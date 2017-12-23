@@ -1,6 +1,6 @@
 <?php 
 
-namespace BitBalm\Relator\PDO;
+namespace BitBalm\Relator;
 
 use BitBalm\Relator\RecordSet;
 use ArrayObject;
@@ -39,7 +39,7 @@ class SimpleRecordSet extends ArrayObject implements GetsRelatedRecords, RecordS
         
     }
     
-    public function getTableName() 
+    public function getTable() 
     {
         if ( $firstitem = current( $this ) ) { 
             return $firstitem->getTable() ; 

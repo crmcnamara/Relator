@@ -2,22 +2,18 @@
 
 namespace BitBalm\Relator\PDO;
 
+use PDO;
 use BitBalm\Relator\RecordTrait as BaseRecordTrait;
+use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\SimpleRecordSet;
 
 Trait RecordTrait {
   
     use BaseRecordTrait;
     
-    abstract public function getTableName() ;
-    
     public function getFetchMode()
     {
         return [ PDO::FETCH_CLASS, $this ] ;
-    }
-    
-    public function asRecordSet()
-    {
-        return new SimpleRecordSet([ $this ]);
     }
     
 }

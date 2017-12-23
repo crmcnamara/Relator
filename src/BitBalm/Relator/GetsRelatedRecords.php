@@ -6,5 +6,7 @@ Interface GetsRelatedRecords
 {
     
     public function getRelated( Relationship $relationship ) ;
+
+    public function getTable() ;
     
 }

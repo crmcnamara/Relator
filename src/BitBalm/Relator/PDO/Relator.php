@@ -3,9 +3,10 @@
 namespace BitBalm\Relator\PDO;
 
 use BitBalm\Relator\Relator as RelatorInterface;
+use BitBalm\Relator\BaseRelator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\RecordSet;
-use BitBalm\Relator\BaseRelator;
+
 
 
 use PDO;
@@ -21,15 +22,12 @@ class Relator extends BaseRelator implements RelatorInterface
         $this->pdo = $pdo;
     }
         
-    /**
-     * @return PDO
-     */
-    public function getPDO() 
+    public function getPDO() : PDO
     {
         return $this->pdo;
     }
     
-    public function getRelated( Relationship $relationship, RecordSet $records )
+    public function getRelated( Relationship $relationship, RecordSet $records ) : RecordSet
     {
     }
     

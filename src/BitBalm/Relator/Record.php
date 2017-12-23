@@ -8,11 +8,11 @@ Interface Record extends GetsRelatedRecords
     /**
      * @return RecordSet
      */
-    public function asRecordSet();
+    public function asRecordSet() : RecordSet ;
     
     /**
      * @return associative array of the record's values
      */
-    public function asArray();
+    public function asArray() : array ;
     
 }

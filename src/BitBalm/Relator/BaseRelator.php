@@ -9,9 +9,9 @@ Abstract class BaseRelator implements Relator
     
     protected $relationships = [] ;
     
-    public function addRelationship( Relationship $relationship, $name = null )
+    public function addRelationship( Relationship $relationship, string $name = null )
     {
-        $name = stringval( $name ) ;
+        $name = strval( $name ) ;
         
         #TODO: how do we want to index/look these up?
         

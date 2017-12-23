@@ -9,7 +9,7 @@ Interface Relator
      * @parameter Relationship $relationship
      * @parameter string $name (optional)
      */
-    public function addRelationship( Relationship $relationship, $name = null );
+    public function addRelationship( Relationship $relationship, string $name = null );
     
     public function addRelationships( array $relationships ); 
     
@@ -19,7 +19,7 @@ Interface Relator
      * @return RecordSet
      * 
      */
-    public function getRelated( Relationship $relationship, RecordSet $recordset );
+    public function getRelated( Relationship $relationship, RecordSet $recordset ) : RecordSet ;
     
 }
     
