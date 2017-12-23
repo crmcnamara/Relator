@@ -1,4 +1,4 @@
 
 # Relator
 
-Interfaces and Implementations for Relational data 
+Tools for relational data 

@@ -1,0 +1,19 @@
+{
+    "name": "bitbalm/relator",
+    "description": "Tools for relational data",
+    "minimum-stability": "stable",
+    "type": "library",
+    "license": "LGPL-3",
+    "authors": [
+        {
+            "name": "Cleo MacNamara",
+            "email": "hacks@bitbalm.null"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    }
+}
