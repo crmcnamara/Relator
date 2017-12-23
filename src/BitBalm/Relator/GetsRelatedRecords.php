@@ -9,4 +9,6 @@ Interface GetsRelatedRecords
 
     public function getTable() ;
     
+    public function asRecordSet() : RecordSet ;
+    
 }

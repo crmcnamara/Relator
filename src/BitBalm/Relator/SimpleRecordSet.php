@@ -46,6 +46,9 @@ class SimpleRecordSet extends ArrayObject implements GetsRelatedRecords, RecordS
         }
     }
     
-    use RecordTrait;
-    
+    public function asRecordSet() : RecordSet
+    {
+        return $this ;
+    }
+
 }
