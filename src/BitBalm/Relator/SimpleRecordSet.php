@@ -6,8 +6,9 @@ use BitBalm\Relator\RecordSet;
 use ArrayObject;
 use InvalidArgumentException;
 
-class SimpleRecordSet extends ArrayObject implements GetsRelatedRecords, RecordSet 
+class SimpleRecordSet extends ArrayObject implements RecordSet 
 {
+    use GetsRelatedTrait;
     
     public function __construct( array $input, $flags, $iterator_class )
     {
