@@ -2,6 +2,7 @@
 
 namespace BitBalm\Relator;
 
+use InvalidArgumentException;
 
 # TODO: trait to handle relationship registration?
 Abstract class BaseRelator implements Relator
@@ -9,27 +10,37 @@ Abstract class BaseRelator implements Relator
     
     protected $relationships = [] ;
     
-    public function addRelationship( Relationship $relationship, string $name = null )
+    public function addRelationship( Relationship $relationship, string $name = null ) : Relator
     {
-        $name = strval( $name ) ;
-        
-        #TODO: how do we want to index/look these up?
-        
-        if ( ! empty($name) ) {
-            $this->relationships[$name] = $relationship ;
-        } else {
-            $this->relationships[] = $relationship;
+        if ( ! ( $fromTable = $relationship->getFromTable()->getTable() ) ) {
+            throw new InvalidArgumentException("Relationship's 'from' table is undefined. ");
         }
         
-        $relationship->setRelator($this);
+        if ( empty($name) ) { $name = $relationship->getToTable()->getTable(); }
+                
+        $this->relationships[$fromTable][$name] = $relationship;
+        
+        $relationship->setRelator($this);        
+        $relationship->getFromTable()->setRelator($this);
+        $relationship->getToTable()->setRelator($this);
         
         return $this;
     }
     
-    public function addRelationships( array $relationships ) 
+    public function addRelationships( array $relationships ) : Relator
     {
-        foreach ( $relationships as $relationship ) { $this->addRelationship($relationship); }
+        foreach ( $relationships as $name => $relationship ) { 
+            $this->addRelationship(
+                $relationship, 
+                is_string($name) ? $name : null 
+              ); 
+        }
         return $this;      
+    }
+    
+    public function getRelationship( string $fromTable, string $relationshipName ) : Relationship
+    {
+        return $this->relationships[$fromTable][$relationshipName] ?? null ;
     }
     
 }

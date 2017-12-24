@@ -5,13 +5,11 @@ namespace BitBalm\Relator;
 Interface Relator
 {
     
-    /**
-     * @parameter Relationship $relationship
-     * @parameter string $name (optional)
-     */
     public function addRelationship( Relationship $relationship, string $name = null );
     
-    public function addRelationships( array $relationships ); 
+    public function addRelationships( array $relationships ) : Relator ; 
+    
+    public function getRelationship( string $fromTable, string $relationshipName ) : Relationship ;
     
     /**
      * @parameter Relationship $relationship
