@@ -8,41 +8,59 @@ use InvalidArgumentException;
 
 class SimpleRecordSet extends ArrayObject implements RecordSet 
 {
+    
+    public $relatorTable ;
+    
     use GetsRelatedTrait;
     
-    public function __construct( array $input, $flags, $iterator_class )
+    public function __construct( array $input = [], $flags = null )
     {
-        // All items in $input array must be Records of the same class
+        parent::__construct( $input, $flags );
+        
+        $this->validate();
+        
         if ( ! empty( $input ) ) {
+            $this->relatorTable = current($this)->getTable() ;
+        }
+    }
+    
+    public function validate() : SimpleRecordSet
+    {
+        
+        $values = $this->getArrayCopy() ;
+        
+
+        
+        if ( ! empty( $values ) ) {
           
             $class = null ;            
-            if ( gettype( current( $input ) ) === 'object' ) { 
-                $class = get_class( current( $input ) ) ; 
+            if ( gettype( current( $values ) ) === 'object' ) { 
+                $class = get_class( current( $values ) ) ; 
             }
             
-            foreach ( $input as $item ) {
-                            
+            foreach ( $values as $item ) {
+                
                 if ( ! ( 
-                      gettype( current( $item ) ) === 'object' 
+                      gettype( $item ) === 'object' 
                         and
                       $item instanceof Record
                         and
-                      get_class( $item ) === $class                        
+                      get_class( $item ) === $class
                   ) ) {
                     throw new InvalidArgumentException(
-                      'All $input arguments must be of the same class and implement '. Record::class );
+                      'All values must be of the same class and implement '. Record::class );
                 }
                 
             }
         }
-            
-        parent::__construct( $input, $flags, $iterator_class );
+        
+        return $this ;
         
     }
     
     public function getTable() : string
     {
-        if ( $firstitem = current( $this ) ) { 
+        if ( $firstitem = current($this) ) { 
             return $firstitem->getTable() ; 
         }
     }
@@ -51,5 +69,5 @@ class SimpleRecordSet extends ArrayObject implements RecordSet
     {
         return $this ;
     }
-
+    
 }
