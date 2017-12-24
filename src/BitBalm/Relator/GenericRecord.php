@@ -13,14 +13,14 @@ class GenericRecord extends ArrayObject implements Record
     
     protected $relatorTable ;
     
-    public function __construct( $table, array $values = [] )
+    public function __construct( string $table, array $values = [] )
     {
         parent::__construct( $values, ArrayObject::ARRAY_AS_PROPS );
         
         $this->setTable( $table ) ;
     }
     
-    protected function setTable( $table )
+    protected function setTable( string $table ) : GenericRecord
     {
       
         if ( !empty( $this->relatorTable ) ) {
@@ -37,7 +37,8 @@ class GenericRecord extends ArrayObject implements Record
         
     }
     
-    public function getTable() {
+    public function getTable() : string
+    {
         return $this->relatorTable ;
     }
     

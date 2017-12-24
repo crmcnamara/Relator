@@ -22,17 +22,17 @@ class SimpleRelationship implements Relationship
         }
     }
     
-    public function getFromTable()  { return $this->fromTable   ; }
-    public function getFromColumn() { return $this->fromColumn  ; }
-    public function getToTable()    { return $this->toTable     ; }
-    public function getToColumn()   { return $this->toColumn    ; }
+    public function getFromTable()  : Record  { return $this->fromTable   ; }
+    public function getFromColumn() : string  { return $this->fromColumn  ; }
+    public function getToTable()    : Record  { return $this->toTable     ; }
+    public function getToColumn()   : string  { return $this->toColumn    ; }
     
     public function getRelator() : Relator
     {
         return $this->relator;
     }
     
-    public function setRelator( Relator $relator )
+    public function setRelator( Relator $relator ) : Relationship
     {
         $this->relator = $relator;
         return $this;

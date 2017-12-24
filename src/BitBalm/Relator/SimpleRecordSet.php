@@ -40,7 +40,7 @@ class SimpleRecordSet extends ArrayObject implements RecordSet
         
     }
     
-    public function getTable() 
+    public function getTable() : string
     {
         if ( $firstitem = current( $this ) ) { 
             return $firstitem->getTable() ; 

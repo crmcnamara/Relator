@@ -5,9 +5,11 @@ namespace BitBalm\Relator;
 Interface GetsRelatedRecords 
 {
     
-    public function getRelated( Relationship $relationship ) ;
+    public function getRelated( string $relationshipName ) : RecordSet ;
 
-    public function getTable() ;
+    public function getTable() : string ;
+    
+    public function getRelator() : Relator ;
     
     public function asRecordSet() : RecordSet ;
     
