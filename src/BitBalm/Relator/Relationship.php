@@ -5,11 +5,13 @@ namespace BitBalm\Relator;
 Interface Relationship
 {
     
-    /**
-     * @return Relator
-     */
-    public function getRelator();
+    public function getRelator() : Relator ;
     
-    public function setRelator( Relator $relator );
+    public function setRelator( Relator $relator ) : Relationship ;
+    
+    public function getFromTable()    : Record ;
+    public function getFromColumn()   : string ; 
+    public function getToTable()      : Record ;
+    public function getToColumn()     : string ;
     
 }
