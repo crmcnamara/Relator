@@ -5,6 +5,7 @@ namespace BitBalm\Relator;
 Trait GetsRelatedTrait 
 {
     
+    protected $relator ;
     
     public function getRelated( string $relationshipName ) : RecordSet
     {
@@ -17,6 +18,16 @@ Trait GetsRelatedTrait
         return $related;
     }
     
-
+    public function setRelator( Relator $relator ) : GetsRelatedRecords 
+    {
+        $this->relator = $relator ;
+        
+        return $this ;
+    }
+    
+    public function getRelator() : Relator
+    {
+        return $this->relator ;
+    }
     
 }
