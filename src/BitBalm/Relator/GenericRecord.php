@@ -13,9 +13,9 @@ class GenericRecord extends ArrayObject implements Record
     
     protected $tableName ;
     
-    public function __construct( string $tableName, array $values = [] )
+    public function __construct( string $tableName, GenericRecord $record = null )
     {
-        parent::__construct( $values, ArrayObject::ARRAY_AS_PROPS );
+        parent::__construct( [], ArrayObject::ARRAY_AS_PROPS );
         
         $this->setTable( $tableName ) ;
     }
@@ -42,6 +42,12 @@ class GenericRecord extends ArrayObject implements Record
     public function asArray() : array
     {
         return $this->getArrayCopy();
+    }
+    
+    public function setArray( array $input ) : GenericRecord 
+    {
+        $this->exchangeArray($input);
+        return $this;
     }
     
 }

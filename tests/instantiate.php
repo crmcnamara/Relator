@@ -24,8 +24,8 @@ $pdo->exec( "
   ");
 
 
-$person   = new GenericRecord('person',  ['id'=>1,'name'=>'Joe',] ) ;
-$article  = new GenericRecord('article', ['id'=>3,'title'=>'Counterpoint','author_id' => 2] ) ;
+$person   = (new GenericRecord('person'))->setArray(['id'=>1,'name'=>'Joe',]) ;
+$article  = (new GenericRecord('article'))->setArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]) ;
 
 $relator = 
     ( new Relator( $pdo ) )
