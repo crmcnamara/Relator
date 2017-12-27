@@ -8,13 +8,11 @@ use BitBalm\Relator\Relationship;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\GenericRecord;
 
-
-
 use PDO;
 use PDOStatement;
 
 
-class Relator extends BaseRelator implements RelatorInterface
+class Relator implements RelatorInterface
 {
     
     protected $pdo ;
@@ -77,7 +75,7 @@ class Relator extends BaseRelator implements RelatorInterface
         // Thus, we must pass them through here as a constructor argument
         #TODO: Are we cheating? should we be implementing getFetchMode() on extended interfaces/implementations?
         if ( $relationship->getToTable() instanceof GenericRecord ) {
-            $fetchmode[] = [ $relationship->getToTable()->getTableName(), $relationship->getToTable() ] ;
+            $fetchmode[] = [ $relationship->getToTable()->getTableName() ] ;
         }
         
         $statement->setFetchMode( ...$fetchmode );

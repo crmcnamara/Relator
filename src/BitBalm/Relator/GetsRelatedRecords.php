@@ -11,6 +11,8 @@ Interface GetsRelatedRecords
     
     public function getRelator() : Relator ;
     
+    public function getRelationship( string $relationshipName ) : Relationship ;
+    
     public function asRecordSet() : RecordSet ;
     
 }

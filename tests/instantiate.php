@@ -4,7 +4,7 @@
 require_once __DIR__ .'/../vendor/autoload.php' ;
 
 use BitBalm\Relator\PDO\Relator;
-use BitBalm\Relator\SimpleRelationship;
+use BitBalm\Relator\SimpleRelationshipSet;
 use BitBalm\Relator\GenericRecord;
 
 
@@ -27,18 +27,17 @@ $pdo->exec( "
 $person   = (new GenericRecord('person'))->setArray(['id'=>1,'name'=>'Joe',]) ;
 $article  = (new GenericRecord('article'))->setArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]) ;
 
-$relator = 
-    ( new Relator( $pdo ) )
-        ->addRelationships([
-            'articles' => new SimpleRelationship( 
-                $person,  'id',
-                $article, 'author_id'
-              ),        
-            'author' => new SimpleRelationship( 
-                $article, 'author_id',
-                $person,  'id'
-              ),
-          ]);
+$relator = new Relator( $pdo );
+
+( new SimpleRelationshipSet( $person, $relator ) )
+    ->addRelationships([
+        'articles' => [ 'id', $article, 'author_id' ],
+      ]) ;
+      
+( new SimpleRelationshipSet( $article, $relator ) )
+    ->addRelationships([
+        'author' => [ 'author_id', $person, 'id' ],
+      ]) ;
 
 
 var_dump( (array) $person );

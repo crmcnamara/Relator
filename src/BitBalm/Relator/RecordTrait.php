@@ -9,6 +9,7 @@ Trait RecordTrait
 {
     
     protected static $relator ;
+    protected static $relationships ;
         
     use GetsRelatedTrait;
     
@@ -30,6 +31,22 @@ Trait RecordTrait
         throw new Exception( "This record's Relator is not yet set. ");
     }
 
+    public function setRelationships( RelationshipSet $relset ) : Record
+    {
+        if ( $relset === self::$relationships ) { return $this ; }
+        if ( self::$relationships instanceof RelationshipSet ) {
+            throw new InvalidArgumentException("This record's RelationshipSet is already set. ");
+        }
+            
+        $this->relationships = $relset;
+        return $this;
+    }
+    
+    public function getRelationship( string $relationshipName ) : Relationship
+    {
+        return $this->relationships->getRelationship( $this->getTableName(), $relationshipName );
+    }
+    
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet
     {
         return $recordset ? new $recordset([$this]) : new SimpleRecordSet([ $this ]);

@@ -7,10 +7,8 @@ Trait GetsRelatedTrait
     
     public function getRelated( string $relationshipName ) : RecordSet
     {
-        $relator = $this->getRelator();
-        
-        $related = $relator->getRelated( 
-            $relator->getRelationship( $this->getTable(), $relationshipName ), 
+        $related = $this->getRelator()->getRelated( 
+            $this->getRelationship( $relationshipName ),
             $this->asRecordSet() 
           ) ;
         return $related;
