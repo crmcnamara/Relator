@@ -7,4 +7,6 @@ Interface Record extends GetsRelatedRecords
     
     public function asArray() : array ;
     
+    public function setRelator( Relator $relator ) : Record ;
+    
 }

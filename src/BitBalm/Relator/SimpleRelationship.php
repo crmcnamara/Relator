@@ -5,8 +5,6 @@ namespace BitBalm\Relator;
 class SimpleRelationship implements Relationship
 {
     
-    protected $relator ;
-    
     protected $fromTable ;
     protected $fromColumn ;
     protected $toTable ;
@@ -26,17 +24,5 @@ class SimpleRelationship implements Relationship
     public function getFromColumn() : string  { return $this->fromColumn  ; }
     public function getToTable()    : Record  { return $this->toTable     ; }
     public function getToColumn()   : string  { return $this->toColumn    ; }
-    
-    public function getRelator() : Relator
-    {
-        return $this->relator;
-    }
-    
-    public function setRelator( Relator $relator ) : Relationship
-    {
-        $this->relator = $relator;
-        return $this;
-    }
-    
     
 }
