@@ -58,11 +58,10 @@ class SimpleRecordSet extends ArrayObject implements RecordSet
         
     }
     
-    public function getTable() : string
+    public function getTableName() : string
     {
-        if ( $firstitem = current($this) ) { 
-            return $firstitem->getTable() ; 
-        }
+        if ( $this->record instanceof Record ) { return $this->record->getTableName() ; }
+        throw new Exception("This RecordSet's Record type is not yet set. ");
     }
     
     public function asRecordSet() : RecordSet

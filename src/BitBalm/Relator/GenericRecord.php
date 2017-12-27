@@ -11,35 +11,32 @@ class GenericRecord extends ArrayObject implements Record
 {
     use RecordTrait;
     
-    protected $relatorTable ;
+    protected $tableName ;
     
-    public function __construct( string $table, array $values = [] )
+    public function __construct( string $tableName, array $values = [] )
     {
         parent::__construct( $values, ArrayObject::ARRAY_AS_PROPS );
         
-        $this->setTable( $table ) ;
+        $this->setTable( $tableName ) ;
     }
     
-    protected function setTable( string $table ) : GenericRecord
+    protected function setTable( string $tableName ) : GenericRecord
     {
-      
-        if ( !empty( $this->relatorTable ) ) {
-            throw Exception('Table is already set');
+        if ( $tableName === $this->tableName ) { return $this ; }
+        
+        if ( is_string( $this->tableName ) ) {
+            throw InvalidArgumentException('A table name for this object is already set. ');
         }
         
-        if ( empty( $table ) ) { 
-            throw InvalidArgumentException('$table argument is empty. ') ; 
-        }
-        
-        $this->relatorTable = $table ;
+        $this->tableName = $tableName ;
         
         return $this ;
         
     }
     
-    public function getTable() : string
+    public function getTableName() : string
     {
-        return $this->relatorTable ;
+        return $this->tableName ;
     }
     
     public function asArray() : array

@@ -12,7 +12,7 @@ class SimpleRelationship implements Relationship
     protected $toTable ;
     protected $toColumn ;
     
-    public function __construct( Record $fromTable, $fromColumn, Record $toTable, $toColumn ) 
+    public function __construct( Record $fromTable, string $fromColumn, Record $toTable, string $toColumn ) 
     {
         foreach ( [ 'fromTable', 'fromColumn', 'toTable', 'toColumn', ] as $var ) {
             if ( empty( $$var ) ) {

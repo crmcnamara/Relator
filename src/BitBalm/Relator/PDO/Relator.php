@@ -51,7 +51,7 @@ class Relator extends BaseRelator implements RelatorInterface
     public function getRelatedStatement( Relationship $relationship, RecordSet $recordset ) : PDOStatement
     {
         $toTable  = $relationship->getToTable();
-        $toTableName = $toTable->getTable();
+        $toTableName = $toTable->getTableName();
         $toColumn = $relationship->getToColumn();
         $querystring = "SELECT * from {$toTableName} where {$toColumn} in ( ? ) ";
         $values = [];
@@ -72,12 +72,12 @@ class Relator extends BaseRelator implements RelatorInterface
         }
         
         $fetchmode = [ PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, get_class( $toTable ), ] ;
-        // Normally, table names for calsses are stored statically per-class
+        // Normally, table names for classes are stored statically per-class
         // GenericRecords, however, must store them individually in each instance
         // Thus, we must pass them through here as a constructor argument
         #TODO: Are we cheating? should we be implementing getFetchMode() on extended interfaces/implementations?
         if ( $relationship->getToTable() instanceof GenericRecord ) {
-            $fetchmode[] = [ $relationship->getToTable()->getTable() ] ;
+            $fetchmode[] = [ $relationship->getToTable()->getTableName(), $relationship->getToTable() ] ;
         }
         
         $statement->setFetchMode( ...$fetchmode );
