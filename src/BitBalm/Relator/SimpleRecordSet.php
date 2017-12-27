@@ -9,7 +9,7 @@ use InvalidArgumentException;
 class SimpleRecordSet extends ArrayObject implements RecordSet 
 {
     
-    public $relatorTable ;
+    protected $record ;
     
     use GetsRelatedTrait;
     
@@ -17,11 +17,12 @@ class SimpleRecordSet extends ArrayObject implements RecordSet
     {
         parent::__construct( $input, $flags );
         
+        if ( ! empty( $input ) ) {
+            $this->record = current($this) ;
+        }
+        
         $this->validate();
         
-        if ( ! empty( $input ) ) {
-            $this->relatorTable = current($this)->getTable() ;
-        }
     }
     
     public function validate() : SimpleRecordSet
@@ -29,13 +30,11 @@ class SimpleRecordSet extends ArrayObject implements RecordSet
         
         $values = $this->getArrayCopy() ;
         
-
-        
         if ( ! empty( $values ) ) {
           
-            $class = null ;            
-            if ( gettype( current( $values ) ) === 'object' ) { 
-                $class = get_class( current( $values ) ) ; 
+            $class = null ;
+            if ( gettype( $this->record ) === 'object' ) { 
+                $class = get_class( $this->record ) ; 
             }
             
             foreach ( $values as $item ) {
@@ -61,6 +60,18 @@ class SimpleRecordSet extends ArrayObject implements RecordSet
     public function getTableName() : string
     {
         if ( $this->record instanceof Record ) { return $this->record->getTableName() ; }
+        throw new Exception("This RecordSet's Record type is not yet set. ");
+    }
+    
+    public function getRelator() : Relator
+    {
+        if ( $this->record instanceof Record ) { return $this->record->getRelator(); }
+        throw new Exception("This RecordSet's Record type is not yet set. ");
+    }
+    
+    public function getRelationship( string $relationshipName ) : Relationship
+    {
+        if ( $this->record instanceof Record ) { return $this->record->getRelationship( $relationshipName ); }
         throw new Exception("This RecordSet's Record type is not yet set. ");
     }
     
