@@ -23,21 +23,20 @@ $pdo->exec( "
     
   ");
 
-
-$person   = (new GenericRecord('person'))->setArray(['id'=>1,'name'=>'Joe',]) ;
-$article  = (new GenericRecord('article'))->setArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]) ;
-
 $relator = new Relator( $pdo );
 
-( new SimpleRelationshipSet( $person, $relator ) )
-    ->addRelationships([
-        'articles' => [ 'id', $article, 'author_id' ],
-      ]) ;
-      
-( new SimpleRelationshipSet( $article, $relator ) )
-    ->addRelationships([
-        'author' => [ 'author_id', $person, 'id' ],
-      ]) ;
+$person   = (new GenericRecord('person'))
+    ->setRelator($relator)
+    ->setArray(['id'=>1,'name'=>'Joe',])     
+    ;
+$article  = (new GenericRecord('article'))
+    ->setRelator($relator)
+    ->setArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2])     
+    ;
+
+$person   ->addRelationship( 'id',        $article, 'author_id',  'articles'  ) ;
+$article  ->addRelationship( 'author_id', $person,  'id',         'author'    ) ;
+
 
 
 var_dump( (array) $person );

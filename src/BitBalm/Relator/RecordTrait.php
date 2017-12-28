@@ -2,49 +2,100 @@
 
 namespace BitBalm\Relator;
 
+use Exception;
 use InvalidArgumentException;
 
 
 Trait RecordTrait 
 {
     
-    protected static $relator ;
+    protected static $relators ;
     protected static $relationships ;
         
     use GetsRelatedTrait;
     
     public function setRelator( Relator $relator ) : Record
     {
-        if ( $relator === self::$relator ) { return $this ; }
-        if ( self::$relator instanceof Relator ) {
+        $existing = isset( self::$relators[ $this->getTableName() ] ) 
+            ? self::$relators[ $this->getTableName() ] : null ;
+            
+        if ( $relator === $existing ) { return $this ; }
+        
+        if ( $existing instanceof Relator ) {
             throw new InvalidArgumentException("This record's Relator is already set. ");
         }
             
-        self::$relator = $relator;
+        self::$relators[ $this->getTableName() ] = $relator;
         
         return $this;
     }
     
     public function getRelator() : Relator 
     {
-        if ( self::$relator instanceof Relator ) { return self::$relator ; }
+        $existing = isset( self::$relators[ $this->getTableName() ] )
+            ? self::$relators[ $this->getTableName() ] : null ;
+            
+        if ( $existing instanceof Relator ) { return $existing ; }
+        
         throw new Exception( "This record's Relator is not yet set. ");
     }
 
-    public function setRelationships( RelationshipSet $relset ) : Record
+    public function addRelationship( 
+        string $fromColumn, 
+        Record $toTable, 
+        string $toColumn, 
+        string $relationshipName = null 
+      ) : Record
     {
-        if ( $relset === self::$relationships ) { return $this ; }
-        if ( self::$relationships instanceof RelationshipSet ) {
-            throw new InvalidArgumentException("This record's RelationshipSet is already set. ");
-        }
+        $this->setRelationship( 
+            new SimpleRelationship( $this, $fromColumn, $toTable, $toColumn ),
+            $relationshipName 
+          );
+          
+        return $this ;
+    }
+    
+    public function setRelationship( Relationship $relationship, string $relationshipName = null ) : Record
+    {
+        
+        if ( empty($relationshipName) ) { $relationshipName = $relationship->getToTable()->getTableName(); }
+        
+        $fromTableName = $relationship->getFromTable()->getTableName();
+        
+        $existing = isset( self::$relationships[$fromTableName][$relationshipName] )
+            ? self::$relationships[$fromTableName][$relationshipName] : null ;
             
-        $this->relationships = $relset;
+        if ( $relationship === $existing ) { return $this ; }
+        
+        if ( $existing instanceof Relationship ) {
+            throw new InvalidArgumentException(
+                "A relationship to {$relationshipName} is already set. "
+              );
+        }
+        
+        if ( ! ( $relationship->getFromTable() instanceof $this ) ) {
+            throw new InvalidArgumentException(
+                "The given Relationship's fromTable must be an instance of ". self::class .". "
+              );
+        }
+        
+        if ( $fromTableName !== $this->getTableName() ) {
+            throw new InvalidArgumentException(
+                "The given Relationship's fromTable must have a tableName of {$fromTableName}. "
+              );
+        }
+        
+        self::$relationships[$fromTableName][$relationshipName] = $relationship;
+        
         return $this;
     }
     
     public function getRelationship( string $relationshipName ) : Relationship
     {
-        return $this->relationships->getRelationship( $this->getTableName(), $relationshipName );
+        if ( isset(self::$relationships[ $this->getTableName() ][$relationshipName]) ) { 
+            return self::$relationships[ $this->getTableName() ][$relationshipName] ; 
+        }
+        throw new Exception("A relationship to {$relationshipName} is not set. ");
     }
     
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet

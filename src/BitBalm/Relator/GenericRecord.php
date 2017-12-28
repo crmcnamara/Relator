@@ -25,7 +25,7 @@ class GenericRecord extends ArrayObject implements Record
         if ( $tableName === $this->tableName ) { return $this ; }
         
         if ( is_string( $this->tableName ) ) {
-            throw InvalidArgumentException('A table name for this object is already set. ');
+            throw InvalidArgumentException('A table name for this Record is already set. ');
         }
         
         $this->tableName = $tableName ;
