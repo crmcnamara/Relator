@@ -76,7 +76,7 @@ class RelatingTests extends TestCase
     }
 
 
-    public function testArticleToAuthor() 
+    public function testRelateArticleToAuthor() 
     {
         $this->article->setArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]);
         
