@@ -61,9 +61,10 @@ class RelatingTests extends TestCase
 
     public function testRelatePersonToArticles() 
     {
-        $this->person->setArray(['id'=>2,'name'=>'Dave',]);
         
-        $articles = $this->person->getRelated('articles');
+        $person = $this->person->createFromArray(['id'=>2,'name'=>'Dave',]);
+
+        $articles = $person->getRelated('articles');
         
         $expected = [ 
             [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
@@ -78,9 +79,9 @@ class RelatingTests extends TestCase
 
     public function testRelateArticleToAuthor() 
     {
-        $this->article->setArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]);
+        $article = $this->article->createFromArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]);
         
-        $authors = $this->article->getRelated('author');
+        $authors = $article->getRelated('author');
         
         $expected = [ [ 'id' => 2, 'name' => 'Dave Davidson', ] ];
         

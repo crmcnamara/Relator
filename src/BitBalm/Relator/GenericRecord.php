@@ -44,10 +44,12 @@ class GenericRecord extends ArrayObject implements Record
         return $this->getArrayCopy();
     }
     
-    public function setArray( array $input ) : GenericRecord 
+    public function createFromArray( array $input ) : Record 
     {
-        $this->exchangeArray($input);
-        return $this;
+        $record = new static( $this->getTableName() );
+        $record->setRelator($this->getRelator());
+        $record->exchangeArray($input);
+        return $record;
     }
     
 }

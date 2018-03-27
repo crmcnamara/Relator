@@ -7,6 +7,7 @@ use BitBalm\Relator\BaseRelator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\GenericRecord;
+use BitBalm\Relator\Record;
 
 use PDO;
 use PDOStatement;
@@ -32,17 +33,21 @@ class Relator implements RelatorInterface
         $statement = $this->getRelatedStatement( $relationship, $recordset );
         $statement->execute();
         $results = $statement->fetchAll();
-        
+
+        foreach ( $results as $index => $result ) {
+          
+            if ( ! $results[$index] instanceof Record ) {
+                $record = $relationship->getToTable()->createFromArray( (array) $results[$index], $statement );
+                $results[$index] = $record;
+            }
+
+            $results[$index]->setRelator($this); 
+
+        }
+
         $resultset = new $recordset($results);
-        if ( empty( $resultset ) ) { 
-            $resultset->relatorTable = $relationship->getToTable()->getTable(); 
-        }
-        foreach ( $resultset as $record ) {
-            $record->setRelator($this);
-        }
-        
+
         return $resultset;
-        
         
     }
     
@@ -68,17 +73,8 @@ class Relator implements RelatorInterface
         foreach ( $values as $index => $value ) {
             $statement->bindValue( $index+1, $value );
         }
-        
-        $fetchmode = [ PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, get_class( $toTable ), ] ;
-        // Normally, table names for classes are stored statically per-class
-        // GenericRecords, however, must store them individually in each instance
-        // Thus, we must pass them through here as a constructor argument
-        #TODO: Are we cheating? should we be implementing getFetchMode() on extended interfaces/implementations?
-        if ( $relationship->getToTable() instanceof GenericRecord ) {
-            $fetchmode[] = [ $relationship->getToTable()->getTableName() ] ;
-        }
-        
-        $statement->setFetchMode( ...$fetchmode );
+
+        $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         return $statement;
     }
