@@ -13,7 +13,7 @@ class GenericRecord extends ArrayObject implements Record
     
     protected $tableName ;
     
-    public function __construct( string $tableName, GenericRecord $record = null )
+    public function __construct( string $tableName )
     {
         parent::__construct( [], ArrayObject::ARRAY_AS_PROPS );
         
