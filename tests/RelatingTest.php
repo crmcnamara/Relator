@@ -7,6 +7,7 @@ use PDO;
 
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
+use BitBalm\Relator\RecordTrait;
 
 /**
  * @runTestsInSeparateProcesses
@@ -21,9 +22,9 @@ class RelatingTests extends TestCase
     public function setUp()
     {
 
-        $pdo = new PDO( 'sqlite::memory:', null, null, [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, ] );
+        $this->pdo = new PDO( 'sqlite::memory:', null, null, [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, ] );
 
-        $pdo->exec( "
+        $this->pdo->exec( "
 
             CREATE TABLE person   (id INTEGER NOT NULL, name  VARCHAR(255) DEFAULT '' NOT NULL, PRIMARY KEY(id));
             INSERT INTO person VALUES(1,'Joe Josephson');
@@ -36,32 +37,99 @@ class RelatingTests extends TestCase
             
           ");
 
-        $relator = new Relator\PDO( $pdo );
+        $this->relator = new Relator\PDO( $this->pdo );
 
-        $person   = (new Record\Generic('person'))   ->setRelator($relator) ;
-        $article  = (new Record\Generic('article'))  ->setRelator($relator) ;
+        // configure two generic records for each entity type
+        $this->generic_person   = (new Record\Generic('person'))   ->setRelator($this->relator) ;
+        $this->generic_article  = (new Record\Generic('article'))  ->setRelator($this->relator) ;
 
-        $person   ->addRelationship( 'id',        $article, 'author_id',  'articles'  ) ;
-        $article  ->addRelationship( 'author_id', $person,  'id',         'author'    ) ;
+        // and define the relationships between them
+        $this->generic_person   ->addRelationship( 'id',        $this->generic_article, 'author_id',  'articles'  ) ;
+        $this->generic_article  ->addRelationship( 'author_id', $this->generic_person,  'id',         'author'    ) ;
+
+
+        // Now configure the same thing using anonymous classes that make use of RecordTrait
+        $this->custom_person = new class() implements Record {
+          
+            use RecordTrait;
+            
+            public function getTableName() : string
+            {
+                return 'person';
+            }
+            
+            protected $values = [];
+            public function asArray() : array
+            {
+                return $this->values;
+            }
+            public function createFromArray( array $values ) : Record
+            {
+                $record = new static;
+                $record->values = $values ;
+                return $record;
+            }
+
+            
+        };        
+        $this->custom_person->setRelator($this->relator) ;
         
-        $this->pdo      = $pdo;
-        $this->relator  = $relator;
-        $this->person   = $person;
-        $this->article  = $article;
+        $this->custom_article = new class() implements Record {
+          
+            use RecordTrait;
+
+            public function getTableName() : string
+            {
+                return 'article';
+            }
+
+            protected $values = [];
+            public function asArray() : array
+            {
+                return $this->values;
+            }
+            public function createFromArray( array $values ) : Record
+            {
+                $record = new static;
+                $record->values = $values ;
+                return $record;
+            }
+            
+            
+        };
+        $this->custom_article->setRelator($this->relator) ;
         
-        
+        $this->custom_person   ->addRelationship( 'id',        $this->custom_article, 'author_id',  'articles'  ) ;
+        $this->custom_article  ->addRelationship( 'author_id', $this->custom_person,  'id',         'author'    ) ;
+
     }
     
     public function tearDown() 
     {
-        unset( $this->pdo, $this->relator, $this->person, $this->article );
+        unset(
+            $this->pdo,
+            $this->relator,
+            $this->generic_person,
+            $this->custom_person,
+            $this->generic_article,
+            $this->custom_article
+          );
     }
-    
 
-    public function testRelatePersonToArticles() 
+    
+    public function people()
+    {
+        return [ [ 'generic_person' ], [ 'custom_person' ], ];
+    }
+
+
+    /** Tests getting articles authored by a person ( one person to many articles )
+     * @dataProvider people
+     */
+    public function testRelatePersonToArticles( string $person_varname ) 
     {
         
-        $person = $this->person->createFromArray(['id'=>2,'name'=>'Dave',]);
+        $person = $this->$person_varname->createFromArray(['id'=>2,'name'=>'Dave',]);
 
         $articles = $person->getRelated('articles');
         
@@ -73,13 +141,24 @@ class RelatingTests extends TestCase
         foreach ( $articles as $idx => $article ) {
             $this->assertEquals( $expected[$idx], $article->asArray() );            
         }
+        
     }
 
 
-    public function testRelateArticleToAuthor() 
+    public function articles()
     {
-        $article = $this->article->createFromArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]);
-        
+        return [ [ 'generic_article' ], [ 'custom_article' ], ];
+    }
+
+
+    /** Tests getting the person who authored an article ( one article to one person )
+     * @dataProvider articles
+     */
+    public function testRelateArticleToAuthor( string $article_varname ) 
+    {
+      
+        $article = $this->$article_varname->createFromArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]);
+
         $authors = $article->getRelated('author');
         
         $expected = [ [ 'id' => 2, 'name' => 'Dave Davidson', ] ];
@@ -87,6 +166,7 @@ class RelatingTests extends TestCase
         foreach ( $authors as $idx => $author ) {
             $this->assertEquals( $expected[$idx], $author->asArray() );            
         }
+        
     }
 
 }
