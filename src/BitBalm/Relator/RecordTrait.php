@@ -11,7 +11,23 @@ Trait RecordTrait
     
     protected static $relators ;
     protected static $relationships ;
-        
+    
+    protected $relator_values = [];
+    
+    public function asArray() : array
+    {
+        return $this->relator_values;
+    }
+    
+    public function createFromArray( array $values ) : Record
+    {
+        $record = new static;
+        $record->setRelator($this->getRelator());
+        $record->relator_values = $values ;
+        return $record;
+    }
+
+    
     use GetsRelatedTrait;
     
     public function setRelator( Relator $relator ) : Record

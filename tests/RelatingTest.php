@@ -57,21 +57,8 @@ class RelatingTests extends TestCase
             {
                 return 'person';
             }
-            
-            protected $values = [];
-            public function asArray() : array
-            {
-                return $this->values;
-            }
-            public function createFromArray( array $values ) : Record
-            {
-                $record = new static;
-                $record->values = $values ;
-                return $record;
-            }
 
-            
-        };        
+        };
         $this->custom_person->setRelator($this->relator) ;
         
         $this->custom_article = new class() implements Record {
@@ -82,19 +69,6 @@ class RelatingTests extends TestCase
             {
                 return 'article';
             }
-
-            protected $values = [];
-            public function asArray() : array
-            {
-                return $this->values;
-            }
-            public function createFromArray( array $values ) : Record
-            {
-                $record = new static;
-                $record->values = $values ;
-                return $record;
-            }
-            
             
         };
         $this->custom_article->setRelator($this->relator) ;
