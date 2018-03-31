@@ -48,7 +48,7 @@ Trait RecordTrait
       ) : Record
     {
         $this->setRelationship( 
-            new SimpleRelationship( $this, $fromColumn, $toTable, $toColumn ),
+            new Relationship\Simple( $this, $fromColumn, $toTable, $toColumn ),
             $relationshipName 
           );
           
@@ -100,7 +100,7 @@ Trait RecordTrait
     
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet
     {
-        return $recordset ? new $recordset([$this]) : new SimpleRecordSet([ $this ]);
+        return $recordset ? new $recordset([$this]) : new RecordSet\Simple([ $this ]);
     }
     
 }

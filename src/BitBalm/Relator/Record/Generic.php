@@ -1,13 +1,16 @@
 <?php
 
-namespace BitBalm\Relator;
+namespace BitBalm\Relator\Record;
 
 use Exception;
 use InvalidArgumentException;
 use PDO;
 use ArrayObject;
 
-class GenericRecord extends ArrayObject implements Record
+use BitBalm\Relator\Record;
+use BitBalm\Relator\RecordTrait;
+
+class Generic extends ArrayObject implements Record
 {
     use RecordTrait;
     
@@ -20,7 +23,7 @@ class GenericRecord extends ArrayObject implements Record
         $this->setTable( $tableName ) ;
     }
     
-    protected function setTable( string $tableName ) : GenericRecord
+    protected function setTable( string $tableName ) : Record\Generic
     {
         if ( $tableName === $this->tableName ) { return $this ; }
         

@@ -1,29 +1,26 @@
 <?php
 
-namespace BitBalm\Relator\PDO;
+namespace BitBalm\Relator\Relator;
 
-use BitBalm\Relator\Relator as RelatorInterface;
-use BitBalm\Relator\BaseRelator;
+use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\RecordSet;
-use BitBalm\Relator\GenericRecord;
 use BitBalm\Relator\Record;
 
-use PDO;
 use PDOStatement;
 
 
-class Relator implements RelatorInterface
+class PDO implements Relator
 {
     
     protected $pdo ;
     
-    public function __construct( PDO $pdo ) 
+    public function __construct( \PDO $pdo ) 
     {
         $this->pdo = $pdo;
     }
         
-    public function getPDO() : PDO
+    public function getPDO() : \PDO
     {
         return $this->pdo;
     }
@@ -74,7 +71,7 @@ class Relator implements RelatorInterface
             $statement->bindValue( $index+1, $value );
         }
 
-        $statement->setFetchMode(PDO::FETCH_ASSOC);
+        $statement->setFetchMode(\PDO::FETCH_ASSOC);
         
         return $statement;
     }

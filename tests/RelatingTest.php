@@ -5,9 +5,8 @@ namespace BitBalm\Relator\Tests;
 use PHPUnit\Framework\TestCase;
 use PDO;
 
-use BitBalm\Relator\PDO\Relator;
-use BitBalm\Relator\GenericRecord;
-
+use BitBalm\Relator\Relator;
+use BitBalm\Relator\Record;
 
 /**
  * @runTestsInSeparateProcesses
@@ -37,10 +36,10 @@ class RelatingTests extends TestCase
             
           ");
 
-        $relator = new Relator( $pdo );
+        $relator = new Relator\PDO( $pdo );
 
-        $person   = (new GenericRecord('person'))   ->setRelator($relator) ;
-        $article  = (new GenericRecord('article'))  ->setRelator($relator) ;
+        $person   = (new Record\Generic('person'))   ->setRelator($relator) ;
+        $article  = (new Record\Generic('article'))  ->setRelator($relator) ;
 
         $person   ->addRelationship( 'id',        $article, 'author_id',  'articles'  ) ;
         $article  ->addRelationship( 'author_id', $person,  'id',         'author'    ) ;

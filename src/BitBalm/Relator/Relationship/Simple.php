@@ -1,8 +1,13 @@
 <?php 
 
-namespace BitBalm\Relator;
+namespace BitBalm\Relator\Relationship;
 
-class SimpleRelationship implements Relationship
+use BitBalm\Relator\Relationship;
+use BitBalm\Relator\Record;
+
+
+
+class Simple implements Relationship
 {
     
     protected $fromTable ;

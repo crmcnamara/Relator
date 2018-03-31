@@ -1,12 +1,19 @@
 <?php 
 
-namespace BitBalm\Relator;
+namespace BitBalm\Relator\RecordSet;
 
+use BitBalm\Relator\Record;
 use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\Relator;
+use BitBalm\Relator\Relationship;
+use BitBalm\Relator\GetsRelatedTrait;
+
 use ArrayObject;
 use InvalidArgumentException;
 
-class SimpleRecordSet extends ArrayObject implements RecordSet 
+
+
+class Simple extends ArrayObject implements RecordSet 
 {
     
     protected $record ;
@@ -25,7 +32,7 @@ class SimpleRecordSet extends ArrayObject implements RecordSet
         
     }
     
-    public function validate() : SimpleRecordSet
+    public function validate() : Simple
     {
         
         $values = $this->getArrayCopy() ;
