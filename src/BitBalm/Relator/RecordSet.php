@@ -4,7 +4,7 @@ namespace BitBalm\Relator;
 
 use ArrayAccess;
 
-Interface RecordSet extends GetsRelatedRecords, ArrayAccess
+Interface RecordSet extends ArrayAccess
 {
     
 }
