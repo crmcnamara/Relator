@@ -7,7 +7,8 @@ use PDO;
 
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
-use BitBalm\Relator\RecordTrait;
+use BitBalm\Relator\Relatable;
+use BitBalm\Relator\Relatable\RelatableTrait;
 
 /**
  * @runTestsInSeparateProcesses
@@ -40,8 +41,8 @@ class RelatingTests extends TestCase
         $this->relator = new Relator\PDO( $this->pdo );
 
         // configure two generic records for each entity type
-        $this->generic_person   = (new Record\Generic('person'))   ->setRelator($this->relator) ;
-        $this->generic_article  = (new Record\Generic('article'))  ->setRelator($this->relator) ;
+        $this->generic_person   = (new Record\Generic('person', 'id'))   ->setRelator($this->relator) ;
+        $this->generic_article  = (new Record\Generic('article', 'id'))  ->setRelator($this->relator) ;
 
         // and define the relationships between them
         $this->generic_person   ->addRelationship( 'id',        $this->generic_article, 'author_id',  'articles'  ) ;
@@ -49,9 +50,9 @@ class RelatingTests extends TestCase
 
 
         // Now configure the same thing using anonymous classes that make use of RecordTrait
-        $this->custom_person = new class() implements Record {
+        $this->custom_person = new class() implements Relatable {
           
-            use RecordTrait;
+            use RelatableTrait;
             
             public function getTableName() : string
             {
@@ -61,9 +62,9 @@ class RelatingTests extends TestCase
         };
         $this->custom_person->setRelator($this->relator) ;
         
-        $this->custom_article = new class() implements Record {
+        $this->custom_article = new class() implements Relatable {
           
-            use RecordTrait;
+            use RelatableTrait;
 
             public function getTableName() : string
             {
@@ -142,5 +143,7 @@ class RelatingTests extends TestCase
         }
         
     }
+    
+    #TODO: relating for recordsets
 
 }
