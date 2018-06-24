@@ -4,26 +4,37 @@ namespace BitBalm\Relator\Record;
 
 use Exception;
 use InvalidArgumentException;
-use PDO;
 use ArrayObject;
 
 use BitBalm\Relator\Record;
-use BitBalm\Relator\RecordTrait;
+use BitBalm\Relator\Record\RecordTrait;
+use BitBalm\Relator\Recordable;
+use BitBalm\Relator\Relatable\RelatableTrait;
+use BitBalm\Relator\Relatable;
+use BitBalm\Relator\Recordable\RecordableTrait;
+use BitBalm\Relator\GetsRelatedRecords;
+use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
-class Generic extends ArrayObject implements Record
+
+class Generic extends ArrayObject implements Record, Recordable, Relatable, GetsRelatedRecords
 {
-    use RecordTrait;
+    use RelatableTrait;
+    use RecordableTrait;
+    
     
     protected $tableName ;
+    protected $primary_key_name;
     
-    public function __construct( string $tableName )
+    
+    public function __construct( string $tableName, string $primary_key_name )
     {
         parent::__construct( [], ArrayObject::ARRAY_AS_PROPS );
         
-        $this->setTable( $tableName ) ;
+        $this->setTableName( $tableName ) ;
+        $this->setPrimaryKeyName( $primary_key_name );
     }
     
-    protected function setTable( string $tableName ) : Record\Generic
+    protected function setTableName( string $tableName ) : Record\Generic
     {
         if ( $tableName === $this->tableName ) { return $this ; }
         
@@ -37,9 +48,27 @@ class Generic extends ArrayObject implements Record
         
     }
     
+    protected function setPrimaryKeyName( string $key_name )
+    {
+        if ( $key_name === $this->primary_key_name ) { return $this ; }
+        
+        if ( is_string( $this->primary_key_name ) ) {
+            throw InvalidArgumentException('A primary key name for this Record is already set. ');
+        }
+        
+        $this->primary_key_name = $key_name ;
+        
+        return $this ;
+    }
+    
     public function getTableName() : string
     {
         return $this->tableName ;
+    }
+    
+    public function getPrimaryKeyName() : string
+    {
+        return $this->primary_key_name ;
     }
     
     public function asArray() : array
@@ -49,9 +78,13 @@ class Generic extends ArrayObject implements Record
     
     public function createFromArray( array $input ) : Record 
     {
-        $record = new static( $this->getTableName() );
-        $record->setRelator($this->getRelator());
+        $record = new static( $this->getTableName(), $this->getPrimaryKeyName() );
         $record->exchangeArray($input);
+        
+        $record->setRelator($this->getRelator());
+        
+        $this->recorder_loaded_id = $values[ $this->getPrimaryKeyName() ] ?? null ;
+        
         return $record;
     }
     

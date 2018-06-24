@@ -4,6 +4,7 @@ namespace BitBalm\Relator\Relationship;
 
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\Record;
+use BitBalm\Relator\Relatable;
 
 
 
@@ -15,7 +16,7 @@ class Simple implements Relationship
     protected $toTable ;
     protected $toColumn ;
     
-    public function __construct( Record $fromTable, string $fromColumn, Record $toTable, string $toColumn ) 
+    public function __construct( Record $fromTable, string $fromColumn, Relatable $toTable, string $toColumn ) 
     {
         foreach ( [ 'fromTable', 'fromColumn', 'toTable', 'toColumn', ] as $var ) {
             if ( empty( $$var ) ) {
@@ -25,9 +26,9 @@ class Simple implements Relationship
         }
     }
     
-    public function getFromTable()  : Record  { return $this->fromTable   ; }
-    public function getFromColumn() : string  { return $this->fromColumn  ; }
-    public function getToTable()    : Record  { return $this->toTable     ; }
-    public function getToColumn()   : string  { return $this->toColumn    ; }
+    public function getFromTable()  : Record    { return $this->fromTable   ; }
+    public function getFromColumn() : string    { return $this->fromColumn  ; }
+    public function getToTable()    : Relatable { return $this->toTable     ; }
+    public function getToColumn()   : string    { return $this->toColumn    ; }
     
 }

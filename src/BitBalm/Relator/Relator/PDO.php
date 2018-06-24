@@ -32,17 +32,13 @@ class PDO implements Relator
         $results = $statement->fetchAll();
 
         foreach ( $results as $index => $result ) {
-          
             if ( ! $results[$index] instanceof Record ) {
                 $record = $relationship->getToTable()->createFromArray( (array) $results[$index], $statement );
                 $results[$index] = $record;
             }
-
-            $results[$index]->setRelator($this); 
-
         }
 
-        $resultset = new $recordset($results);
+        $resultset = new $recordset( $results );
 
         return $resultset;
         
