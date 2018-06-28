@@ -2,6 +2,9 @@
 
 namespace BitBalm\Relator\Recordable;
 
+use Exception;
+
+use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recorder;
@@ -9,8 +12,11 @@ use BitBalm\Relator\Recorder;
 
 Trait RecordableTrait
 {
+    use RecordTrait;
+    
+    
     protected static $recorders ;
-    protected static $recorder_loaded_id;
+    protected $recorder_loaded_id;
     
     
     public function setRecorder( Recorder $recorder ) : Recordable
@@ -37,10 +43,6 @@ Trait RecordableTrait
         throw new Exception( "This record's Recorder is not yet set. ");
     }
     
-    public function getLoadedId() 
-    {
-        return $this->recorder_loaded_id ?? null ;
-    }
     
     public function loadRecord( $record_id ) : Recordable 
     {
@@ -57,14 +59,23 @@ Trait RecordableTrait
         return $this->getRecorder()->deleteRecord($this);
     }
     
-    public function createFromArray( array $values ) : Record
+    
+    public function setLoadedId( $id ) : Recordable
     {
-        $record = new static;
-        $record->record_values = $values ;
+        if ( $id === $this->recorder_loaded_id ) { return $this ; }
         
-        $this->recorder_loaded_id = $values[ $this->getPrimaryKeyName() ] ?? null ;
+        if ( ! is_null($this->recorder_loaded_id) ) {
+            throw new Exception("This record's loaded id is already set. ");
+        }
         
-        return $record;
+        $this->recorder_loaded_id = $id ;
+        
+        return $this;
+    }
+    
+    public function getLoadedId() 
+    {
+        return $this->recorder_loaded_id ?? null ;
     }
     
 }

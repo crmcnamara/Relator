@@ -5,6 +5,7 @@ namespace BitBalm\Relator\Recorder;
 use Exception;
 
 use BitBalm\Relator\Recorder;
+use BitBalm\Relator\Recordable;
 
 
 class PDO implements Recorder
@@ -37,11 +38,13 @@ class PDO implements Recorder
         $statement->execute();
         $results = $statement->fetchAll();
         
-        if ( count($results) >1 ) { throw Exception( "multiple {$table} records loaded for id: {$record_id} " ) ; }
+        if ( count($results) >1 ) { throw Exception( "Multiple {$table} records loaded for id: {$record_id} " ) ; }
         
         if ( count($results) <1 ) { return null; }
         
         $loaded_record = $record->createFromArray(current($results));
+        
+        $loaded_record->setLoadedId( current($results)[ $loaded_record->getPrimaryKeyName() ] ?? null );
         
         return $loaded_record;
     }

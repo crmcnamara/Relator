@@ -18,9 +18,7 @@ use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
 class Generic extends ArrayObject implements Record, Recordable, Relatable, GetsRelatedRecords
 {
-    use RelatableTrait;
-    use RecordableTrait;
-    
+    use RelatableTrait, RecordableTrait;
     
     protected $tableName ;
     protected $primary_key_name;
@@ -80,11 +78,6 @@ class Generic extends ArrayObject implements Record, Recordable, Relatable, Gets
     {
         $record = new static( $this->getTableName(), $this->getPrimaryKeyName() );
         $record->exchangeArray($input);
-        
-        $record->setRelator($this->getRelator());
-        
-        $this->recorder_loaded_id = $values[ $this->getPrimaryKeyName() ] ?? null ;
-        
         return $record;
     }
     
