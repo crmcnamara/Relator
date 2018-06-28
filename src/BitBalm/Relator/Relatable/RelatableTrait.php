@@ -2,6 +2,9 @@
 
 namespace BitBalm\Relator\Relatable;
 
+use Exception;
+use InvalidArgumentException;
+
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\RecordSet;
@@ -12,8 +15,6 @@ use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
 Trait RelatableTrait
 {
-  
-    use RecordTrait;
     use GetsRelatedTrait;
     
     protected static $relators ;
@@ -104,9 +105,6 @@ Trait RelatableTrait
         throw new Exception("A relationship to {$relationshipName} is not set. ");
     }
     
-    public function asRecordSet( RecordSet $recordset = null ) : RecordSet
-    {
-        return $recordset ? new $recordset( [ $this ] ) : new RecordSet\Relatable( [ $this ] );
-    }
+
 
 }

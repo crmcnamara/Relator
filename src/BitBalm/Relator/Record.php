@@ -10,6 +10,4 @@ Interface Record
 
     public function createFromArray( array $input ) : Record ;
     
-    public function asRecordSet( RecordSet $recordset = null ) : RecordSet ;
-    
 }

@@ -18,4 +18,8 @@ Trait GetsRelatedTrait
         return $related;
     }
     
+    public function asRecordSet( RecordSet $recordset = null ) : RecordSet
+    {
+        return $recordset ? new $recordset( [ $this ] ) : new RecordSet\Relatable( [ $this ] );
+    }
 }

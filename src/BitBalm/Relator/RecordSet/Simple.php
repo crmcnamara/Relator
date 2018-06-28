@@ -42,4 +42,6 @@ class Simple extends ArrayObject implements RecordSet
         return $this ;
     }
     
+    #TODO: call validateRecords() after every alteration! adding items, changing items, etc. 
+    
 }
