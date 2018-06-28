@@ -16,7 +16,7 @@ abstract class BaseMapper
     
     protected $pdo ;
     protected $schema;
-    protected $columns = [] ;
+    protected static $columns = [] ;
     
     public function __construct( \PDO $pdo, SchemaInterface $schema ) 
     {
@@ -29,13 +29,13 @@ abstract class BaseMapper
     {
         $tables = $this->schema->fetchTableList();
         foreach ( (array) $tables as $table ) {
-            $this->columns[$table] = array_column( $this->schema->fetchTableCols($table), 'name' );
+            static::$columns[$table] = array_column( $this->schema->fetchTableCols($table), 'name' );
         }
     }
     
     public function validTable( string $table ) 
     {
-        if ( ! in_array( $table, array_keys($this->columns), true ) ) {
+        if ( ! in_array( $table, array_keys(static::$columns), true ) ) {
             throw new InvalidArgumentException("Table '{$table}' does not exist in the database. ");
         }
         return $table;
@@ -43,12 +43,7 @@ abstract class BaseMapper
     
     public function validColumn( string $table, string $column ) 
     {
-        
-        if ( empty($this->columns[$table]) ) {
-            $this->columns[$table] = array_column( $this->schema->fetchTableCols($table), 'name' );
-        }
-        
-        if ( ! in_array( $column, $this->columns[$table], true ) ) {
+        if ( ! in_array( $column, static::$columns[$table], true ) ) {
             throw new InvalidArgumentException("Column '{$column}' does not exist in the database table '{$table}' . ");
         }
         return $column;
