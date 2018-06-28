@@ -42,9 +42,7 @@ class PDO implements Recorder
         
         if ( count($results) <1 ) { return null; }
         
-        $loaded_record = $record->createFromArray(current($results));
-        
-        $loaded_record->setLoadedId( current($results)[ $loaded_record->getPrimaryKeyName() ] ?? null );
+        $loaded_record = $record->loadFromArray(current($results));
         
         return $loaded_record;
     }

@@ -8,6 +8,6 @@ Interface Record
     
     public function asArray() : array ;
 
-    public function createFromArray( array $input ) : Record ;
+    public function createFromArray( array $values ) : Record ;
     
 }

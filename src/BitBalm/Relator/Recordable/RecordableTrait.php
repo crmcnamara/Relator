@@ -60,7 +60,14 @@ Trait RecordableTrait
     }
     
     
-    public function setLoadedId( $id ) : Recordable
+    public function loadFromArray( array $values ) : Recordable 
+    {
+        $record = $this->createFromArray($values);
+        $record->setLoadedId( $values[ $this->getPrimaryKeyName() ] ?? null );
+        return $record;
+    }
+    
+    protected function setLoadedId( $id ) : Recordable
     {
         if ( $id === $this->recorder_loaded_id ) { return $this ; }
         
