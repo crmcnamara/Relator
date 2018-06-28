@@ -33,7 +33,7 @@ class PDO extends BaseMapper implements Recorder
         
         if ( count($results) <1 ) { return null; }
         
-        $loaded_record = $record->loadFromArray(current($results));
+        $loaded_record = $record->createFromArray(current($results));
         
         return $loaded_record;
     }

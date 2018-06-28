@@ -59,14 +59,6 @@ Trait RecordableTrait
         return $this->getRecorder()->deleteRecord($this);
     }
     
-    
-    public function loadFromArray( array $values ) : Recordable 
-    {
-        $record = $this->createFromArray($values);
-        $record->setLoadedId( $values[ $this->getPrimaryKeyName() ] ?? null );
-        return $record;
-    }
-    
     protected function setLoadedId( $id ) : Recordable
     {
         if ( $id === $this->recorder_loaded_id ) { return $this ; }
@@ -83,6 +75,14 @@ Trait RecordableTrait
     public function getLoadedId() 
     {
         return $this->recorder_loaded_id ?? null ;
+    }
+    
+    public function createFromArray( array $values ) : Record
+    {
+        $record = new static;
+        $record->record_values = $values ;
+        $record->setLoadedId( $values[ $this->getPrimaryKeyName() ] ?? null );
+        return $record;
     }
     
 }
