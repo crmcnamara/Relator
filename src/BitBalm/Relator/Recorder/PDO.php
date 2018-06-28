@@ -16,10 +16,7 @@ class PDO implements Recorder
     {
         $this->pdo = $pdo;
     }
-        
-    public function getPDO() : \PDO
     {
-        return $this->pdo;
     }
     
     public function loadRecord( Recordable $record, $record_id ) : Recordable 
@@ -31,11 +28,10 @@ class PDO implements Recorder
         
         $querystring = "SELECT * from {$table} where {$prikey} = ? ";
         
-        $statement = $this->getPDO()->prepare( $querystring );
-        $statement->bindValue( 1, $record_id );
+        $statement = $this->pdo->prepare( $querystring );
         $statement->setFetchMode(\PDO::FETCH_ASSOC);
         
-        $statement->execute();
+        $statement->execute([ $record_id ]);
         $results = $statement->fetchAll();
         
         if ( count($results) >1 ) { throw Exception( "Multiple {$table} records loaded for id: {$record_id} " ) ; }
@@ -71,14 +67,11 @@ class PDO implements Recorder
                 . implode( ' , ', array_pad( [], count($values), '?' ) )
             ." ) ";
             
-        $statement = $this->getPDO()->prepare( $querystring );
-        foreach ( array_values($values) as $index => $value ) {
-            $statement->bindValue( $index +1, $value );
-        }
+        $statement = $this->pdo->prepare( $querystring );
         $statement->setFetchMode(\PDO::FETCH_ASSOC);
         
-        $statement->execute();
-        $inserted_id = $this->getPDO()->lastInsertId();
+        $statement->execute(array_values( $values ));
+        $inserted_id = $this->pdo->lastInsertId();
         
         $inserted_record = $this->loadRecord( $record, $insert_id );
         
@@ -106,17 +99,15 @@ class PDO implements Recorder
                 . implode( ' , ', $setstrings )
             ." WHERE {$prikey} = ? ";
             
-        $statement = $this->getPDO()->prepare( $querystring );
-        foreach ( array_values($values) as $index => $value ) {
-            $statement->bindValue( $index +1, $value );
-        }
-        $statement->bindValue( count($values) +1, $update_id );
+        $statement = $this->pdo->prepare( $querystring );
         $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        $values = array_values( $values );
+        $values[] = $update_id;
         
-        $statement->execute();
+        $statement->execute($values);
         $affected = $statement->rowCount();
         
-        $updated_record = $this->loadRecord( $record, $record->getLoadedId() );
+        $updated_record = $this->loadRecord( $record, $update_id  );
         
         #TODO: consider attempting to update record values and recorder_loaded_id on the original record object
         
@@ -130,15 +121,12 @@ class PDO implements Recorder
         $update_id = $record->getLoadedId();
         
         #TODO: validation/escaping of $table and $prikey
-        
-        $querystring = 
-            "DELETE from {$table} WHERE {$prikey} = ? ";
+        $querystring = "DELETE from {$table} WHERE {$prikey} = ? ";
             
-        $statement = $this->getPDO()->prepare( $querystring );
-        $statement->bindValue( 1, $record->getLoadedId() );
+        $statement = $this->pdo->prepare( $querystring );
         $statement->setFetchMode(\PDO::FETCH_ASSOC);
         
-        $statement->execute();
+        $statement->execute([ $update_id ]);
         $affected = $statement->rowCount();
         
         return $affected;

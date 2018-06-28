@@ -19,10 +19,7 @@ class PDO implements Relator
     {
         $this->pdo = $pdo;
     }
-        
-    public function getPDO() : \PDO
     {
-        return $this->pdo;
     }
     
     public function getRelated( Relationship $relationship, RecordSet $recordset ) : RecordSet
@@ -61,7 +58,7 @@ class PDO implements Relator
             $querystring 
           );
         
-        $statement = $this->getPDO()->prepare( $querystring );
+        $statement = $this->pdo->prepare( $querystring );
         
         foreach ( $values as $index => $value ) {
             $statement->bindValue( $index+1, $value );
