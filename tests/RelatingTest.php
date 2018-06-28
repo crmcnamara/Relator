@@ -2,8 +2,12 @@
 
 namespace BitBalm\Relator\Tests;
 
-use PHPUnit\Framework\TestCase;
 use PDO;
+
+use PHPUnit\Framework\TestCase;
+
+use Aura\SqlSchema\SqliteSchema;
+use Aura\SqlSchema\ColumnFactory;
 
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
@@ -39,7 +43,7 @@ class RelatingTests extends TestCase
             
           ");
 
-        $this->relator = new Relator\PDO( $this->pdo );
+        $this->relator = new Relator\PDO( $this->pdo, new SqliteSchema( $this->pdo, new ColumnFactory ) );
 
         // configure two generic records for each entity type
         $this->generic_person   = (new Record\Generic('person', 'id'))   ->setRelator($this->relator) ;

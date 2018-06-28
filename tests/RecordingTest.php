@@ -2,8 +2,12 @@
 
 namespace BitBalm\Relator\Tests;
 
-use PHPUnit\Framework\TestCase;
 use PDO;
+
+use PHPUnit\Framework\TestCase;
+
+use Aura\SqlSchema\SqliteSchema;
+use Aura\SqlSchema\ColumnFactory;
 
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Record;
@@ -38,8 +42,9 @@ class RecordingTests extends TestCase
             INSERT INTO article VALUES(3,'Counterpoint',2);
             
           ");
-
-        $this->recorder = new Recorder\PDO( $this->pdo );
+        
+        
+        $this->recorder = new Recorder\PDO( $this->pdo, new SqliteSchema( $this->pdo, new ColumnFactory ) );
 
         // configure two generic records for each entity type
         $this->generic_person   = (new Record\Generic('person', 'id'))   ->setRecorder($this->recorder) ;
@@ -60,7 +65,6 @@ class RecordingTests extends TestCase
         };
         $this->custom_article->setRecorder($this->recorder) ;
         
-
     }
     
     public function tearDown() 

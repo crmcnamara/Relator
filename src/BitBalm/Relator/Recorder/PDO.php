@@ -2,29 +2,24 @@
 
 namespace BitBalm\Relator\Recorder;
 
+#use PDO;
 use Exception;
+use InvalidArgumentException;
 
+use Aura\SqlSchema\SchemaInterface;
+
+use BitBalm\Relator\PDO\BaseMapper;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Recordable;
 
 
-class PDO implements Recorder
+class PDO extends BaseMapper implements Recorder
 {
-    protected $pdo ;
-    
-    public function __construct( \PDO $pdo ) 
-    {
-        $this->pdo = $pdo;
-    }
-    {
-    }
     
     public function loadRecord( Recordable $record, $record_id ) : Recordable 
     {
-        $table = $record->getTableName();
-        $prikey = $record->getPrimaryKeyName();
-        
-        #TODO: validation/escaping of table and prikey
+        $table  = $this->validTable($record->getTableName());
+        $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
         
         $querystring = "SELECT * from {$table} where {$prikey} = ? ";
         
@@ -55,8 +50,10 @@ class PDO implements Recorder
     
     protected function insertRecord( Recordable $record ) : Recordable
     {
+        
+        $table = $this->validTable($record->getTableName());
         $values = $record->asArray();
-        $table = $record->getTableName();
+        foreach ( $values as $column => $value ) { $this->validColumn( $table, $column ); }
         
         #TODO: validation/escaping of $table 
         
@@ -82,17 +79,16 @@ class PDO implements Recorder
     
     protected function updateRecord( Recordable $record ) : Recordable
     {
+        $table = $this->validTable($record->getTableName());
+        $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
         $values = $record->asArray();
-        $table  = $record->getTableName();
-        $prikey = $record->getPrimaryKeyName();
+        foreach ( $values as $column => $value ) { $this->validColumn( $table, $column ); }
         $update_id = $record->getLoadedId();
         
         $setstrings = [];
         foreach ( $values as $column => $value ) {
             $setstrings[$column] = " {$column} = ? ";
         }
-        
-        #TODO: validation/escaping of $table, $column, $prikey
         
         $querystring = 
             "UPDATE {$table} set "
@@ -116,11 +112,10 @@ class PDO implements Recorder
     
     public function deleteRecord( Recordable $record ) 
     {
-        $table  = $record->getTableName();
-        $prikey = $record->getPrimaryKeyName();
+        $table = $this->validTable($record->getTableName());
+        $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
         $update_id = $record->getLoadedId();
         
-        #TODO: validation/escaping of $table and $prikey
         $querystring = "DELETE from {$table} WHERE {$prikey} = ? ";
             
         $statement = $this->pdo->prepare( $querystring );

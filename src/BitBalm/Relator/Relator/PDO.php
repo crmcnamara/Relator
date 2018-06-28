@@ -2,6 +2,13 @@
 
 namespace BitBalm\Relator\Relator;
 
+#use PDO;
+use Exception;
+use InvalidArgumentException;
+
+use Aura\SqlSchema\SchemaInterface;
+
+use BitBalm\Relator\PDO\BaseMapper;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\RecordSet;
@@ -10,17 +17,8 @@ use BitBalm\Relator\Record;
 use PDOStatement;
 
 
-class PDO implements Relator
+class PDO extends BaseMapper implements Relator
 {
-    
-    protected $pdo ;
-    
-    public function __construct( \PDO $pdo ) 
-    {
-        $this->pdo = $pdo;
-    }
-    {
-    }
     
     public function getRelated( Relationship $relationship, RecordSet $recordset ) : RecordSet
     {
@@ -44,8 +42,8 @@ class PDO implements Relator
     public function getRelatedStatement( Relationship $relationship, RecordSet $recordset ) : PDOStatement
     {
         $toTable  = $relationship->getToTable();
-        $toTableName = $toTable->getTableName();
-        $toColumn = $relationship->getToColumn();
+        $toTableName = $this->validTable($toTable->getTableName());
+        $toColumn = $this->validColumn( $toTableName, $relationship->getToColumn() );
         $querystring = "SELECT * from {$toTableName} where {$toColumn} in ( ? ) ";
         $values = [];
         foreach ( $recordset as $record ) {
