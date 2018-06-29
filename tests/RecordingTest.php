@@ -110,6 +110,62 @@ class RecordingTests extends TestCase
         
     }
     
- 
+    public function testUpdateGenericArticle() 
+    {
+        $article = $this->generic_article->newRecord()->loadRecord(2);
+        
+        $expected_fixture = [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ];
+        $this->assertEquals( $expected_fixture, $article->asArray(), 
+            "An article fixture for the update test was not as expected. "
+          );
+        
+        $article['id'] = 4;
+        $article['title'] = 'I Forget';
+        $article['author_id'] = 3;
+        $article->saveRecord();
+        
+        foreach ( [ 1, 2, 3, 4, ] as $idx ) {
+            try { 
+                $articles[$idx] = $this->generic_article->newRecord()->loadRecord($idx)->asArray();
+            } catch ( InvalidArgumentException $e ) {
+                $articles[$idx] = [ 'Exception' => [ 'message' => $e->getMessage() ] ];
+            }
+        }
+        
+        $expected_articles = [
+            1 => 
+            array (
+              'id' => '1',
+              'title' => 'On Something or Other',
+              'author_id' => '1',
+            ),
+            2 => 
+            array (
+              'Exception' => 
+              array (
+                'message' => 'No article records found for id: 2 ',
+              ),
+            ),
+            3 => 
+            array (
+              'id' => '3',
+              'title' => 'Counterpoint',
+              'author_id' => '2',
+            ),
+            4 => 
+            array (
+              'id' => '4',
+              'title' => 'I Forget',
+              'author_id' => '3',
+            ),
+          ];
+        
+        $this->assertEquals( $expected_articles, $articles,
+            var_export($articles,1) ."\n".
+            "The database state was not as expected after updating an article (including its id). "
+          );
+        
+    }
+    
 
 }
