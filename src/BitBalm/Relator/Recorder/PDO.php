@@ -35,21 +35,21 @@ class PDO extends BaseMapper implements Recorder
         
         $record
             ->setValues($values)
-            ->setLoadedId( $values[ $record->getPrimaryKeyName() ] ?? null );
+            ->setUpdateId( $values[ $record->getPrimaryKeyName() ] ?? null );
         
         return $record;
     }
     
     public function saveRecord( Recordable $record ) : Recordable 
     {
-        if ( !empty($record->getLoadedId()) ) {
-            return $this->updateRecord($record);
+        if ( ! is_null($record->getUpdateId()) ) {
+            $this->updateRecord($record);
             
         } else {
             $this->insertRecord($record);
         }
         
-        $this->loadRecord( $record, $record->getLoadedId() );
+        $this->loadRecord( $record, $record->getUpdateId() );
         
         return $record;
     }
@@ -74,7 +74,7 @@ class PDO extends BaseMapper implements Recorder
         $statement->execute(array_values( $values ));
         $inserted_id = $this->pdo->lastInsertId();
         
-        $record->setLoadedId( $inserted_id );
+        $record->setUpdateId( $inserted_id );
         
         return $record;
     }
@@ -85,7 +85,7 @@ class PDO extends BaseMapper implements Recorder
         $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
         $values = $record->asArray();
         foreach ( $values as $column => $value ) { $this->validColumn( $table, $column ); }
-        $update_id = $record->getLoadedId();
+        $update_id = $record->getUpdateId();
         
         $setstrings = [];
         foreach ( $values as $column => $value ) {
@@ -106,7 +106,7 @@ class PDO extends BaseMapper implements Recorder
         $affected = $statement->rowCount();
         
         if ( array_key_exists( $prikey, $values ) ) { $update_id = $values[$prikey]; }
-        $record->setLoadedId( $update_id );
+        $record->setUpdateId( $update_id );
         
         return $record;
     }
@@ -115,7 +115,7 @@ class PDO extends BaseMapper implements Recorder
     {
         $table = $this->validTable($record->getTableName());
         $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
-        $update_id = $record->getLoadedId();
+        $update_id = $record->getUpdateId();
         
         $querystring = "DELETE from {$table} WHERE {$prikey} = ? ";
             

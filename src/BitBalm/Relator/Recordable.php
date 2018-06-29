@@ -16,5 +16,7 @@ interface Recordable extends Record
     
     public function deleteRecord() ;
     
-    public function getLoadedId() ;
+    public function setUpdateId( $id ) : Recordable ;
+    
+    public function getUpdateId() ;
 }

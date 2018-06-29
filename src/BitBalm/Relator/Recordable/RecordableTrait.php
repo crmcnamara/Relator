@@ -16,7 +16,7 @@ Trait RecordableTrait
     
     
     protected static $recorders ;
-    protected $recorder_loaded_id;
+    protected $recorder_update_id;
     
     
     public function setRecorder( Recorder $recorder ) : Recordable
@@ -59,23 +59,16 @@ Trait RecordableTrait
         return $this->getRecorder()->deleteRecord($this);
     }
     
-    protected function setLoadedId( $id ) : Recordable
+    
+    public function setUpdateId( $id ) : Recordable
     {
-        if ( $id === $this->recorder_loaded_id ) { return $this ; }
-        
-        if ( ! is_null($this->recorder_loaded_id) ) {
-            throw new Exception("This record's loaded id is already set. ");
-        }
-        
-        $this->recorder_loaded_id = $id ;
-        
+        $this->recorder_update_id = $id ;
         return $this;
     }
     
-    public function getLoadedId() 
+    public function getUpdateId() 
     {
-        return $this->recorder_loaded_id ?? null ;
+        return $this->recorder_update_id ?? null ;
     }
-    
     
 }
