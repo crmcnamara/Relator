@@ -74,12 +74,15 @@ class Generic extends ArrayObject implements Record, Recordable, Relatable, Gets
         return $this->getArrayCopy();
     }
     
-    public function createFromArray( array $values ) : Record 
+    public function newRecord() : Record 
     {
-        $record = new static( $this->getTableName(), $this->getPrimaryKeyName() );
-        $record->exchangeArray($values);
-        $record->setLoadedId( $values[ $this->getPrimaryKeyName() ] ?? null );
-        return $record;
+        return new static( $this->getTableName(), $this->getPrimaryKeyName() );
+    }
+    
+    public function setValues( array $values ) : Record 
+    {
+        $this->exchangeArray(array_replace( (array) $this->getArrayCopy(), $values )) ;
+        return $this;
     }
     
 }

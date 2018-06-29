@@ -12,5 +12,4 @@ interface Relatable extends Record
     public function getRelator() : Relator ;
       
     public function setRelationship( Relationship $relationship, string $relationshipName = null ) : Record ;
-    
 }

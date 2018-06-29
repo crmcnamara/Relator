@@ -97,18 +97,24 @@ class RelatingTests extends TestCase
     public function testRelatePersonToArticles( string $person_varname ) 
     {
         
-        $person = $this->$person_varname->createFromArray(['id'=>2,'name'=>'Dave',]);
+        $person = $this->$person_varname->newRecord()->setValues(['id'=>2,'name'=>'Dave',]);
 
         $articles = $person->getRelated('articles');
         
-        $expected = [ 
+        // convert to arrays for easy comparison
+        foreach( $articles as $idx => $article ) { $articles[$idx] = $article->asArray(); }
+        
+        $expected_articles = [ 
             [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
             [ 'id' => '3', 'title' => 'Counterpoint',  'author_id' => '2', ],
           ];
         
-        foreach ( $articles as $idx => $article ) {
-            $this->assertEquals( $expected[$idx], $article->asArray() );            
-        }
+        
+        $this->assertEquals( $expected_articles, (array) $articles,
+            var_export( $articles, 1 ) ."\n".
+            "Articles related to a person were not as expected. "
+          );
+        
         
     }
 
@@ -125,7 +131,7 @@ class RelatingTests extends TestCase
     public function testRelateArticleToAuthor( string $article_varname ) 
     {
       
-        $article = $this->$article_varname->createFromArray(['id'=>3,'title'=>'Counterpoint','author_id' => 2]);
+        $article = $this->$article_varname->newRecord()->setValues(['id'=>3,'title'=>'Counterpoint','author_id' => 2]);
 
         $authors = $article->getRelated('author');
         

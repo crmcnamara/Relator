@@ -27,9 +27,8 @@ class PDO extends BaseMapper implements Relator
         $results = $statement->fetchAll();
 
         foreach ( $results as $index => $result ) {
-            if ( ! $results[$index] instanceof Record ) {
-                $record = $relationship->getToTable()->createFromArray( (array) $results[$index], $statement );
-                $results[$index] = $record;
+            if ( ! $result instanceof Record ) {
+                $results[$index] = $relationship->getToTable()->newRecord()->setValues($result);
             }
         }
 

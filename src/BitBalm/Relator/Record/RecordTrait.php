@@ -17,11 +17,15 @@ Trait RecordTrait
         return $this->record_values;
     }
     
-    public function createFromArray( array $values ) : Record
+    public function setValues( array $values ) : Record 
     {
-        $record = new static;
-        $record->record_values = $values ;
-        return $record;
+        $this->record_values = array_replace( (array) $this->record_values, $values ) ;
+        return $this;
+    }
+    
+    public function newRecord() : Record
+    {
+        return new static;        
     }
     
 }

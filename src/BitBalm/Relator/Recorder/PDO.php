@@ -31,11 +31,13 @@ class PDO extends BaseMapper implements Recorder
         
         if ( count($results) >1 ) { throw Exception( "Multiple {$table} records loaded for id: {$record_id} " ) ; }
         
-        if ( count($results) <1 ) { return null; }
+        $values = current($results);
         
-        $loaded_record = $record->createFromArray(current($results));
+        $record
+            ->setValues($values)
+            ->setLoadedId( $values[ $record->getPrimaryKeyName() ] ?? null );
         
-        return $loaded_record;
+        return $record;
     }
     
     public function saveRecord( Recordable $record ) : Recordable 
@@ -44,8 +46,12 @@ class PDO extends BaseMapper implements Recorder
             return $this->updateRecord($record);
             
         } else {
-            return $this->insertRecord($record);
+            $this->insertRecord($record);
         }
+        
+        $this->loadRecord( $record, $record->getLoadedId() );
+        
+        return $record;
     }
     
     protected function insertRecord( Recordable $record ) : Recordable
@@ -54,9 +60,7 @@ class PDO extends BaseMapper implements Recorder
         $table = $this->validTable($record->getTableName());
         $values = $record->asArray();
         foreach ( $values as $column => $value ) { $this->validColumn( $table, $column ); }
-        
-        #TODO: validation/escaping of $table 
-        
+                
         $querystring = 
             "INSERT into {$table} ( "
                 . implode( ' , ', array_keys( $values ) )
@@ -70,11 +74,9 @@ class PDO extends BaseMapper implements Recorder
         $statement->execute(array_values( $values ));
         $inserted_id = $this->pdo->lastInsertId();
         
-        $inserted_record = $this->loadRecord( $record, $insert_id );
+        $record->setLoadedId( $inserted_id );
         
-        #TODO: consider attempting to update record values and recorder_loaded_id on the original record object
-        
-        return $inserted_record;
+        return $record;
     }
     
     protected function updateRecord( Recordable $record ) : Recordable
@@ -97,17 +99,16 @@ class PDO extends BaseMapper implements Recorder
             
         $statement = $this->pdo->prepare( $querystring );
         $statement->setFetchMode(\PDO::FETCH_ASSOC);
-        $values = array_values( $values );
-        $values[] = $update_id;
+        $query_values = array_values( $values );
+        $query_values[] = $update_id;
         
-        $statement->execute($values);
+        $statement->execute($query_values);
         $affected = $statement->rowCount();
         
-        $updated_record = $this->loadRecord( $record, $update_id  );
+        if ( array_key_exists( $prikey, $values ) ) { $update_id = $values[$prikey]; }
+        $record->setLoadedId( $update_id );
         
-        #TODO: consider attempting to update record values and recorder_loaded_id on the original record object
-        
-        return $updated_record;
+        return $record;
     }
     
     public function deleteRecord( Recordable $record ) 

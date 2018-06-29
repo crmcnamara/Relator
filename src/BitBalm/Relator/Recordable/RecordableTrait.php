@@ -77,12 +77,5 @@ Trait RecordableTrait
         return $this->recorder_loaded_id ?? null ;
     }
     
-    public function createFromArray( array $values ) : Record
-    {
-        $record = new static;
-        $record->record_values = $values ;
-        $record->setLoadedId( $values[ $this->getPrimaryKeyName() ] ?? null );
-        return $record;
-    }
     
 }

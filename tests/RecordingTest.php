@@ -3,6 +3,8 @@
 namespace BitBalm\Relator\Tests;
 
 use PDO;
+use Exception;
+use InvalidargumentException;
 
 use PHPUnit\Framework\TestCase;
 
@@ -14,6 +16,7 @@ use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recordable\RecordableTrait;
+
 
 /**
  * @runTestsInSeparateProcesses
@@ -92,21 +95,21 @@ class RecordingTests extends TestCase
     public function testLoadArticles( string $article_varname ) 
     {
         $articles = [
-            $article1 = $this->$article_varname->loadRecord(2),
-            $article2 = $this->$article_varname->loadRecord(3),
+            $this->$article_varname->newRecord()->loadRecord(2)->asArray(),
+            $this->$article_varname->newRecord()->loadRecord(3)->asArray(),
           ];
 
-        $expected = [ 
+        $expected_articles = [ 
             [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
             [ 'id' => '3', 'title' => 'Counterpoint',  'author_id' => '2', ],
           ];
-        
-        foreach ( $articles as $idx => $article ) {
-            $this->assertEquals( $expected[$idx], $article->asArray() );            
-        }
+          
+        $this->assertEquals( $expected_articles, $articles,
+            "Loaded articles were not as expected. "
+          );
         
     }
-
-
+    
+ 
 
 }
