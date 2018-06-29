@@ -29,7 +29,13 @@ class PDO extends BaseMapper implements Recorder
         $statement->execute([ $record_id ]);
         $results = $statement->fetchAll();
         
-        if ( count($results) >1 ) { throw Exception( "Multiple {$table} records loaded for id: {$record_id} " ) ; }
+        if ( count($results) >1 ) { 
+            throw new Exception( "Multiple {$table} records loaded for {$prikey}: {$record_id} " ) ; 
+        }
+        
+        if ( count($results) <1 ) { 
+            throw new InvalidArgumentException( "No {$table} records found for {$prikey}: {$record_id} " ) ; 
+        }
         
         $values = current($results);
         
