@@ -12,9 +12,6 @@ use BitBalm\Relator\Recorder;
 
 Trait RecordableTrait
 {
-    use RecordTrait;
-    
-    
     protected static $recorders ;
     protected $recorder_update_id;
     

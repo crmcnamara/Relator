@@ -2,11 +2,12 @@
 
 namespace BitBalm\Relator\Record;
 
+
 use Exception;
 use InvalidArgumentException;
 
 use BitBalm\Relator\Record;
-
+use BitBalm\Relator\RecordSet;
 
 Trait RecordTrait 
 {
@@ -26,6 +27,11 @@ Trait RecordTrait
     public function newRecord() : Record
     {
         return new static;        
+    }
+    
+    public function asRecordSet( RecordSet $recordset = null ) : RecordSet
+    {
+        return $recordset ? new $recordset([ $this ]) : new RecordSet\Simple([ $this ]);
     }
     
 }

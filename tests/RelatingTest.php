@@ -12,6 +12,7 @@ use Aura\SqlSchema\ColumnFactory;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
+use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Relatable;
 use BitBalm\Relator\Relatable\RelatableTrait;
 
@@ -55,15 +56,15 @@ class RelatingTests extends TestCase
 
 
         // Now configure the same thing using anonymous classes that make use of RecordTrait
-        $this->custom_person = new class() implements Relatable {
-            use RecordTrait, RelatableTrait;
+        $this->custom_person = new class() implements Relatable, GetsRelatedRecords {
+            use RelatableTrait;
             public function getTableName() : string { return 'person'; }
         };
         $this->custom_person->setRelator($this->relator) ;
         
-        $this->custom_article = new class() implements Relatable {          
-            use RecordTrait, RelatableTrait;
-            public function getTableName() : string { return 'article'; }            
+        $this->custom_article = new class() implements Relatable, GetsRelatedRecords {
+            use RelatableTrait;
+            public function getTableName() : string { return 'article'; }
         };
         $this->custom_article->setRelator($this->relator) ;
         

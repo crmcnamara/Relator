@@ -19,4 +19,6 @@ interface Recordable extends Record
     public function setUpdateId( $id ) : Recordable ;
     
     public function getUpdateId() ;
+    
+    public function asRecordSet() : RecordSet ;
 }

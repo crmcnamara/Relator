@@ -55,14 +55,14 @@ class RecordingTests extends TestCase
 
         // Now configure the same thing using anonymous classes that make use of RecordableTrait
         $this->custom_person = new class() implements Recordable {
-            use RecordableTrait;            
+            use Recordtrait, RecordableTrait;            
             public function getTableName()      : string { return 'person'; }
             public function getPrimaryKeyName() : string { return 'id';     }
         };
         $this->custom_person->setRecorder($this->recorder) ;
         
         $this->custom_article = new class() implements Recordable {
-            use RecordableTrait;
+            use Recordtrait, RecordableTrait;
             public function getTableName()      : string { return 'article';  }
             public function getPrimaryKeyName() : string { return 'id';       }
         };

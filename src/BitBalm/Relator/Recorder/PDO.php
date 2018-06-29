@@ -11,6 +11,7 @@ use Aura\SqlSchema\SchemaInterface;
 use BitBalm\Relator\PDO\BaseMapper;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Recordable;
+use BitBalm\Relator\RecordSet;
 
 
 class PDO extends BaseMapper implements Recorder
@@ -21,13 +22,7 @@ class PDO extends BaseMapper implements Recorder
         $table  = $this->validTable($record->getTableName());
         $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
         
-        $querystring = "SELECT * from {$table} where {$prikey} = ? ";
-        
-        $statement = $this->pdo->prepare( $querystring );
-        $statement->setFetchMode(\PDO::FETCH_ASSOC);
-        
-        $statement->execute([ $record_id ]);
-        $results = $statement->fetchAll();
+        $results = (array) $this->loadRecords( $record, [ $record_id ] );
         
         if ( count($results) >1 ) { 
             throw new Exception( "Multiple {$table} records loaded for {$prikey}: {$record_id} " ) ; 
@@ -37,13 +32,45 @@ class PDO extends BaseMapper implements Recorder
             throw new InvalidArgumentException( "No {$table} records found for {$prikey}: {$record_id} " ) ; 
         }
         
-        $values = current($results);
+        // transfer values to the passed record
+        $values = current($results)->asArray();
         
         $record
             ->setValues($values)
             ->setUpdateId( $values[ $record->getPrimaryKeyName() ] ?? null );
-        
+            
         return $record;
+    }
+    
+    public function loadRecords( Recordable $record, array $record_ids ) : RecordSet 
+    {
+        $table  = $this->validTable($record->getTableName());
+        $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
+        
+        $querystring = 
+            "SELECT * from {$table} where {$prikey} in ( "
+              . implode( ', ', array_pad( [],  count($record_ids), '?' ) ) 
+            ." ) ";
+        
+        $statement = $this->pdo->prepare( $querystring );
+        $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        
+        $statement->execute($record_ids);
+        $results = $statement->fetchAll();
+        
+        $records = [];
+        foreach ( $results as $idx => $values ) {
+            $records[$idx] = $record->newRecord()
+                ->setValues($values)
+                ->setUpdateId( $values[ $record->getPrimaryKeyName() ] ?? null );
+        }
+        
+        // fetch the record's preferred recordset
+        $recordset = $record->asRecordSet();
+        // and instantiate a new one of the same type, with these new result records
+        $recordset = new $recordset($records);
+        
+        return $recordset;
     }
     
     public function saveRecord( Recordable $record ) : Recordable 

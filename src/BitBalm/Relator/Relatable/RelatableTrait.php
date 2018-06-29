@@ -15,7 +15,7 @@ use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
 Trait RelatableTrait
 {
-    use GetsRelatedTrait;
+    use RecordTrait, GetsRelatedTrait;
     
     protected static $relators ;
     protected static $relationships ;
@@ -105,6 +105,9 @@ Trait RelatableTrait
         throw new Exception("A relationship to {$relationshipName} is not set. ");
     }
     
-
-
+    public function asRecordSet( RecordSet $recordset = null ) : RecordSet
+    {
+        return $recordset ? new $recordset([ $this ]) : new RecordSet\Relatable([ $this ]);
+    }
+    
 }
