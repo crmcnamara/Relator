@@ -110,23 +110,24 @@ class RecordingTests extends TestCase
         
     }
     
-    public function testUpdateGenericArticle() 
+    /**
+     * @dataProvider articles
+     */
+    public function testUpdateArticles( string $article_varname ) 
     {
-        $article = $this->generic_article->newRecord()->loadRecord(2);
+        $article = $this->$article_varname->newRecord()->loadRecord(2);
         
         $expected_fixture = [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ];
         $this->assertEquals( $expected_fixture, $article->asArray(), 
             "An article fixture for the update test was not as expected. "
           );
         
-        $article['id'] = 4;
-        $article['title'] = 'I Forget';
-        $article['author_id'] = 3;
+        $article->setValues([ 'id' => 4, 'title' => 'I Forget', 'author_id' => 3, ]);
         $article->saveRecord();
         
         foreach ( [ 1, 2, 3, 4, ] as $idx ) {
             try { 
-                $articles[$idx] = $this->generic_article->newRecord()->loadRecord($idx)->asArray();
+                $articles[$idx] = $this->$article_varname->newRecord()->loadRecord($idx)->asArray();
             } catch ( InvalidArgumentException $e ) {
                 $articles[$idx] = [ 'Exception' => [ 'message' => $e->getMessage() ] ];
             }
