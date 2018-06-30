@@ -34,7 +34,9 @@ class Simple extends ArrayObject implements RecordSet
         return $this;
     }
     
+    public function asArrays() : array 
     {
+        return array_map( function($record) { return $record->asArray(); }, (array) $this );
     }
     
     #TODO: call validateRecords() after every alteration! adding items, changing items, etc. 
