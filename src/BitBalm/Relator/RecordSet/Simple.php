@@ -14,10 +14,7 @@ use InvalidArgumentException;
 
 class Simple extends ArrayObject implements RecordSet 
 {
-    
     protected $record ;
-    
-    use GetsRelatedTrait;
     
     public function __construct( array $records, $flags = null )
     {
@@ -37,9 +34,7 @@ class Simple extends ArrayObject implements RecordSet
         return $this;
     }
     
-    public function asRecordSet() : RecordSet
     {
-        return $this ;
     }
     
     #TODO: call validateRecords() after every alteration! adding items, changing items, etc. 

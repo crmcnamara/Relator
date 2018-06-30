@@ -48,4 +48,8 @@ class Relatable extends Simple implements RecordSet, GetsRelatedRecords
         throw new Exception("This RecordSet's Record type is not yet set. ");
     }
     
+    public function asRecordSet() : RecordSet
+    {
+        return $this ;
+    }
 }
