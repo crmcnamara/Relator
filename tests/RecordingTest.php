@@ -176,6 +176,69 @@ class RecordingTests extends TestCase
     /**
      * @dataProvider articles
      */
+    public function testInsertArticle( string $article_varname )
+    {
+        $article_with_id = $this->$article_varname->newRecord()->setValues([ 
+            'id' => '5', 'title' => 'I Forget', 'author_id' => '3',
+          ])->saveRecord();
+          
+        $article_without_id = $this->$article_varname->newRecord()->setValues([ 
+            'title' => 'Wandering', 'author_id' => '3',
+          ])->saveRecord();
+        
+        $articles = [] ;
+        foreach ( [ 3, 4, 5, 6, 7, ] as $idx ) {
+            try { 
+                $articles[$idx] = $this->$article_varname->newRecord()->loadRecord($idx)->asArray();
+            } catch ( InvalidArgumentException $e ) {
+                $articles[$idx] = [ 'Exception' => [ 'message' => $e->getMessage() ] ];
+            }
+        }
+        
+        $expected_articles = [
+            3 => 
+            array (
+              'id' => '3',
+              'title' => 'Counterpoint',
+              'author_id' => '2',
+            ),
+            4 => 
+            array (
+              'Exception' => 
+              array (
+                'message' => 'No article records found for id: 4 ',
+              ),
+            ),
+            5 => 
+            array (
+              'id' => '5',
+              'title' => 'I Forget',
+              'author_id' => '3',
+            ),
+            6 => 
+            array (
+              'id' => '6',
+              'title' => 'Wandering',
+              'author_id' => '3',
+            ),
+            7 => 
+            array (
+              'Exception' => 
+              array (
+                'message' => 'No article records found for id: 7 ',
+              ),
+            ),
+
+          ];
+        
+        $this->assertEquals( $expected_articles, $articles,
+            var_export($articles,1) ."\n".
+            "The database state was not as expected after inserting articles. "
+          );
+        
+    }
+    
+    
     public function recorderMethods()
     {
         return [ 
