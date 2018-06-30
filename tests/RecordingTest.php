@@ -129,6 +129,7 @@ class RecordingTests extends TestCase
         $article->setValues([ 'id' => 4, 'title' => 'I Forget', 'author_id' => 3, ]);
         $article->saveRecord();
         
+        $articles = [] ;
         foreach ( [ 1, 2, 3, 4, ] as $idx ) {
             try { 
                 $articles[$idx] = $this->$article_varname->newRecord()->loadRecord($idx)->asArray();
@@ -175,14 +176,39 @@ class RecordingTests extends TestCase
     /**
      * @dataProvider articles
      */
-    public function testLoadRejectsMissingTable( string $article_varname ) 
+    public function recorderMethods()
+    {
+        return [ 
+            [ 'loadRecord' ], 
+            [ 'loadRecords' ], 
+            [ 'saveRecord' ], 
+            [ 'deleteRecord' ], 
+          ];
+    }
+    
+    public function articlesAndMethods()
+    {
+        $scenarios = [] ;
+        foreach ( $this->articles() as $article ) {
+            foreach( $this->recorderMethods() as $method ) {
+                $scenarios[] = [ current($article), current($method), ];
+            }
+        }
+        return $scenarios;
+    }
+    
+    /**
+     * @dataProvider articlesAndMethods
+     */
+    public function testRejectsMissingTable( string $article_varname, string $method ) 
     {
         $this->pdo->exec( "DROP table article ; ");
         $this->$article_varname->getRecorder()->getValidator()->refreshSchema();
         
         $this->expectException(InvalidArgumentException::class);
         
-        $article = $this->$article_varname->newRecord()->loadRecord(2);
+        $article = $this->$article_varname->newRecord();
+        $this->$article_varname->getRecorder()->$method( $article, [2] );
         
     }
     
