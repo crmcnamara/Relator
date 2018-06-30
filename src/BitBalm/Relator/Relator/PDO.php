@@ -41,8 +41,8 @@ class PDO extends BaseMapper implements Relator
     public function getRelatedStatement( Relationship $relationship, RecordSet $recordset ) : PDOStatement
     {
         $toTable  = $relationship->getToTable();
-        $toTableName = $this->validTable($toTable->getTableName());
-        $toColumn = $this->validColumn( $toTableName, $relationship->getToColumn() );
+        $toTableName = $this->getValidator()->validTable($toTable->getTableName());
+        $toColumn = $this->getValidator()->validColumn( $toTableName, $relationship->getToColumn() );
         $querystring = "SELECT * from {$toTableName} where {$toColumn} in ( ? ) ";
         $values = [];
         foreach ( $recordset as $record ) {

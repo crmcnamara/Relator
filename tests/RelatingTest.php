@@ -15,6 +15,7 @@ use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Relatable;
 use BitBalm\Relator\Relatable\RelatableTrait;
+use BitBalm\Relator\PDO\SchemaValidator;
 
 /**
  * @runTestsInSeparateProcesses
@@ -44,7 +45,10 @@ class RelatingTests extends TestCase
             
           ");
 
-        $this->relator = new Relator\PDO( $this->pdo, new SqliteSchema( $this->pdo, new ColumnFactory ) );
+        $this->relator = new Relator\PDO( 
+            $this->pdo, 
+            new SchemaValidator( new SqliteSchema( $this->pdo, new ColumnFactory ) )
+          );
 
         // configure two generic records for each entity type
         $this->generic_person   = (new Record\Generic('person', 'id'))   ->setRelator($this->relator) ;

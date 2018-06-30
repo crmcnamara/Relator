@@ -16,6 +16,7 @@ use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recordable\RecordableTrait;
+use BitBalm\Relator\PDO\SchemaValidator;
 
 
 /**
@@ -47,7 +48,10 @@ class RecordingTests extends TestCase
           ");
         
         
-        $this->recorder = new Recorder\PDO( $this->pdo, new SqliteSchema( $this->pdo, new ColumnFactory ) );
+        $this->recorder = new Recorder\PDO( 
+            $this->pdo, 
+            new SchemaValidator( new SqliteSchema( $this->pdo, new ColumnFactory ) )
+          );
 
         // configure two generic records for each entity type
         $this->generic_person   = (new Record\Generic('person', 'id'))   ->setRecorder($this->recorder) ;

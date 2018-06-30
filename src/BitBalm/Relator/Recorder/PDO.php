@@ -19,8 +19,8 @@ class PDO extends BaseMapper implements Recorder
     
     public function loadRecord( Recordable $record, $record_id ) : Recordable 
     {
-        $table  = $this->validTable($record->getTableName());
-        $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
+        $table  = $this->getValidator()->validTable($record->getTableName());
+        $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
         
         $results = (array) $this->loadRecords( $record, [ $record_id ] );
         
@@ -44,8 +44,8 @@ class PDO extends BaseMapper implements Recorder
     
     public function loadRecords( Recordable $record, array $record_ids ) : RecordSet 
     {
-        $table  = $this->validTable($record->getTableName());
-        $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
+        $table  = $this->getValidator()->validTable($record->getTableName());
+        $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
         
         $querystring = 
             "SELECT * from {$table} where {$prikey} in ( "
@@ -90,9 +90,9 @@ class PDO extends BaseMapper implements Recorder
     protected function insertRecord( Recordable $record ) : Recordable
     {
         
-        $table = $this->validTable($record->getTableName());
+        $table = $this->getValidator()->validTable($record->getTableName());
         $values = $record->asArray();
-        foreach ( $values as $column => $value ) { $this->validColumn( $table, $column ); }
+        foreach ( $values as $column => $value ) { $this->getValidator()->validColumn( $table, $column ); }
                 
         $querystring = 
             "INSERT into {$table} ( "
@@ -114,10 +114,10 @@ class PDO extends BaseMapper implements Recorder
     
     protected function updateRecord( Recordable $record ) : Recordable
     {
-        $table = $this->validTable($record->getTableName());
-        $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
+        $table = $this->getValidator()->validTable($record->getTableName());
+        $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
         $values = $record->asArray();
-        foreach ( $values as $column => $value ) { $this->validColumn( $table, $column ); }
+        foreach ( $values as $column => $value ) { $this->getValidator()->validColumn( $table, $column ); }
         $update_id = $record->getUpdateId();
         
         $setstrings = [];
@@ -146,8 +146,8 @@ class PDO extends BaseMapper implements Recorder
     
     public function deleteRecord( Recordable $record ) 
     {
-        $table = $this->validTable($record->getTableName());
-        $prikey = $this->validColumn( $table, $record->getPrimaryKeyName() );
+        $table = $this->getValidator()->validTable($record->getTableName());
+        $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
         $update_id = $record->getUpdateId();
         
         $querystring = "DELETE from {$table} WHERE {$prikey} = ? ";
