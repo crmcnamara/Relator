@@ -8,6 +8,7 @@ use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recorder;
+use BitBalm\Relator\RecordSet;
 
 
 Trait RecordableTrait
@@ -44,6 +45,11 @@ Trait RecordableTrait
     public function loadRecord( $record_id ) : Recordable 
     {
         return $this->getRecorder()->loadRecord( $this, $record_id );
+    }
+
+    public function loadRecords( array $record_ids ) : RecordSet 
+    {
+        return $this->getRecorder()->loadRecords( $this, $record_ids );
     }
     
     public function saveRecord() : Recordable 

@@ -2,6 +2,7 @@
 
 namespace BitBalm\Relator;
 
+
 interface Recordable extends Record
 {
     public function getPrimaryKeyName() : string ;
@@ -11,6 +12,8 @@ interface Recordable extends Record
     public function getRecorder() : Recorder ;
     
     public function loadRecord( $record_id ) : Recordable ;
+    
+    public function loadRecords( array $record_ids ) : RecordSet ;
     
     public function saveRecord() : Recordable ;
     
