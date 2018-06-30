@@ -172,5 +172,19 @@ class RecordingTests extends TestCase
         
     }
     
+    /**
+     * @dataProvider articles
+     */
+    public function testLoadRejectsMissingTable( string $article_varname ) 
+    {
+        $this->pdo->exec( "DROP table article ; ");
+        $this->$article_varname->getRecorder()->getValidator()->refreshSchema();
+        
+        $this->expectException(InvalidArgumentException::class);
+        
+        $article = $this->$article_varname->newRecord()->loadRecord(2);
+        
+    }
+    
 
 }
