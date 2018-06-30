@@ -96,13 +96,31 @@ class RecordingTests extends TestCase
     /** 
      * @dataProvider articles
      */
-    public function testLoadArticles( string $article_varname ) 
+    public function testLoadArticle( string $article_varname ) 
     {
         $articles = [
             $this->$article_varname->newRecord()->loadRecord(2)->asArray(),
             $this->$article_varname->newRecord()->loadRecord(3)->asArray(),
           ];
 
+        $expected_articles = [ 
+            [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
+            [ 'id' => '3', 'title' => 'Counterpoint',  'author_id' => '2', ],
+          ];
+          
+        $this->assertEquals( $expected_articles, $articles,
+            "Loaded articles were not as expected. "
+          );
+        
+    }
+    
+    /** 
+     * @dataProvider articles
+     */
+    public function testLoadArticles( string $article_varname ) 
+    {
+        $articles = $this->$article_varname->newRecord()->loadRecords([ 2, 3, 4, ])->asArrays();
+        
         $expected_articles = [ 
             [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
             [ 'id' => '3', 'title' => 'Counterpoint',  'author_id' => '2', ],
