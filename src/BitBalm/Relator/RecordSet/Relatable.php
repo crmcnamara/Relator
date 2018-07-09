@@ -30,16 +30,22 @@ class Relatable extends Simple implements RecordSet, GetsRelatedRecords
         return $this;
     }
     
+    protected function getRecord() : RelatableRecord
+    {
+        if ( empty($this->record) ) { 
+            throw new Exception("This RecordSet's Record type is not yet set. ");
+        }
+        return $this->record;
+    }
+    
     public function getTableName() : string
     {
-        if ( $this->record instanceof RelatableRecord ) { return $this->record->getTableName() ; }
-        throw new Exception("This RecordSet's Record type is not yet set. ");
+        return $this->getRecord()->getTableName() ; 
     }
     
     public function getRelationship( string $relationshipName ) : Relationship
     {
-        if ( $this->record instanceof RelatableRecord ) { return $this->record->getRelationship( $relationshipName ); }
-        throw new Exception("This RecordSet's Record type is not yet set. ");
+        return $this->getRecord()->getRelationship($relationshipName);
     }
     
     public function asRecordSet() : RecordSet
