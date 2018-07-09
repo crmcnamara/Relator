@@ -36,12 +36,6 @@ class Relatable extends Simple implements RecordSet, GetsRelatedRecords
         throw new Exception("This RecordSet's Record type is not yet set. ");
     }
     
-    public function getRelator() : Relator
-    {
-        if ( $this->record instanceof RelatableRecord ) { return $this->record->getRelator(); }
-        throw new Exception("This RecordSet's Record type is not yet set. ");
-    }
-    
     public function getRelationship( string $relationshipName ) : Relationship
     {
         if ( $this->record instanceof RelatableRecord ) { return $this->record->getRelationship( $relationshipName ); }
