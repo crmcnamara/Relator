@@ -9,8 +9,6 @@ Interface GetsRelatedRecords
     
     public function getRelationship( string $relationshipName ) : Relationship ;
     
-    public function getTableName() : string ;
-    
     public function asRecordSet() : RecordSet ;
     
 }
