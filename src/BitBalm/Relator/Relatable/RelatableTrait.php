@@ -51,58 +51,58 @@ Trait RelatableTrait
         string $fromColumn, 
         Record $toTable, 
         string $toColumn, 
-        string $relationshipName = null 
+        string $relationship_name = null 
       ) : Record
     {
         $this->setRelationship( 
             new Relationship\Simple( $this, $fromColumn, $toTable, $toColumn ),
-            $relationshipName 
+            $relationship_name 
           );
           
         return $this ;
     }
     
-    public function setRelationship( Relationship $relationship, string $relationshipName = null ) : Record
+    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : Record
     {
         
-        if ( empty($relationshipName) ) { $relationshipName = $relationship->getToTable()->getTableName(); }
+        if ( empty($relationship_name) ) { $relationship_name = $relationship->getToTable()->getTableName(); }
         
-        $fromTableName = $relationship->getFromTable()->getTableName();
+        $from_table_name = $relationship->getFromTable()->getTableName();
         
-        $existing = isset( self::$relationships[$fromTableName][$relationshipName] )
-            ? self::$relationships[$fromTableName][$relationshipName] : null ;
+        $existing = isset( self::$relationships[$from_table_name][$relationship_name] )
+            ? self::$relationships[$from_table_name][$relationship_name] : null ;
             
         if ( $relationship === $existing ) { return $this ; }
         
         if ( $existing instanceof Relationship ) {
             throw new InvalidArgumentException(
-                "A relationship to {$relationshipName} is already set. "
+                "A relationship to {$relationship_name} is already set. "
               );
         }
         
         if ( ! ( $relationship->getFromTable() instanceof $this ) ) {
             throw new InvalidArgumentException(
-                "The given Relationship's fromTable must be an instance of ". self::class .". "
+                "The given Relationship's from table must be an instance of ". self::class .". "
               );
         }
         
-        if ( $fromTableName !== $this->getTableName() ) {
+        if ( $from_table_name !== $this->getTableName() ) {
             throw new InvalidArgumentException(
-                "The given Relationship's fromTable must have a tableName of {$fromTableName}. "
+                "The given Relationship's from table must have a table name of {$from_table_name}. "
               );
         }
         
-        self::$relationships[$fromTableName][$relationshipName] = $relationship;
+        self::$relationships[$from_table_name][$relationship_name] = $relationship;
         
         return $this;
     }
     
-    public function getRelationship( string $relationshipName ) : Relationship
+    public function getRelationship( string $relationship_name ) : Relationship
     {
-        if ( isset(self::$relationships[ $this->getTableName() ][$relationshipName]) ) { 
-            return self::$relationships[ $this->getTableName() ][$relationshipName] ; 
+        if ( isset(self::$relationships[ $this->getTableName() ][$relationship_name]) ) { 
+            return self::$relationships[ $this->getTableName() ][$relationship_name] ; 
         }
-        throw new Exception("A relationship to {$relationshipName} is not set. ");
+        throw new Exception("A relationship to {$relationship_name} is not set. ");
     }
     
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet

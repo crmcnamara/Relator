@@ -20,27 +20,27 @@ class Generic extends ArrayObject implements Record, Recordable, Relatable, Gets
 {
     use RelatableTrait, RecordableTrait;
     
-    protected $tableName ;
+    protected $table_name ;
     protected $primary_key_name;
     
     
-    public function __construct( string $tableName, string $primary_key_name )
+    public function __construct( string $table_name, string $primary_key_name )
     {
         parent::__construct( [], ArrayObject::ARRAY_AS_PROPS );
         
-        $this->setTableName( $tableName ) ;
+        $this->setTableName( $table_name ) ;
         $this->setPrimaryKeyName( $primary_key_name );
     }
     
-    protected function setTableName( string $tableName ) : Record\Generic
+    protected function setTableName( string $table_name ) : Record\Generic
     {
-        if ( $tableName === $this->tableName ) { return $this ; }
+        if ( $table_name === $this->table_name ) { return $this ; }
         
-        if ( is_string( $this->tableName ) ) {
+        if ( is_string( $this->table_name ) ) {
             throw InvalidArgumentException('A table name for this Record is already set. ');
         }
         
-        $this->tableName = $tableName ;
+        $this->table_name = $table_name ;
         
         return $this ;
         
@@ -61,7 +61,7 @@ class Generic extends ArrayObject implements Record, Recordable, Relatable, Gets
     
     public function getTableName() : string
     {
-        return $this->tableName ;
+        return $this->table_name ;
     }
     
     public function getPrimaryKeyName() : string
