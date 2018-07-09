@@ -256,6 +256,35 @@ class RecordingTests extends TestCase
         
     }
     
+    /**
+     * @dataProvider articles
+     */
+    public function testDeleteArticle( string $article_varname )
+    {
+        $article = $this->$article_varname->newRecord()->loadRecord(2);
+        
+        $expected_article = [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ];
+        
+        $this->assertEquals( $expected_article, $article->asArray(), 
+            "Loaded fixture article #2 was not as expected. "
+          );
+          
+        $article->deleteRecord(); $article->deleteRecord();
+        
+        $e = null;
+        try {
+            $deleted_article = $this->$article_varname->newRecord()->loadRecord(2);
+            
+        } catch ( InvalidArgumentException $e ) {}
+        
+        $this->assertNotEmpty( $e, 
+            "After deleting article #2 and attempting to reload it, "
+            ."an exception indicating its absence was not thrown. "
+          );
+
+          
+    }
+    
     
     public function recorderMethods()
     {
