@@ -18,20 +18,31 @@ class Simple extends ArrayObject implements RecordSet
     
     public function __construct( array $records, $flags = null )
     {
-        $this->validateRecords( ...$records );
-        
+        foreach ( $records as $record ) { $this->validRecord($record); }
         parent::__construct( $records, $flags );
-        
-        if ( ! empty( $records ) ) {
-            $this->record = current($this) ;
-        }
         
     }
 
-    protected function validateRecords( Record ...$records ) : RecordSet
+    protected function validRecord( Record $record ) : Record
     {
-        #TODO: validate that $records are all of the same class?
-        return $this;
+        if ( ! isset( $this->record ) ) {
+            $this->record = $record;
+            
+        } else {
+            if ( ! $record instanceof $this->record ) {
+                throw new InvalidArgumentException( 
+                    'Passed record of class '. get_class($record)
+                    .' must be an instance of class '. get_class($this->record) .'. '
+                  );
+            }
+        }
+        return $record;
+    }
+    
+    
+    public  function offsetSet( $key, $value ) 
+    {
+        parent::offsetSet( $key, $this->validRecord($value) );
     }
     
     public function asArrays() : array 
@@ -39,6 +50,6 @@ class Simple extends ArrayObject implements RecordSet
         return array_map( function($record) { return $record->asArray(); }, (array) $this );
     }
     
-    #TODO: call validateRecords() after every alteration! adding items, changing items, etc. 
+    
     
 }

@@ -20,14 +20,14 @@ class Relatable extends Simple implements RecordSet, GetsRelatedRecords
     use GetsRelatedTrait;
 
 
-    protected function validateRecords( Record ...$records ) : RecordSet 
+    protected function validRecord( Record $record ) : Record 
     {
-        return $this->validateRelatables( ...$records );
+        return parent::validRecord($this->validRelatable($record));
     }
     
-    protected function validateRelatables( RelatableRecord ...$records ) : RecordSet\Relatable 
+    protected function validRelatable( RelatableRecord $record ) : RelatableRecord 
     {
-        return $this;
+        return $record;
     }
     
     protected function getRecord() : RelatableRecord
