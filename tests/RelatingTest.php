@@ -16,6 +16,8 @@ use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Relatable;
 use BitBalm\Relator\Relatable\RelatableTrait;
 use BitBalm\Relator\PDO\SchemaValidator;
+use BitBalm\Relator\RecordSet;
+
 
 /**
  * @runTestsInSeparateProcesses
@@ -148,6 +150,29 @@ class RelatingTests extends TestCase
         
     }
     
-    #TODO: relating for recordsets
+    /** Tests getting articles authored by a person ( one person to many articles )
+     * @dataProvider people
+     */
+    public function testRelateAuthorsToArticles( string $person_varname ) 
+    {
+        $authors = new RecordSet\Relatable([
+            $this->$person_varname->newRecord()->setValues(['id'=>1,'name'=>'Joe',]),
+            $this->$person_varname->newRecord()->setValues(['id'=>2,'name'=>'Dave',])
+          ]);
+         
+        $articles = $authors->getRelated('articles')->asArrays();
+        
+        $expected_articles = [ 
+            [ 'id' => '1', 'title' => 'On Something or Other', 'author_id' => '1', ],
+            [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
+            [ 'id' => '3', 'title' => 'Counterpoint',  'author_id' => '2', ],
+          ];
+        
+        $this->assertEquals( $expected_articles, $articles,
+            var_export( $articles, 1 ) ."\n".
+            "Articles related to a RecordSet of multiple people were not as expected. "
+          );
+        
+    }
 
 }
