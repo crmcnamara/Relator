@@ -106,22 +106,17 @@ class RelatingTests extends TestCase
         
         $person = $this->$person_varname->newRecord()->setValues(['id'=>2,'name'=>'Dave',]);
 
-        $articles = $person->getRelated('articles');
-        
-        // convert to arrays for easy comparison
-        foreach( $articles as $idx => $article ) { $articles[$idx] = $article->asArray(); }
+        $articles = $person->getRelated('articles')->asArrays();
         
         $expected_articles = [ 
             [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
             [ 'id' => '3', 'title' => 'Counterpoint',  'author_id' => '2', ],
           ];
         
-        
-        $this->assertEquals( $expected_articles, (array) $articles,
+        $this->assertEquals( $expected_articles, $articles,
             var_export( $articles, 1 ) ."\n".
             "Articles related to a person were not as expected. "
           );
-        
         
     }
 
