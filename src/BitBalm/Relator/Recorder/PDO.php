@@ -19,21 +19,23 @@ class PDO extends BaseMapper implements Recorder
     
     public function loadRecord( Recordable $record, $record_id ) : Recordable 
     {
-        $table  = $this->getValidator()->validTable($record->getTableName());
-        $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
-        
-        $results = (array) $this->loadRecords( $record, [ $record_id ] );
+        $results = $this->loadRecordsByColumnValues( $record, $record->getPrimaryKeyName(), [ $record_id ] )
+            ->asArrays();
         
         if ( count($results) >1 ) { 
-            throw new Exception( "Multiple {$table} records loaded for {$prikey}: {$record_id} " ) ; 
+            throw new Exception( 
+                "Multiple {$record->getTableName()} records loaded for {$record->getPrimaryKeyName()}: {$record_id} " 
+              ) ; 
         }
         
         if ( count($results) <1 ) { 
-            throw new InvalidArgumentException( "No {$table} records found for {$prikey}: {$record_id} " ) ; 
+            throw new InvalidArgumentException( 
+                "No {$record->getTableName()} records found for {$record->getPrimaryKeyName()}: {$record_id} " 
+              ) ; 
         }
         
         // transfer values to the passed record
-        $values = current($results)->asArray();
+        $values = current($results);
         
         $record
             ->setValues($values)
@@ -44,18 +46,23 @@ class PDO extends BaseMapper implements Recorder
     
     public function loadRecords( Recordable $record, array $record_ids ) : RecordSet 
     {
+        return $this->loadRecordsByColumnValues( $record, $record->getPrimaryKeyName(), $record_ids );
+    }
+    
+    public function loadRecordsByColumnValues( Recordable $record, string $column, array $values ) : RecordSet 
+    {
         $table  = $this->getValidator()->validTable($record->getTableName());
-        $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
+        $column = $this->getValidator()->validColumn( $table, $column );
         
         $querystring = 
-            "SELECT * from {$table} where {$prikey} in ( "
-              . implode( ', ', array_pad( [],  count($record_ids), '?' ) ) 
+            "SELECT * from {$table} where {$column} in ( "
+              . implode( ', ', array_pad( [],  count($values), '?' ) ) 
             ." ) ";
         
         $statement = $this->pdo->prepare( $querystring );
         $statement->setFetchMode(\PDO::FETCH_ASSOC);
         
-        $statement->execute($record_ids);
+        $statement->execute($values);
         $results = $statement->fetchAll();
         
         $records = [];
