@@ -1,15 +1,15 @@
 <?php
 
-namespace BitBalm\Relator\Record;
+namespace BitBalm\Relator\Mappable;
 
 
 use Exception;
 use InvalidArgumentException;
 
-use BitBalm\Relator\Record;
+use BitBalm\Relator\Mappable;
 use BitBalm\Relator\RecordSet;
 
-Trait RecordTrait 
+Trait MappableTrait 
 {
     protected $record_values = [];
     
@@ -18,15 +18,15 @@ Trait RecordTrait
         return $this->record_values;
     }
     
-    public function setValues( array $values ) : Record 
+    public function setValues( array $values ) : Mappable 
     {
         $this->record_values = array_replace( (array) $this->record_values, $values ) ;
         return $this;
     }
     
-    public function newRecord() : Record
+    public function newRecord() : Mappable
     {
-        return new static;        
+        return new static;
     }
     
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet

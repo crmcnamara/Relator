@@ -2,7 +2,7 @@
 
 namespace BitBalm\Relator\RecordSet;
 
-use BitBalm\Relator\Record;
+use BitBalm\Relator\Mappable;
 use BitBalm\Relator\Relatable as RelatableRecord;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Relator;
@@ -20,7 +20,7 @@ class Relatable extends Simple implements RecordSet, GetsRelatedRecords
     use GetsRelatedTrait;
 
 
-    protected function validRecord( Record $record ) : Record 
+    protected function validRecord( Mappable $record ) : Mappable
     {
         return parent::validRecord($this->validRelatable($record));
     }

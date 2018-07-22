@@ -5,8 +5,8 @@ namespace BitBalm\Relator\Relatable;
 use Exception;
 use InvalidArgumentException;
 
-use BitBalm\Relator\Record;
-use BitBalm\Relator\Record\RecordTrait;
+use BitBalm\Relator\Mappable;
+use BitBalm\Relator\Mappable\MappableTrait;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
@@ -15,13 +15,13 @@ use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
 Trait RelatableTrait
 {
-    use RecordTrait, GetsRelatedTrait;
+    use MappableTrait, GetsRelatedTrait;
     
     protected static $relators ;
     protected static $relationships ;
     
     
-    public function setRelator( Relator $relator ) : Record
+    public function setRelator( Relator $relator ) : Mappable
     {
         $existing = isset( self::$relators[ $this->getTableName() ] ) 
             ? self::$relators[ $this->getTableName() ] : null ;
@@ -48,11 +48,11 @@ Trait RelatableTrait
     }
 
     public function addRelationship( 
-        string $fromColumn, 
-        Record $toTable, 
-        string $toColumn, 
-        string $relationship_name = null 
-      ) : Record
+        string    $fromColumn, 
+        Mappable  $toTable, 
+        string    $toColumn, 
+        string    $relationship_name = null 
+      ) : Mappable
     {
         $this->setRelationship( 
             new Relationship\Simple( $this, $fromColumn, $toTable, $toColumn ),
@@ -62,7 +62,7 @@ Trait RelatableTrait
         return $this ;
     }
     
-    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : Record
+    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : Mappable
     {
         
         if ( empty($relationship_name) ) { $relationship_name = $relationship->getToTable()->getTableName(); }

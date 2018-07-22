@@ -11,7 +11,7 @@ use Aura\SqlSchema\ColumnFactory;
 
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
-use BitBalm\Relator\Record\RecordTrait;
+use BitBalm\Relator\Mappable\MappableTrait;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Relatable;
 use BitBalm\Relator\Relatable\RelatableTrait;

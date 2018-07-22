@@ -6,7 +6,7 @@ use Exception;
 use InvalidArgumentException;
 use ArrayObject;
 
-use BitBalm\Relator\Record;
+use BitBalm\Relator\Mappable;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Relatable\RelatableTrait;
@@ -16,7 +16,7 @@ use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
 
-class Generic extends ArrayObject implements Record, Recordable, Relatable, GetsRelatedRecords
+class Generic extends ArrayObject implements Mappable, Recordable, Relatable, GetsRelatedRecords
 {
     use RelatableTrait, RecordableTrait;
     
@@ -32,7 +32,7 @@ class Generic extends ArrayObject implements Record, Recordable, Relatable, Gets
         $this->setPrimaryKeyName( $primary_key_name );
     }
     
-    protected function setTableName( string $table_name ) : Record\Generic
+    protected function setTableName( string $table_name ) : Generic
     {
         if ( $table_name === $this->table_name ) { return $this ; }
         
@@ -46,7 +46,7 @@ class Generic extends ArrayObject implements Record, Recordable, Relatable, Gets
         
     }
     
-    protected function setPrimaryKeyName( string $key_name )
+    protected function setPrimaryKeyName( string $key_name ) : Generic
     {
         if ( $key_name === $this->primary_key_name ) { return $this ; }
         
@@ -74,12 +74,12 @@ class Generic extends ArrayObject implements Record, Recordable, Relatable, Gets
         return $this->getArrayCopy();
     }
     
-    public function newRecord() : Record 
+    public function newRecord() : Mappable 
     {
         return new static( $this->getTableName(), $this->getPrimaryKeyName() );
     }
     
-    public function setValues( array $values ) : Record 
+    public function setValues( array $values ) : Mappable 
     {
         $this->exchangeArray(array_replace( (array) $this->getArrayCopy(), $values )) ;
         return $this;

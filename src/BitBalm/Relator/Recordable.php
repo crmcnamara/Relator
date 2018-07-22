@@ -3,7 +3,7 @@
 namespace BitBalm\Relator;
 
 
-interface Recordable extends Record
+interface Recordable extends Mappable
 {
     public function getPrimaryKeyName() : string ;
     
