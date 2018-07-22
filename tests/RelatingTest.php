@@ -55,11 +55,9 @@ class RelatingTests extends TestCase
           );
 
         // configure two generic records for each entity type
-        $this->generic_person   = (new class extends Record\Generic { use RecordTrait; })
-            ->setTableName('person')
+        $this->generic_person   = (new Record\Generic( 'person', 'id' ))
             ->setRelator($this->relator) ;
-        $this->generic_article  = (new class extends Record\Generic { use RecordTrait; })
-            ->setTableName('article')
+        $this->generic_article  = (new Record\Generic( 'article', 'id' ))
             ->setRelator($this->relator) ;
 
         // and define the relationships between them
@@ -67,7 +65,7 @@ class RelatingTests extends TestCase
         $this->generic_article  ->addRelationship( 'author_id', $this->generic_person,  'id',         'author'    );
 
 
-        // Now configure the same thing using anonymous classes that make use of RecordTrait
+        // Now configure the same thing using anonymous classes that make use of Record/Trait
         $this->custom_person = (new class() implements Record { use RecordTrait; })
             ->setTableName('person')
             ->setRelator($this->relator);

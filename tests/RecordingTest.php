@@ -55,16 +55,12 @@ class RecordingTests extends TestCase
           );
 
         // configure two generic records for each entity type
-        $this->generic_person   = (new class extends Record\Generic { use RecordTrait; })
-            ->setTableName('person')
-            ->setPrimaryKeyName('id')
+        $this->generic_person   = (new Record\Generic( 'person', 'id' ))
             ->setRecorder($this->recorder);
-        $this->generic_article  = (new class extends Record\Generic { use RecordTrait; })
-            ->setTableName('article')
-            ->setPrimaryKeyName('id')
+        $this->generic_article  = (new Record\Generic( 'article', 'id' ))
             ->setRecorder($this->recorder);
 
-        // Now configure the same thing using anonymous classes that make use of RecordTrait
+        // Now configure the same thing using anonymous classes that make use of Record/Trait
         $this->custom_person = (new class() implements Record { use RecordTrait; })
             ->setTableName('person')
             ->setPrimaryKeyName('id')
