@@ -12,7 +12,9 @@ use BitBalm\Relator\RecordSet;
 
 
 Trait RecordableTrait
-{
+{    
+    protected static $primary_key_name;
+    
     protected static $recorders ;
     protected $recorder_update_id;
     
@@ -74,4 +76,27 @@ Trait RecordableTrait
         return $this->recorder_update_id ?? null ;
     }
     
+    public function getPrimaryKeyName() : string
+    {
+        #TODO: throw Exception if null? Otherwise a TypeError will be thrown
+        return static::$primary_key_name;
+    }
+    
+    public function setPrimaryKeyName( string $primary_key_name ) : Recordable
+    {
+        $existing_name = static::$primary_key_name;
+        
+        if ( $existing_name === $primary_key_name ) { return $this; }
+        
+        if ( !is_null($existing_name) )  {
+            throw new InvalidArgumentException(
+                "The primary key name for this object is already set to: {$existing_name}. "
+              );
+        }
+        
+        static::$primary_key_name = $primary_key_name;
+        
+        return $this;
+        
+    }
 }

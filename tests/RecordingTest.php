@@ -4,7 +4,7 @@ namespace BitBalm\Relator\Tests;
 
 use PDO;
 use Exception;
-use InvalidargumentException;
+use InvalidArgumentException;
 
 use PHPUnit\Framework\TestCase;
 
@@ -13,6 +13,7 @@ use Aura\SqlSchema\ColumnFactory;
 
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Record;
+use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Mappable\MappableTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recordable\RecordableTrait;
@@ -54,23 +55,25 @@ class RecordingTests extends TestCase
           );
 
         // configure two generic records for each entity type
-        $this->generic_person   = (new Record\Generic('person', 'id'))   ->setRecorder($this->recorder) ;
-        $this->generic_article  = (new Record\Generic('article', 'id'))  ->setRecorder($this->recorder) ;
+        $this->generic_person   = (new class extends Record\Generic { use RecordTrait; })
+            ->setTableName('person')
+            ->setPrimaryKeyName('id')
+            ->setRecorder($this->recorder);
+        $this->generic_article  = (new class extends Record\Generic { use RecordTrait; })
+            ->setTableName('article')
+            ->setPrimaryKeyName('id')
+            ->setRecorder($this->recorder);
 
-        // Now configure the same thing using anonymous classes that make use of RecordableTrait
-        $this->custom_person = new class() implements Recordable {
-            use MappableTrait, RecordableTrait;
-            public function getTableName()      : string { return 'person'; }
-            public function getPrimaryKeyName() : string { return 'id';     }
-        };
-        $this->custom_person->setRecorder($this->recorder) ;
+        // Now configure the same thing using anonymous classes that make use of RecordTrait
+        $this->custom_person = (new class() implements Record { use RecordTrait; })
+            ->setTableName('person')
+            ->setPrimaryKeyName('id')
+            ->setRecorder($this->recorder);
         
-        $this->custom_article = new class() implements Recordable {
-            use MappableTrait, RecordableTrait;
-            public function getTableName()      : string { return 'article';  }
-            public function getPrimaryKeyName() : string { return 'id';       }
-        };
-        $this->custom_article->setRecorder($this->recorder) ;
+        $this->custom_article = (new class() implements Record { use RecordTrait; })
+            ->setTableName('article')
+            ->setPrimaryKeyName('id')
+            ->setRecorder($this->recorder);
         
     }
     

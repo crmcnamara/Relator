@@ -6,22 +6,19 @@ use Exception;
 use InvalidArgumentException;
 
 use BitBalm\Relator\Mappable;
-use BitBalm\Relator\Mappable\MappableTrait;
+use BitBalm\Relator\Relatable;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
-use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
 
 Trait RelatableTrait
-{
-    use MappableTrait, GetsRelatedTrait;
-    
+{    
     protected static $relators ;
     protected static $relationships ;
     
     
-    public function setRelator( Relator $relator ) : Mappable
+    public function setRelator( Relator $relator ) : Relatable
     {
         $existing = isset( self::$relators[ $this->getTableName() ] ) 
             ? self::$relators[ $this->getTableName() ] : null ;

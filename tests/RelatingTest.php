@@ -11,6 +11,7 @@ use Aura\SqlSchema\ColumnFactory;
 
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
+use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Mappable\MappableTrait;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Relatable;
@@ -53,26 +54,26 @@ class RelatingTests extends TestCase
           );
 
         // configure two generic records for each entity type
-        $this->generic_person   = (new Record\Generic('person', 'id'))   ->setRelator($this->relator) ;
-        $this->generic_article  = (new Record\Generic('article', 'id'))  ->setRelator($this->relator) ;
+        $this->generic_person   = (new class extends Record\Generic { use RecordTrait; })
+            ->setTableName('person')
+            ->setRelator($this->relator) ;
+        $this->generic_article  = (new class extends Record\Generic { use RecordTrait; })
+            ->setTableName('article')
+            ->setRelator($this->relator) ;
 
         // and define the relationships between them
-        $this->generic_person   ->addRelationship( 'id',        $this->generic_article, 'author_id',  'articles'  ) ;
-        $this->generic_article  ->addRelationship( 'author_id', $this->generic_person,  'id',         'author'    ) ;
+        $this->generic_person   ->addRelationship( 'id',        $this->generic_article, 'author_id',  'articles'  );
+        $this->generic_article  ->addRelationship( 'author_id', $this->generic_person,  'id',         'author'    );
 
 
         // Now configure the same thing using anonymous classes that make use of RecordTrait
-        $this->custom_person = new class() implements Relatable, GetsRelatedRecords {
-            use RelatableTrait;
-            public function getTableName() : string { return 'person'; }
-        };
-        $this->custom_person->setRelator($this->relator) ;
+        $this->custom_person = (new class() implements Record { use RecordTrait; })
+            ->setTableName('person')
+            ->setRelator($this->relator);
         
-        $this->custom_article = new class() implements Relatable, GetsRelatedRecords {
-            use RelatableTrait;
-            public function getTableName() : string { return 'article'; }
-        };
-        $this->custom_article->setRelator($this->relator) ;
+        $this->custom_article = (new class() implements Record { use RecordTrait; })
+            ->setTableName('article')
+            ->setRelator($this->relator);
         
         $this->custom_person   ->addRelationship( 'id',        $this->custom_article, 'author_id',  'articles'  ) ;
         $this->custom_article  ->addRelationship( 'author_id', $this->custom_person,  'id',         'author'    ) ;
