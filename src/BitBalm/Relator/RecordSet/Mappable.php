@@ -2,7 +2,7 @@
 
 namespace BitBalm\Relator\RecordSet;
 
-use BitBalm\Relator\Mappable;
+use BitBalm\Relator\Mappable as MappableRecord;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
@@ -12,7 +12,7 @@ use ArrayObject;
 use InvalidArgumentException;
 
 
-class Simple extends ArrayObject implements RecordSet 
+class Mappable extends ArrayObject implements RecordSet 
 {
     protected $record ;
     
@@ -23,7 +23,7 @@ class Simple extends ArrayObject implements RecordSet
         
     }
 
-    protected function validRecord( Mappable $record ) : Mappable
+    protected function validRecord( MappableRecord $record ) : MappableRecord
     {
         if ( ! isset( $this->record ) ) {
             $this->record = $record;

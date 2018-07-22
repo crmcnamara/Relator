@@ -18,6 +18,7 @@ use BitBalm\Relator\Relatable;
 use BitBalm\Relator\Relatable\RelatableTrait;
 use BitBalm\Relator\PDO\SchemaValidator;
 use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\RecordSet\GetsRelated;
 
 
 /**
@@ -151,7 +152,7 @@ class RelatingTests extends TestCase
      */
     public function testRelateAuthorsToArticles( string $person_varname ) 
     {
-        $authors = new RecordSet\Relatable([
+        $authors = new RecordSet\GetsRelated([
             $this->$person_varname->newRecord()->setValues(['id'=>1,'name'=>'Joe',]),
             $this->$person_varname->newRecord()->setValues(['id'=>2,'name'=>'Dave',])
           ]);

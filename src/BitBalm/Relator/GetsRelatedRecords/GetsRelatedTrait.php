@@ -6,6 +6,7 @@ use BitBalm\Relator\Mappable;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Relatable;
 use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\RecordSet\GetsRelated;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 
@@ -85,7 +86,7 @@ Trait GetsRelatedTrait
     
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet
     {
-        return $recordset ? new $recordset([ $this ]) : new RecordSet\Relatable([ $this ]);
+        return $recordset ? new $recordset([ $this ]) : new RecordSet\GetsRelated([ $this ]);
     }
     
 }

@@ -14,9 +14,8 @@ use ArrayObject;
 use InvalidArgumentException;
 
 
-class Relatable extends Simple implements RecordSet, GetsRelatedRecords
+class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRecords
 {
-    
     use GetsRelatedTrait;
 
 
@@ -43,9 +42,14 @@ class Relatable extends Simple implements RecordSet, GetsRelatedRecords
         return $this->getRecord()->getTableName() ; 
     }
     
-    public function getRelationship( string $relationshipName ) : Relationship
+    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : GetsRelatedRecords 
     {
-        return $this->getRecord()->getRelationship($relationshipName);
+        return $this->getRecord()->setRelationship( $relationship, $relationship_name );
+    }
+    
+    public function getRelationship( string $relationship_name ) : Relationship
+    {
+        return $this->getRecord()->getRelationship($relationship_name);
     }
     
     public function asRecordSet() : RecordSet
