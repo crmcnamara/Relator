@@ -2,9 +2,10 @@
 
 namespace BitBalm\Relator\Relator;
 
-#use PDO;
 use Exception;
 use InvalidArgumentException;
+#use PDO;
+use PDOStatement;
 
 use Aura\SqlSchema\SchemaInterface;
 
@@ -13,8 +14,7 @@ use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Record;
-
-use PDOStatement;
+use BitBalm\Relator\Mappable;
 
 
 class PDO extends BaseMapper implements Relator
@@ -27,12 +27,14 @@ class PDO extends BaseMapper implements Relator
         $results = $statement->fetchAll();
 
         foreach ( $results as $index => $result ) {
-            if ( ! $result instanceof Record ) {
+            if ( ! $result instanceof Mappable ) {
                 $results[$index] = $relationship->getToTable()->newRecord()->setValues($result);
             }
         }
-
-        $resultset = new $recordset( $results );
+        
+        $to_recordset = $relationship->getToTable()->asRecordSet();
+        
+        $resultset = new $to_recordset( $results );
 
         return $resultset;
         

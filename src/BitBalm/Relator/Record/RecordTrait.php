@@ -15,6 +15,6 @@ Trait RecordTrait
 {
     use MappableTrait, RecordableTrait, RelatableTrait, GetsRelatedTrait
     {
-        RelatableTrait::asRecordSet insteadof MappableTrait;
+        GetsRelatedTrait::asRecordSet insteadof MappableTrait;
     }
 }

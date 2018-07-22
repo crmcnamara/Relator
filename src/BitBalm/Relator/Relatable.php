@@ -10,4 +10,6 @@ interface Relatable extends Mappable
     public function setRelator( Relator $relator ) : Relatable ;
     
     public function getRelator() : Relator ;
+    
+    public function asRecordSet() : RecordSet ;
 }
