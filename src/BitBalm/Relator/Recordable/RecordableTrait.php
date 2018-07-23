@@ -14,33 +14,26 @@ use BitBalm\Relator\RecordSet;
 Trait RecordableTrait
 {    
     protected static $primary_key_name;
+    protected static $recorder;
     
-    protected static $recorders ;
     protected $recorder_update_id;
     
     
     public function setRecorder( Recorder $recorder ) : Recordable
     {
-        $existing = self::$recorders[ $this->getTableName() ] ?? null ;
-            
-        if ( $recorder === $existing ) { return $this ; }
-        
-        if ( $existing instanceof Recorder ) {
+        if ( self::$recorder and self::$recorder !== $recorder ) {
             throw new InvalidArgumentException("This record's Recorder is already set. ");
         }
-            
-        self::$recorders[ $this->getTableName() ] = $recorder;
+        
+        self::$recorder = $recorder;
         
         return $this;
     }
     
     public function getRecorder() : Recorder 
     {
-        $existing = self::$recorders[ $this->getTableName() ] ?? null ;
-            
-        if ( $existing instanceof Recorder ) { return $existing ; }
-        
-        throw new Exception( "This record's Recorder is not yet set. ");
+        #TODO: throw Exception instead of TypeError when not set?
+        return self::$recorder;
     }
     
     
@@ -78,7 +71,7 @@ Trait RecordableTrait
     
     public function getPrimaryKeyName() : string
     {
-        #TODO: throw Exception if null? Otherwise a TypeError will be thrown
+        #TODO: throw Exception instead of TypeError when not set?
         return static::$primary_key_name;
     }
     

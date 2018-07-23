@@ -14,34 +14,24 @@ use BitBalm\Relator\Relationship;
 
 Trait RelatableTrait
 {    
-    protected static $relators ;
-    protected static $relationships ;
+    protected static $relator ;
     
     
     public function setRelator( Relator $relator ) : Relatable
     {
-        $existing = isset( self::$relators[ $this->getTableName() ] ) 
-            ? self::$relators[ $this->getTableName() ] : null ;
-            
-        if ( $relator === $existing ) { return $this ; }
-        
-        if ( $existing instanceof Relator ) {
+        if ( self::$relator and self::$relator !== $relator ) {
             throw new InvalidArgumentException("This record's Relator is already set. ");
         }
-            
-        self::$relators[ $this->getTableName() ] = $relator;
+        
+        self::$relator = $relator;
         
         return $this;
     }
     
     public function getRelator() : Relator 
     {
-        $existing = isset( self::$relators[ $this->getTableName() ] )
-            ? self::$relators[ $this->getTableName() ] : null ;
-            
-        if ( $existing instanceof Relator ) { return $existing ; }
-        
-        throw new Exception( "This record's Relator is not yet set. ");
+        #TODO: throw Exception instead of TypeError when not set?
+        return static::$relator;
     }
     
 }

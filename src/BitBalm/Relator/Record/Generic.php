@@ -12,6 +12,9 @@ use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Relatable\RelatableTrait;
 use BitBalm\Relator\Relatable;
 use BitBalm\Relator\Recordable\RecordableTrait;
+use BitBalm\Relator\Recorder;
+use BitBalm\Relator\Relator;
+use BitBalm\Relator\Relationship;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
@@ -27,6 +30,9 @@ class Generic extends ArrayObject implements Mappable, Recordable, Relatable, Ge
     protected $generic_table_name;
     protected $generic_primary_key_name;
     
+    protected static $recorders;
+    protected static $relators;
+    
     
     public function __construct( string $table_name, string $primary_key_name )
     {
@@ -38,28 +44,24 @@ class Generic extends ArrayObject implements Mappable, Recordable, Relatable, Ge
 
     public function setTableName( string $table_name ) : Generic
     {
-        if ( $table_name === $this->generic_table_name ) { return $this ; }
-        
-        if ( is_string( $this->generic_table_name ) ) {
-            throw InvalidArgumentException('A table name for this Record is already set. ');
+        if ( $this->generic_table_name and $this->generic_table_name !== $table_name ) {
+            throw InvalidArgumentException('A table name for this record is already set. ');
         }
         
         $this->generic_table_name = $table_name ;
         
         return $this ;
-        
     }
     
     public function getTableName() : string
     {
+        #TODO: throw Exception instead of TypeError when not set?
         return $this->generic_table_name ;
     }
     
     public function setPrimaryKeyName( string $key_name ) : Generic
     {
-        if ( $key_name === $this->generic_primary_key_name ) { return $this ; }
-        
-        if ( is_string( $this->generic_primary_key_name ) ) {
+        if ( $this->generic_primary_key_name and $this->generic_primary_key_name !== $table_name ) {
             throw InvalidArgumentException('A primary key name for this Record is already set. ');
         }
         
@@ -70,8 +72,90 @@ class Generic extends ArrayObject implements Mappable, Recordable, Relatable, Ge
     
     public function getPrimaryKeyName() : string
     {
+        #TODO: throw Exception instead of TypeError when not set?
         return $this->generic_primary_key_name ;
     }
+    
+    public function setRecorder( Recorder $recorder ) : Recordable
+    {
+        $table = $this->getTableName();
+        
+        if ( !empty(self::$recorders[$table]) and self::$recorders[$table] !== $relator ) {
+            throw new InvalidArgumentException("This record's Recorder is already set. ");
+        }
+        
+        self::$recorders[$table] = $recorder;
+        
+        return $this;
+    }
+    
+    public function getRecorder() : Recorder 
+    {
+        #TODO: throw Exception instead of TypeError when not set?
+        return self::$recorders[$this->getTableName()];
+    }
+    
+    public function setRelator( Relator $relator ) : Relatable
+    {
+        $table = $this->getTableName();
+        
+        if ( !empty(self::$relators[$table]) and self::$relators[$table] !== $relator ) {
+            throw new InvalidArgumentException("This record's Relator is already set. ");
+        }
+        
+        self::$relators[$table] = $relator;
+        
+        return $this;
+    }
+    
+    public function getRelator() : Relator 
+    {
+        #TODO: throw Exception instead of TypeError when not set?
+        return static::$relators[$this->getTableName()];
+    }
+    
+    
+    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : GetsRelatedRecords
+    {
+        
+        if ( empty($relationship_name) ) { $relationship_name = $relationship->getToTable()->getTableName(); }
+        
+        $from_table_name = $this->getTableName();
+        
+        $existing = isset( self::$relationships[$from_table_name][$relationship_name] )
+            ? self::$relationships[$from_table_name][$relationship_name] : null ;
+            
+        if ( $relationship === $existing ) { return $this ; }
+        
+        if ( $existing instanceof Relationship ) {
+            throw new InvalidArgumentException(
+                "A relationship to {$relationship_name} is already set. "
+              );
+        }
+        
+        if ( ! ( $relationship->getFromTable() instanceof $this ) ) {
+            throw new InvalidArgumentException(
+                "The given Relationship's from table must be an instance of ". self::class .". "
+              );
+        }
+        
+        if ( $from_table_name !== $relationship->getFromTable()->getTableName() ) {
+            throw new InvalidArgumentException(
+                "The given Relationship's from table must have a table name of {$from_table_name}. "
+              );
+        }
+        
+        self::$relationships[$from_table_name][$relationship_name] = $relationship;
+        
+        return $this;
+    }
+    
+    public function getRelationship( string $relationship_name ) : Relationship
+    {
+        #TODO: throw Exception instead of TypeError when not set?
+        return self::$relationships[$this->getTableName()][$relationship_name]; 
+    }
+    
 
     public function newRecord() : Mappable 
     {

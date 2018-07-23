@@ -13,10 +13,12 @@ use BitBalm\Relator\Relationship;
 
 Trait GetsRelatedTrait 
 {
-    
-    public function getRelated( string $relationshipName ) : RecordSet
+    protected static $relationships;
+        
+        
+    public function getRelated( string $relationship_name ) : RecordSet
     {
-        $relationship = $this->getRelationship( $relationshipName );
+        $relationship = $this->getRelationship( $relationship_name );
         
         $related = $relationship->getToTable()->getRelator()
             ->getRelated( $relationship, $this->asRecordSet() ) ;
@@ -48,8 +50,8 @@ Trait GetsRelatedTrait
         
         $from_table_name = $relationship->getFromTable()->getTableName();
         
-        $existing = isset( self::$relationships[$from_table_name][$relationship_name] )
-            ? self::$relationships[$from_table_name][$relationship_name] : null ;
+        $existing = isset( self::$relationships[$relationship_name] )
+            ? self::$relationships[$relationship_name] : null ;
             
         if ( $relationship === $existing ) { return $this ; }
         
@@ -71,15 +73,15 @@ Trait GetsRelatedTrait
               );
         }
         
-        self::$relationships[$from_table_name][$relationship_name] = $relationship;
+        self::$relationships[$relationship_name] = $relationship;
         
         return $this;
     }
     
     public function getRelationship( string $relationship_name ) : Relationship
     {
-        if ( isset(self::$relationships[ $this->getTableName() ][$relationship_name]) ) { 
-            return self::$relationships[ $this->getTableName() ][$relationship_name] ; 
+        if ( isset(self::$relationships[$relationship_name]) ) { 
+            return self::$relationships[$relationship_name]; 
         }
         throw new Exception("A relationship to {$relationship_name} is not set. ");
     }

@@ -36,12 +36,6 @@ Trait MappableTrait
         return $recordset ? new $recordset([ $this ]) : new RecordSet\Simple([ $this ]);
     }
     
-    public function getTableName() : string
-    {
-        #TODO: throw Exception if null? Otherwise, a TypeError will be
-        return static::$table_name;
-    }
-    
     public function setTableName( string $table_name ) : Mappable
     {
         $existing_name = static::$table_name;
@@ -59,4 +53,11 @@ Trait MappableTrait
         return $this;
         
     }
+    
+    public function getTableName() : string
+    {
+        #TODO: throw Exception instead of TypeError when not set?
+        return static::$table_name;
+    }
+    
 }

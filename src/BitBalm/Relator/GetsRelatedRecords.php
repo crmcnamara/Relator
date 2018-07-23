@@ -5,7 +5,7 @@ namespace BitBalm\Relator;
 
 Interface GetsRelatedRecords 
 {
-    public function setRelationship( Relationship $relationship, string $relationshipName = null ) : GetsRelatedRecords ;
+    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : GetsRelatedRecords ;
     
     public function getRelationship( string $relationship_name ) : Relationship ;
     
