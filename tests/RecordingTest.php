@@ -39,20 +39,18 @@ class RecordingTest extends SqliteTestCase
         $mapper = $this->getMapper();
         
         // configure two generic records for each entity type
-        $this->generic_person   = (new Record\Generic( 'person', 'id' ))
+        $this->generic_person   = (new Record\Generic( 'person' ))
             ->setMapper($mapper);
-        $this->generic_article  = (new Record\Generic( 'article', 'id' ))
+        $this->generic_article  = (new Record\Generic( 'article' ))
             ->setMapper($mapper);
 
         // Now configure the same thing using anonymous classes that make use of Record/Trait
         $this->custom_person = (new class() implements Record { use RecordTrait; })
             ->setTableName('person')
-            ->setPrimaryKeyName('id')
             ->setMapper($mapper);
         
         $this->custom_article = (new class() implements Record { use RecordTrait; })
             ->setTableName('article')
-            ->setPrimaryKeyName('id')
             ->setMapper($mapper);
         
     }
@@ -310,12 +308,6 @@ class RecordingTest extends SqliteTestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->custom_article->setTableName('address');
-    }
-    
-    public function testRejectsChangingPrimaryKeyNames()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->custom_article->setPrimaryKeyName('other_id');
     }
     
     public function testRejectsChangingRecorders()

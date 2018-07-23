@@ -14,7 +14,8 @@ use BitBalm\Relator\PDO\SchemaValidator;
 class Aura implements SchemaValidator
 {
     protected $schema;
-    protected static $columns = [] ;
+    protected $column_names = [] ;
+    protected $columns = [] ;
  
     
     public function __construct( SchemaInterface $schema ) 
@@ -26,15 +27,16 @@ class Aura implements SchemaValidator
     public function refreshSchema()
     {
         $tables = $this->schema->fetchTableList();
-        static::$columns = [];
+        $this->columns = [];
         foreach ( (array) $tables as $table ) {
-            static::$columns[$table] = array_column( $this->schema->fetchTableCols($table), 'name' );
+            $this->columns[$table] = $this->schema->fetchTableCols($table);
+            $this->column_names[$table] = array_column( $this->columns[$table], 'name' );
         }
     }
     
     public function isValidTable( string $table ) : bool
     {
-        return in_array( $table, array_keys(static::$columns), true ) ;
+        return in_array( $table, array_keys($this->columns), true ) ;
     }
     
     public function validTable( string $table ) : string
@@ -47,7 +49,7 @@ class Aura implements SchemaValidator
     
     public function isValidColumn( string $table, string $column ) : bool
     {
-        return in_array( $column, static::$columns[$table], true ) ;
+        return in_array( $column, $this->column_names[$table], true ) ;
     }
     
     public function validColumn( string $table, string $column ) : string
@@ -56,6 +58,17 @@ class Aura implements SchemaValidator
             throw new InvalidArgumentException("Column '{$column}' does not exist in the database table '{$table}' . ");
         }
         return $column;
+    }
+    
+    public function getPrimaryKeyName( string $table ) : string
+    {
+        $table = $this->validTable($table);
+        
+        foreach( (array) $this->columns[$table] as $column ) {
+            if ( !empty($column->primary) ) { return $column->name; }
+        }
+
+        throw new InvalidArgumentException("No primary key found for table {$table}. ");
     }
     
 }

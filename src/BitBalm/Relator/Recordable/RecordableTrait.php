@@ -72,25 +72,7 @@ Trait RecordableTrait
     
     public function getPrimaryKeyName() : string
     {
-        #TODO: throw Exception instead of TypeError when not set?
-        return static::$primary_key_name;
+        return $this->getRecorder()->getPrimaryKeyName( $this->getTableName() );
     }
-    
-    public function setPrimaryKeyName( string $primary_key_name ) : Recordable
-    {
-        $existing_name = static::$primary_key_name;
-        
-        if ( $existing_name === $primary_key_name ) { return $this; }
-        
-        if ( !is_null($existing_name) )  {
-            throw new InvalidArgumentException(
-                "The primary key name for this object is already set to: {$existing_name}. "
-              );
-        }
-        
-        static::$primary_key_name = $primary_key_name;
-        
-        return $this;
-        
-    }
+ 
 }

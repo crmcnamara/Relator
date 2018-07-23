@@ -39,10 +39,10 @@ class GenericRecordTest extends SqliteTestCase
         $mapper = $this->getMapper();
 
         // configure two generic records for each entity type
-        $this->generic_person   = (new Record\Generic( 'person', 'id' ))
+        $this->generic_person   = (new Record\Generic( 'person' ))
             ->setRecorder($this->recorder)
             ->setMapper($mapper);
-        $this->generic_article  = (new Record\Generic( 'article', 'id' ))
+        $this->generic_article  = (new Record\Generic( 'article' ))
             ->setRecorder($this->recorder)
             ->setMapper($mapper);
 
@@ -72,8 +72,8 @@ class GenericRecordTest extends SqliteTestCase
      */ 
     public function testGenericSegregatesTableNames()
     {
-        $address = new Record\Generic( 'address', 'id' );
-        $number  = new Record\Generic( 'number' , 'id' );
+        $address = new Record\Generic( 'address' );
+        $number  = new Record\Generic( 'number' );
         
         $this->assertEquals( 'address', $address->getTableName(), 
             "A table name was not stored correctly in a Generic Record. " 
@@ -82,26 +82,10 @@ class GenericRecordTest extends SqliteTestCase
             "A table name was not stored correctly in a Generic Record. " 
           );
     }
-    
-    public function testGenericSegregatesPrimaryKeyNames()
-    {
-        $address = new Record\Generic( 'address', 'address_id' );
-        $number  = new Record\Generic( 'number' , 'number_id' );
-        
-        $this->assertEquals( 'address_id', $address->getPrimaryKeyName(), 
-            "A primary key name was not stored correctly in a Generic Record. " 
-          );
-        $this->assertEquals( 'number_id' , $number->getPrimaryKeyName(), 
-            "A primary key name was not stored correctly in a Generic Record. " 
-          );
-    }
-    
-    /* setRelator() will reject setting a different Relator when one is already set for most classes.
-     * in Generic, it should be accepted and stored separately for each table name.
-     */
+
     public function testGenericSegregatesRelators()
     {
-        $this->generic_article  = (new Record\Generic( 'address', 'id' ))
+        $this->generic_article  = (new Record\Generic( 'address' ))
             ->setRelator(clone $this->relator);
         
         $this->assertTrue(true);
@@ -109,7 +93,7 @@ class GenericRecordTest extends SqliteTestCase
     
     public function testGenericSegregatesRecorders()
     {
-        $this->generic_article  = (new Record\Generic( 'address', 'id' ))
+        $this->generic_article  = (new Record\Generic( 'address' ))
             ->setRecorder(clone $this->recorder);
                 
         $this->assertTrue(true);

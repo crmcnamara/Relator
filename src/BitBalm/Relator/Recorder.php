@@ -12,4 +12,6 @@ interface Recorder
     public function saveRecord( Recordable $record ) : Recordable ;
     
     public function deleteRecord( Recordable $record ) ;
+    
+    public function getPrimaryKeyName( string $table_name ) : string ;
 }

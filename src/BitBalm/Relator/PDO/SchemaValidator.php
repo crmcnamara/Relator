@@ -12,4 +12,6 @@ interface SchemaValidator
     public function isValidColumn( string $table, string $column ) : bool ;
     
     public function validColumn( string $table, string $column ) : string ;
+    
+    public function getPrimaryKeyName( string $table ) : string ;
 }

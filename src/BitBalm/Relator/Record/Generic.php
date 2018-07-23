@@ -29,18 +29,16 @@ class Generic extends ArrayObject implements Record
     
     
     protected $generic_table_name;
-    protected $generic_primary_key_name;
     
     protected static $recorders;
     protected static $relators;
     
     
-    public function __construct( string $table_name, string $primary_key_name )
+    public function __construct( string $table_name )
     {
         parent::__construct( [], ArrayObject::ARRAY_AS_PROPS );
         
         $this->setTableName( $table_name ) ;
-        $this->setPrimaryKeyName( $primary_key_name );
     }
 
     public function setTableName( string $table_name ) : Generic
@@ -58,23 +56,6 @@ class Generic extends ArrayObject implements Record
     {
         #TODO: throw Exception instead of TypeError when not set?
         return $this->generic_table_name ;
-    }
-    
-    public function setPrimaryKeyName( string $key_name ) : Generic
-    {
-        if ( $this->generic_primary_key_name and $this->generic_primary_key_name !== $table_name ) {
-            throw InvalidArgumentException('A primary key name for this Record is already set. ');
-        }
-        
-        $this->generic_primary_key_name = $key_name ;
-        
-        return $this ;
-    }
-    
-    public function getPrimaryKeyName() : string
-    {
-        #TODO: throw Exception instead of TypeError when not set?
-        return $this->generic_primary_key_name ;
     }
     
     public function setRecorder( Recorder $recorder ) : Recordable

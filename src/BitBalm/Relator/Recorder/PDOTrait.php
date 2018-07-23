@@ -167,4 +167,9 @@ trait PDOTrait
         
         return $affected;
     }
+    
+    public function getPrimaryKeyName( string $table_name ) : string 
+    {
+        return $this->getValidator()->getPrimaryKeyName($table_name);
+    }
 }
