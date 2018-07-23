@@ -22,8 +22,7 @@ Trait GetsRelatedTrait
     {
         $relationship = $this->getRelationship( $relationship_name );
         
-        $related = $relationship->getToTable()->getRelator()
-            ->getRelated( $relationship, $this->asRecordSet() ) ;
+        $related = $relationship->getToTable()->getRelator()->getRelated( $this, $relationship ) ;
         
         return $related;
     }

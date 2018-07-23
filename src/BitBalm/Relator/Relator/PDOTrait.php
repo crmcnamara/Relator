@@ -13,6 +13,7 @@ use BitBalm\Relator\PDO\BaseMapper;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Mappable;
 
@@ -20,9 +21,9 @@ use BitBalm\Relator\Mappable;
 trait PDOTrait 
 {
     
-    public function getRelated( Relationship $relationship, RecordSet $recordset ) : RecordSet
+    public function getRelated( GetsRelatedRecords $related_from, Relationship $relationship  ) : RecordSet
     {
-        $statement = $this->getRelatedStatement( $relationship, $recordset );
+        $statement = $this->getRelatedStatement( $related_from, $relationship );
         $statement->execute();
         $results = $statement->fetchAll();
 
@@ -40,16 +41,15 @@ trait PDOTrait
         
     }
     
-    public function getRelatedStatement( Relationship $relationship, RecordSet $recordset ) : PDOStatement
+    public function getRelatedStatement( GetsRelatedRecords $related_from, Relationship $relationship ) : PDOStatement
     {
         $to_table  = $relationship->getToTable();
         $to_table_name = $this->getValidator()->validTable($to_table->getTableName());
         $to_column = $this->getValidator()->validColumn( $to_table_name, $relationship->getToColumn() );
         $querystring = "SELECT * from {$to_table_name} where {$to_column} in ( ? ) ";
-        $values = [];
-        foreach ( $recordset as $record ) {
-            $values[] = $record->asArray()[ $relationship->getFromColumn() ] ;
-        }
+        
+        $values = array_column( $related_from->asRecordSet()->asArrays(), $relationship->getFromColumn() );
+        
         // Replace the placeholder with as many placeholders as we have values
         $querystring = str_replace( 
             '?', 
