@@ -309,5 +309,22 @@ class RecordingTest extends SqliteTestCase
         
     }
     
-
+    
+    public function testRejectsChangingTableNames()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->custom_article->setTableName('address');
+    }
+    
+    public function testRejectsChangingPrimaryKeyNames()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->custom_article->setPrimaryKeyName('other_id');
+    }
+    
+    public function testRejectsChangingRecorders()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->custom_article->setRecorder(clone $this->recorder);
+    }
 }

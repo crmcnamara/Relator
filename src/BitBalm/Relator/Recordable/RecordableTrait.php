@@ -3,6 +3,7 @@
 namespace BitBalm\Relator\Recordable;
 
 use Exception;
+use InvalidArgumentException;
 
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;

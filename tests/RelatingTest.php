@@ -160,5 +160,31 @@ class RelatingTest extends SqliteTestCase
           );
         
     }
+    
+    
+    public function testRejectsChangingTableNames()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->custom_article->setTableName('address');
+    }
+
+    public function testRejectsChangingRelators()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->custom_article->setRelator(clone $this->relator);
+    }
+    
+    public function testRejectsChangingRelationships()
+    {
+        $this->custom_person    ->addRelationship( 'id',        $this->generic_person, 'id',  'self'  );
+        
+        // add a 'self' relation to a different class to insure it is accepted.
+        $this->custom_article   ->addRelationship( 'id',        $this->generic_person, 'id',  'self'  );
+        
+        $this->expectException(InvalidArgumentException::class);
+        $this->custom_person    ->addRelationship( 'id',        $this->generic_person, 'id',  'self'  );
+        
+    }
+
 
 }

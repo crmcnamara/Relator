@@ -2,6 +2,8 @@
 
 namespace BitBalm\Relator\GetsRelatedRecords;
 
+use InvalidArgumentException;
+
 use BitBalm\Relator\Mappable;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Relatable;

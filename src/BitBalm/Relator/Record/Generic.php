@@ -80,7 +80,7 @@ class Generic extends ArrayObject implements Mappable, Recordable, Relatable, Ge
     {
         $table = $this->getTableName();
         
-        if ( !empty(self::$recorders[$table]) and self::$recorders[$table] !== $relator ) {
+        if ( !empty(self::$recorders[$table]) and self::$recorders[$table] !== $recorder ) {
             throw new InvalidArgumentException("This record's Recorder is already set. ");
         }
         
@@ -121,9 +121,9 @@ class Generic extends ArrayObject implements Mappable, Recordable, Relatable, Ge
         if ( empty($relationship_name) ) { $relationship_name = $relationship->getToTable()->getTableName(); }
         
         $from_table_name = $this->getTableName();
-        
-        $existing = isset( self::$relationships[$from_table_name][$relationship_name] )
-            ? self::$relationships[$from_table_name][$relationship_name] : null ;
+
+        $existing = isset( static::$relationships[$from_table_name][$relationship_name] )
+            ? static::$relationships[$from_table_name][$relationship_name] : null ;
             
         if ( $relationship === $existing ) { return $this ; }
         
@@ -135,7 +135,7 @@ class Generic extends ArrayObject implements Mappable, Recordable, Relatable, Ge
         
         if ( ! ( $relationship->getFromTable() instanceof $this ) ) {
             throw new InvalidArgumentException(
-                "The given Relationship's from table must be an instance of ". self::class .". "
+                "The given Relationship's from table must be an instance of ". static::class .". "
               );
         }
         
@@ -145,7 +145,7 @@ class Generic extends ArrayObject implements Mappable, Recordable, Relatable, Ge
               );
         }
         
-        self::$relationships[$from_table_name][$relationship_name] = $relationship;
+        static::$relationships[$from_table_name][$relationship_name] = $relationship;
         
         return $this;
     }
@@ -153,7 +153,7 @@ class Generic extends ArrayObject implements Mappable, Recordable, Relatable, Ge
     public function getRelationship( string $relationship_name ) : Relationship
     {
         #TODO: throw Exception instead of TypeError when not set?
-        return self::$relationships[$this->getTableName()][$relationship_name]; 
+        return static::$relationships[$this->getTableName()][$relationship_name]; 
     }
     
 
