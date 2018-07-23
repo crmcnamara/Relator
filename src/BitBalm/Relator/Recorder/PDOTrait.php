@@ -2,7 +2,7 @@
 
 namespace BitBalm\Relator\Recorder;
 
-#use PDO;
+use PDO;
 use Exception;
 use InvalidArgumentException;
 
@@ -14,7 +14,7 @@ use BitBalm\Relator\Recordable;
 use BitBalm\Relator\RecordSet;
 
 
-class PDO extends BaseMapper implements Recorder
+trait PDOTrait 
 {
     
     public function loadRecord( Recordable $record, $record_id ) : Recordable 
@@ -60,7 +60,7 @@ class PDO extends BaseMapper implements Recorder
             ." ) ";
         
         $statement = $this->pdo->prepare( $querystring );
-        $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute($values);
         $results = $statement->fetchAll();
@@ -109,7 +109,7 @@ class PDO extends BaseMapper implements Recorder
             ." ) ";
             
         $statement = $this->pdo->prepare( $querystring );
-        $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute(array_values( $values ));
         $inserted_id = $this->pdo->lastInsertId();
@@ -138,7 +138,7 @@ class PDO extends BaseMapper implements Recorder
             ." WHERE {$prikey} = ? ";
             
         $statement = $this->pdo->prepare( $querystring );
-        $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        $statement->setFetchMode(PDO::FETCH_ASSOC);
         $query_values = array_values( $values );
         $query_values[] = $update_id;
         
@@ -160,7 +160,7 @@ class PDO extends BaseMapper implements Recorder
         $querystring = "DELETE from {$table} WHERE {$prikey} = ? ";
             
         $statement = $this->pdo->prepare( $querystring );
-        $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute([ $update_id ]);
         $affected = $statement->rowCount();

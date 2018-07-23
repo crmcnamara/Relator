@@ -29,7 +29,6 @@ use BitBalm\Relator\RecordSet\GetsRelated;
  */
 class RelatingTest extends SqliteTestCase
 {
-    protected $relator;
     protected $generic_person;
     protected $generic_article;
     protected $custom_person;
@@ -38,18 +37,15 @@ class RelatingTest extends SqliteTestCase
     public function setUp()
     {
 
-        $pdo = $this->setUpSqlite();
-
-        $this->relator = new Relator\PDO( 
-            $pdo, 
-            new SchemaValidator( new SqliteSchema( $pdo, new ColumnFactory ) )
-          );
+        $pdo = $this->getPdo();
+        
+        $mapper = $this->getMapper();
 
         // configure two generic records for each entity type
         $this->generic_person   = (new Record\Generic( 'person', 'id' ))
-            ->setRelator($this->relator) ;
+            ->setMapper($mapper);
         $this->generic_article  = (new Record\Generic( 'article', 'id' ))
-            ->setRelator($this->relator) ;
+            ->setMapper($mapper);
 
         // and define the relationships between them
         $this->generic_person   ->addRelationship( 'id',        $this->generic_article, 'author_id',  'articles'  );
@@ -59,11 +55,11 @@ class RelatingTest extends SqliteTestCase
         // Now configure the same thing using anonymous classes that make use of Record/Trait
         $this->custom_person = (new class() implements Record { use RecordTrait; })
             ->setTableName('person')
-            ->setRelator($this->relator);
+            ->setMapper($mapper);
         
         $this->custom_article = (new class() implements Record { use RecordTrait; })
             ->setTableName('article')
-            ->setRelator($this->relator);
+            ->setMapper($mapper);
         
         $this->custom_person   ->addRelationship( 'id',        $this->custom_article, 'author_id',  'articles'  ) ;
         $this->custom_article  ->addRelationship( 'author_id', $this->custom_person,  'id',         'author'    ) ;

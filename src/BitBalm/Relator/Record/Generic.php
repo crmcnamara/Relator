@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use ArrayObject;
 
 use BitBalm\Relator\Mappable;
+use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Relatable\RelatableTrait;
@@ -22,7 +23,7 @@ use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
  *    to represent records from //any// table in the database schema. 
  * The table and its primary key must be provided as constructor arguments
  */
-class Generic extends ArrayObject implements Mappable, Recordable, Relatable, GetsRelatedRecords
+class Generic extends ArrayObject implements Record
 {
     use RecordTrait;
     

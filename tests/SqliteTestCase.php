@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 use Aura\SqlSchema\SqliteSchema;
 use Aura\SqlSchema\ColumnFactory;
 
+use BitBalm\Relator\Mapper;
+use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
@@ -27,10 +29,15 @@ use BitBalm\Relator\RecordSet\GetsRelated;
 class SqliteTestCase extends TestCase
 {
     protected $pdo;
+    protected $mapper;
+    protected $recorder;
+    protected $relator;
         
 
-    public function setUpSqlite() : PDO
+    public function getPdo() : PDO
     {
+        if ( $this->pdo ) { return $this->pdo; }
+        
         $this->pdo = new PDO( 'sqlite::memory:', null, null, [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, ] );
 
         $this->pdo->exec( "
@@ -51,8 +58,25 @@ class SqliteTestCase extends TestCase
     
     public function tearDown()
     {
-        unset( $this->pdo );
+        unset( $this->pdo, $this->mapper, $this->recorder, $this->relator );
         return parent::tearDown();
+    }
+    
+    public function getMapper() : Mapper
+    {
+        if ( $this->mapper ) { return $this->mapper ; }
+        
+        $pdo = $this->getPdo();
+        
+        $this->mapper = new Mapper\PDO( 
+            $pdo,
+            new SchemaValidator( new SqliteSchema( $pdo, new ColumnFactory ) )
+          );
+          
+        $this->recorder = $this->relator = $this->mapper;
+        
+        return $this->mapper;
+      
     }
 
 }

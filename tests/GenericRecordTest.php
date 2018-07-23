@@ -28,34 +28,23 @@ use BitBalm\Relator\RecordSet\GetsRelated;
  */
 class GenericRecordTest extends SqliteTestCase
 {
-    protected $recorder;
-    protected $relator;
     protected $generic_person;
     protected $generic_article;
 
 
     public function setUp()
     {
-
-        $pdo = $this->setUpSqlite();
+        $pdo = $this->getPdo();
         
-        $this->relator = new Relator\PDO( 
-            $this->pdo, 
-            new SchemaValidator( new SqliteSchema( $this->pdo, new ColumnFactory ) )
-          );
-          
-        $this->recorder = new Recorder\PDO( 
-            $this->pdo, 
-            new SchemaValidator( new SqliteSchema( $this->pdo, new ColumnFactory ) )
-          );
+        $mapper = $this->getMapper();
 
         // configure two generic records for each entity type
         $this->generic_person   = (new Record\Generic( 'person', 'id' ))
             ->setRecorder($this->recorder)
-            ->setRelator($this->relator);
+            ->setMapper($mapper);
         $this->generic_article  = (new Record\Generic( 'article', 'id' ))
             ->setRecorder($this->recorder)
-            ->setRelator($this->relator);
+            ->setMapper($mapper);
 
         // and define the relationships between them
         $this->generic_person   ->addRelationship( 'id',        $this->generic_article, 'author_id',  'articles'  );

@@ -1,19 +1,23 @@
 <?php
 
-namespace BitBalm\Relator\PDO;
+namespace BitBalm\Relator\Mapper;
 
-use PDO;
-use Exception;
-use InvalidArgumentException;
+#use PDO;
+
+use BitBalm\Relator\Mapper;
+use BitBalm\Relator\Recorder;
+use BitBalm\Relator\Relator;
 use BitBalm\Relator\PDO\SchemaValidator;
 
 
-/** This serves as the common basis for the Relator\PDO and Recorder\PDO implementations
- */
-abstract class BaseMapper
+class PDO implements Mapper
 {
+    use Recorder\PDOTrait, Relator\PDOTrait;
+    
+    
     protected $pdo ;
     protected $validator;    
+    
     
     public function __construct( \PDO $pdo, SchemaValidator $validator ) 
     {
@@ -25,5 +29,4 @@ abstract class BaseMapper
     {
         return $this->validator;
     }
-    
 }

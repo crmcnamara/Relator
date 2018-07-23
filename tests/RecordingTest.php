@@ -12,6 +12,7 @@ require_once __DIR__ .'/SqliteTestCase.php';
 use Aura\SqlSchema\SqliteSchema;
 use Aura\SqlSchema\ColumnFactory;
 
+use BitBalm\Relator\Mapper;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
@@ -26,7 +27,6 @@ use BitBalm\Relator\PDO\SchemaValidator;
  */
 class RecordingTest extends SqliteTestCase
 {
-    protected $recorder;
     protected $generic_person;
     protected $generic_article;
     protected $custom_person;
@@ -34,30 +34,26 @@ class RecordingTest extends SqliteTestCase
 
     public function setUp()
     {
-
-        $pdo = $this->setUpSqlite();
+        $pdo = $this->getPdo();
         
-        $this->recorder = new Recorder\PDO( 
-            $pdo, 
-            new SchemaValidator( new SqliteSchema( $pdo, new ColumnFactory ) )
-          );
-
+        $mapper = $this->getMapper();
+        
         // configure two generic records for each entity type
         $this->generic_person   = (new Record\Generic( 'person', 'id' ))
-            ->setRecorder($this->recorder);
+            ->setMapper($mapper);
         $this->generic_article  = (new Record\Generic( 'article', 'id' ))
-            ->setRecorder($this->recorder);
+            ->setMapper($mapper);
 
         // Now configure the same thing using anonymous classes that make use of Record/Trait
         $this->custom_person = (new class() implements Record { use RecordTrait; })
             ->setTableName('person')
             ->setPrimaryKeyName('id')
-            ->setRecorder($this->recorder);
+            ->setMapper($mapper);
         
         $this->custom_article = (new class() implements Record { use RecordTrait; })
             ->setTableName('article')
             ->setPrimaryKeyName('id')
-            ->setRecorder($this->recorder);
+            ->setMapper($mapper);
         
     }
     

@@ -4,7 +4,7 @@ namespace BitBalm\Relator\Relator;
 
 use Exception;
 use InvalidArgumentException;
-#use PDO;
+use PDO;
 use PDOStatement;
 
 use Aura\SqlSchema\SchemaInterface;
@@ -17,7 +17,7 @@ use BitBalm\Relator\Record;
 use BitBalm\Relator\Mappable;
 
 
-class PDO extends BaseMapper implements Relator
+trait PDOTrait 
 {
     
     public function getRelated( Relationship $relationship, RecordSet $recordset ) : RecordSet
@@ -63,7 +63,7 @@ class PDO extends BaseMapper implements Relator
             $statement->bindValue( $index+1, $value );
         }
 
-        $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         return $statement;
     }
