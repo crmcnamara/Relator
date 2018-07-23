@@ -39,12 +39,8 @@ class GenericRecordTest extends SqliteTestCase
         $mapper = $this->getMapper();
 
         // configure two generic records for each entity type
-        $this->generic_person   = (new Record\Generic( 'person' ))
-            ->setRecorder($this->recorder)
-            ->setMapper($mapper);
-        $this->generic_article  = (new Record\Generic( 'article' ))
-            ->setRecorder($this->recorder)
-            ->setMapper($mapper);
+        $this->generic_person   = (new Record\Generic( 'person'  ))->setMapper($mapper);
+        $this->generic_article  = (new Record\Generic( 'article' ))->setMapper($mapper);
 
         // and define the relationships between them
         $this->generic_person   ->addRelationship( 'id',        $this->generic_article, 'author_id',  'articles'  );

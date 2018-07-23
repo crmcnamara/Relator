@@ -39,10 +39,8 @@ class RecordingTest extends SqliteTestCase
         $mapper = $this->getMapper();
         
         // configure two generic records for each entity type
-        $this->generic_person   = (new Record\Generic( 'person' ))
-            ->setMapper($mapper);
-        $this->generic_article  = (new Record\Generic( 'article' ))
-            ->setMapper($mapper);
+        $this->generic_person   = (new Record\Generic( 'person'  ))->setMapper($mapper);
+        $this->generic_article  = (new Record\Generic( 'article' ))->setMapper($mapper);
 
         // Now configure the same thing using anonymous classes that make use of Record/Trait
         $this->custom_person = (new class() implements Record { use RecordTrait; })
