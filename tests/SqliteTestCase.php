@@ -70,7 +70,7 @@ class SqliteTestCase extends TestCase
         
         $this->mapper = new Mapper\PDO( 
             $pdo,
-            new SchemaValidator( new SqliteSchema( $pdo, new ColumnFactory ) )
+            new SchemaValidator\Aura( new SqliteSchema( $pdo, new ColumnFactory ) )
           );
           
         $this->recorder = $this->relator = $this->mapper;
