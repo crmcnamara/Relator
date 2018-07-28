@@ -10,6 +10,10 @@ use BitBalm\Relator\Relatable;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
+use BitBalm\Relator\AlreadySetException;
+
+
+class RelatorAlreadySet extends InvalidArgumentException implements AlreadySetException {}
 
 
 Trait RelatableTrait
@@ -20,7 +24,7 @@ Trait RelatableTrait
     public function setRelator( Relator $relator ) : Relatable
     {
         if ( self::$relator and self::$relator !== $relator ) {
-            throw new InvalidArgumentException("This record's Relator is already set. ");
+            throw new RelatorAlreadySet("This record's Relator is already set. ");
         }
         
         self::$relator = $relator;

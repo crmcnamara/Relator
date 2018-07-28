@@ -42,7 +42,7 @@ class Aura implements SchemaValidator
     public function validTable( string $table ) : string
     {
         if ( ! $this->isValidTable( $table ) ) {
-            throw new InvalidArgumentException("Table '{$table}' does not exist in the database. ");
+            throw new InvalidTable("Table '{$table}' does not exist in the database. ");
         }
         return $table;
     }
@@ -55,7 +55,7 @@ class Aura implements SchemaValidator
     public function validColumn( string $table, string $column ) : string
     {
         if ( ! $this->isValidColumn( $table, $column ) ) {
-            throw new InvalidArgumentException("Column '{$column}' does not exist in the database table '{$table}' . ");
+            throw new InvalidColumn("Column '{$column}' does not exist in the database table '{$table}' . ");
         }
         return $column;
     }
@@ -68,7 +68,7 @@ class Aura implements SchemaValidator
             if ( !empty($column->primary) ) { return $column->name; }
         }
 
-        throw new InvalidArgumentException("No primary key found for table {$table}. ");
+        throw new PrimaryKeyNotFound("No primary key found for table {$table}. ");
     }
     
 }

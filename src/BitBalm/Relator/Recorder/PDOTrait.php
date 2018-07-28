@@ -5,6 +5,8 @@ namespace BitBalm\Relator\Recorder;
 use PDO;
 use Exception;
 use InvalidArgumentException;
+use RuntimeException;
+
 
 use Aura\SqlSchema\SchemaInterface;
 
@@ -12,6 +14,11 @@ use BitBalm\Relator\PDO\BaseMapper;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\RecordSet;
+
+
+class TooManyRecords extends RuntimeException {}
+
+class RecordNotFound extends InvalidArgumentException {}
 
 
 trait PDOTrait 
@@ -23,13 +30,13 @@ trait PDOTrait
             ->asArrays();
         
         if ( count($results) >1 ) { 
-            throw new Exception( 
+            throw new TooManyRecords( 
                 "Multiple {$record->getTableName()} records loaded for {$record->getPrimaryKeyName()}: {$record_id} " 
               ) ; 
         }
         
         if ( count($results) <1 ) { 
-            throw new InvalidArgumentException( 
+            throw new RecordNotFound( 
                 "No {$record->getTableName()} records found for {$record->getPrimaryKeyName()}: {$record_id} " 
               ) ; 
         }

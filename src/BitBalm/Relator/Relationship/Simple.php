@@ -20,7 +20,7 @@ class Simple implements Relationship
     {
         foreach ( [ 'fromTable', 'fromColumn', 'toTable', 'toColumn', ] as $var ) {
             if ( empty( $$var ) ) {
-                throw new InvalidArgumentExcpetion( "Invalid argument for $var" );
+                throw new InvalidArgumentException( "Invalid argument for $var" );
             }
             $this->$var = $$var ;
         }

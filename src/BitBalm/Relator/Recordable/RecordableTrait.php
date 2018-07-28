@@ -10,6 +10,10 @@ use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\AlreadySetException;
+
+
+class RecorderAlreadySet extends InvalidArgumentException implements AlreadySetException {}
 
 
 Trait RecordableTrait
@@ -23,7 +27,7 @@ Trait RecordableTrait
     public function setRecorder( Recorder $recorder ) : Recordable
     {
         if ( self::$recorder and self::$recorder !== $recorder ) {
-            throw new InvalidArgumentException("This record's Recorder is already set. ");
+            throw new RecorderAlreadySet("This record's Recorder is already set. ");
         }
         
         self::$recorder = $recorder;

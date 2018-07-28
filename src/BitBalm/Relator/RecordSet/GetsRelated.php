@@ -2,6 +2,10 @@
 
 namespace BitBalm\Relator\RecordSet;
 
+use ArrayObject;
+use InvalidArgumentException;
+use RuntimeException;
+
 use BitBalm\Relator\Mappable;
 use BitBalm\Relator\Relatable as RelatableRecord;
 use BitBalm\Relator\RecordSet;
@@ -9,9 +13,10 @@ use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
+use BitBalm\Relator\NotYetSetException;
 
-use ArrayObject;
-use InvalidArgumentException;
+
+class RecordNotYetSet extends RuntimeException implements NotYetSetException {}
 
 
 class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRecords
@@ -32,7 +37,7 @@ class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRe
     protected function getRecord() : RelatableRecord
     {
         if ( empty($this->record) ) { 
-            throw new Exception("This RecordSet's Record type is not yet set. ");
+            throw new RecordNotYetSet("This RecordSet's Record type is not yet set. ");
         }
         return $this->record;
     }

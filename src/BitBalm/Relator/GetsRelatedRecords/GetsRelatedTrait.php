@@ -11,13 +11,22 @@ use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\RecordSet\GetsRelated;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
+use BitBalm\Relator\AlreadySetException;
+use BitBalm\Relator\NotYetSetException;
+
+
+class RelationshipAlreadySet extends InvalidArgumentException implements AlreadySetException {}
+
+class InvalidRelationship extends InvalidArgumentException {}
+
+class RelationshipNotYetSet extends InvalidArgumentException implements NotYetSetException {}
 
 
 Trait GetsRelatedTrait 
 {
     protected static $relationships;
-        
-        
+    
+    
     public function getRelated( string $relationship_name ) : RecordSet
     {
         $relationship = $this->getRelationship( $relationship_name );
@@ -63,13 +72,13 @@ Trait GetsRelatedTrait
         }
         
         if ( ! ( $relationship->getFromTable() instanceof $this ) ) {
-            throw new InvalidArgumentException(
+            throw new InvalidRelationship(
                 "The given Relationship's from table must be an instance of ". self::class .". "
               );
         }
         
         if ( $from_table_name !== $this->getTableName() ) {
-            throw new InvalidArgumentException(
+            throw new RelationshipAlreadySet(
                 "The given Relationship's from table must have a table name of {$from_table_name}. "
               );
         }
@@ -84,7 +93,7 @@ Trait GetsRelatedTrait
         if ( isset(self::$relationships[$relationship_name]) ) { 
             return self::$relationships[$relationship_name]; 
         }
-        throw new Exception("A relationship to {$relationship_name} is not set. ");
+        throw new RelationshipNotYetSet("A relationship to {$relationship_name} is not set. ");
     }
     
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet

@@ -12,6 +12,9 @@ use ArrayObject;
 use InvalidArgumentException;
 
 
+class InvalidRecord extends InvalidArgumentException {}
+
+
 class Mappable extends ArrayObject implements RecordSet 
 {
     protected $record ;
@@ -30,7 +33,7 @@ class Mappable extends ArrayObject implements RecordSet
             
         } else {
             if ( ! $record instanceof $this->record ) {
-                throw new InvalidArgumentException( 
+                throw new InvalidRecord( 
                     'Passed record of class '. get_class($record)
                     .' must be an instance of class '. get_class($this->record) .'. '
                   );

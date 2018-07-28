@@ -3,6 +3,13 @@
 namespace BitBalm\Relator\PDO;
 
 
+interface InvalidTable {}
+
+interface InvalidColumn {}
+
+interface PrimaryKeyNotFound {}
+
+
 interface SchemaValidator
 {
     public function isValidTable( string $table ) : bool ;

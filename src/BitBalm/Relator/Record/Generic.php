@@ -19,8 +19,9 @@ use BitBalm\Relator\Relationship;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
+
 /* The Generic Record is a single class that can be used 
- *    to represent records from //any// table in the database schema. 
+ *    to represent records from //every// table in the database schema. 
  * The table and its primary key must be provided as constructor arguments
  */
 class Generic extends ArrayObject implements Record
@@ -44,7 +45,7 @@ class Generic extends ArrayObject implements Record
     public function setTableName( string $table_name ) : Generic
     {
         if ( $this->generic_table_name and $this->generic_table_name !== $table_name ) {
-            throw InvalidArgumentException('A table name for this record is already set. ');
+            throw Mappable\TableNameAlreadySet('A table name for this record is already set. ');
         }
         
         $this->generic_table_name = $table_name ;
@@ -63,7 +64,7 @@ class Generic extends ArrayObject implements Record
         $table = $this->getTableName();
         
         if ( !empty(self::$recorders[$table]) and self::$recorders[$table] !== $recorder ) {
-            throw new InvalidArgumentException("This record's Recorder is already set. ");
+            throw new Recordable\RecorderAlreadySet("This record's Recorder is already set. ");
         }
         
         self::$recorders[$table] = $recorder;
@@ -82,7 +83,7 @@ class Generic extends ArrayObject implements Record
         $table = $this->getTableName();
         
         if ( !empty(self::$relators[$table]) and self::$relators[$table] !== $relator ) {
-            throw new InvalidArgumentException("This record's Relator is already set. ");
+            throw new Relatable\RelatorAlreadySet("This record's Relator is already set. ");
         }
         
         self::$relators[$table] = $relator;
@@ -110,19 +111,19 @@ class Generic extends ArrayObject implements Record
         if ( $relationship === $existing ) { return $this ; }
         
         if ( $existing instanceof Relationship ) {
-            throw new InvalidArgumentException(
+            throw new GetsRelatedRecords\RelationshipAlreadySet(
                 "A relationship to {$relationship_name} is already set. "
               );
         }
         
         if ( ! ( $relationship->getFromTable() instanceof $this ) ) {
-            throw new InvalidArgumentException(
+            throw new GetsRelatedRecords\InvalidRelationship(
                 "The given Relationship's from table must be an instance of ". static::class .". "
               );
         }
         
         if ( $from_table_name !== $relationship->getFromTable()->getTableName() ) {
-            throw new InvalidArgumentException(
+            throw new GetsRelatedRecords\InvalidRelationship(
                 "The given Relationship's from table must have a table name of {$from_table_name}. "
               );
         }

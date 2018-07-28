@@ -14,6 +14,7 @@ use Aura\SqlSchema\ColumnFactory;
 
 use BitBalm\Relator\Mapper;
 use BitBalm\Relator\Recorder;
+use BitBalm\Relator\Recorder\RecordNotFound;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Mappable\MappableTrait;
@@ -130,7 +131,7 @@ class RecordingTest extends SqliteTestCase
         foreach ( [ 1, 2, 3, 4, ] as $idx ) {
             try { 
                 $articles[$idx] = $this->$article_varname->newRecord()->loadRecord($idx)->asArray();
-            } catch ( InvalidArgumentException $e ) {
+            } catch ( RecordNotFound $e ) {
                 $articles[$idx] = [ 'Exception' => [ 'message' => $e->getMessage() ] ];
             }
         }
@@ -187,7 +188,7 @@ class RecordingTest extends SqliteTestCase
         foreach ( [ 3, 4, 5, 6, 7, ] as $idx ) {
             try { 
                 $articles[$idx] = $this->$article_varname->newRecord()->loadRecord($idx)->asArray();
-            } catch ( InvalidArgumentException $e ) {
+            } catch ( RecordNotFound $e ) {
                 $articles[$idx] = [ 'Exception' => [ 'message' => $e->getMessage() ] ];
             }
         }
@@ -250,18 +251,10 @@ class RecordingTest extends SqliteTestCase
           
         $article->deleteRecord(); $article->deleteRecord();
         
-        $e = null;
-        try {
-            $deleted_article = $this->$article_varname->newRecord()->loadRecord(2);
-            
-        } catch ( InvalidArgumentException $e ) {}
+        $this->expectException(RecordNotFound::class);
         
-        $this->assertNotEmpty( $e, 
-            "After deleting article #2 and attempting to reload it, "
-            ."an exception indicating its absence was not thrown. "
-          );
-
-          
+        $deleted_article = $this->$article_varname->newRecord()->loadRecord(2);
+        
     }
     
     

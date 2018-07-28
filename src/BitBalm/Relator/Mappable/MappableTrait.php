@@ -8,6 +8,11 @@ use InvalidArgumentException;
 
 use BitBalm\Relator\Mappable;
 use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\AlreadySetException;
+
+
+class TableNameAlreadySet extends InvalidArgumentException implements AlreadySetException {}
+
 
 Trait MappableTrait 
 {
@@ -43,7 +48,7 @@ Trait MappableTrait
         if ( $existing_name === $table_name ) { return $this; }
         
         if ( !is_null($existing_name) )  {
-            throw new InvalidArgumentException(
+            throw new TableNameAlreadySet(
                 "The table name for this object is already set to: {$existing_name}. "
               );
         }
