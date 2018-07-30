@@ -24,17 +24,17 @@ class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRe
     use GetsRelatedTrait;
 
 
-    protected function validRecord( Mappable $record ) : Mappable
+    protected function validRecord( Mappable $record ) /*: Mappable*/
     {
         return parent::validRecord($this->validRelatable($record));
     }
     
-    protected function validRelatable( RelatableRecord $record ) : RelatableRecord 
+    protected function validRelatable( RelatableRecord $record ) /*: RelatableRecord*/ 
     {
         return $record;
     }
     
-    protected function getRecord() : RelatableRecord
+    protected function getRecord() /*: RelatableRecord*/
     {
         if ( empty($this->record) ) { 
             throw new RecordNotYetSet("This RecordSet's Record type is not yet set. ");
@@ -42,22 +42,22 @@ class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRe
         return $this->record;
     }
     
-    public function getTableName() : string
+    public function getTableName() /*: string*/
     {
         return $this->getRecord()->getTableName() ; 
     }
     
-    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : GetsRelatedRecords 
+    public function setRelationship( Relationship $relationship, /*string*/ $relationship_name = null ) /*: GetsRelatedRecords*/ 
     {
         return $this->getRecord()->setRelationship( $relationship, $relationship_name );
     }
     
-    public function getRelationship( string $relationship_name ) : Relationship
+    public function getRelationship( /*string*/ $relationship_name ) /*: Relationship*/
     {
         return $this->getRecord()->getRelationship($relationship_name);
     }
     
-    public function asRecordSet() : RecordSet
+    public function asRecordSet() /*: RecordSet*/
     {
         return $this ;
     }

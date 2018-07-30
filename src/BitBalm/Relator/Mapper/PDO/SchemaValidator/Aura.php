@@ -36,12 +36,12 @@ class Aura implements SchemaValidator
         }
     }
     
-    public function isValidTable( string $table ) : bool
+    public function isValidTable( /*string*/ $table ) /*: bool*/
     {
         return in_array( $table, array_keys($this->columns), true ) ;
     }
     
-    public function validTable( string $table ) : string
+    public function validTable( /*string*/ $table ) /*: string*/
     {
         if ( ! $this->isValidTable( $table ) ) {
             throw new InvalidTable("Table '{$table}' does not exist in the database. ");
@@ -49,26 +49,27 @@ class Aura implements SchemaValidator
         return $table;
     }
     
-    public function isValidColumn( string $table, string $column ) : bool
+    public function isValidColumn( /*string*/ $table, /*string*/ $column ) /*: bool*/
     {
         return in_array( $column, $this->column_names[$table], true ) ;
     }
     
-    public function validColumn( string $table, string $column ) : string
+    public function validColumn( /*string*/ $table, /*string*/ $column ) /*: string*/
     {
+
         if ( ! $this->isValidColumn( $table, $column ) ) {
             throw new InvalidColumn("Column '{$column}' does not exist in the database table '{$table}' . ");
         }
         return $column;
     }
     
-    public function isPrimaryKey( string $column, string $table ) : bool 
+    public function isPrimaryKey( /*string*/ $column, /*string*/ $table ) /*: bool*/ 
     {
         $column = $this->validColumn( $this->validTable($table), $column );
         return !empty($this->columns[$table][$column]->primary);
     }
     
-    public function getPrimaryKeyName( string $table ) : string
+    public function getPrimaryKeyName( /*string*/ $table ) /*: string*/
     {
         $table = $this->validTable($table);
         

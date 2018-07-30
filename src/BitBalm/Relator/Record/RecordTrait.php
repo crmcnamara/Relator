@@ -20,7 +20,7 @@ Trait RecordTrait
         GetsRelatedTrait::asRecordSet insteadof MappableTrait;
     }
     
-    public function setMapper( Mapper $mapper ) : Record
+    public function setMapper( Mapper $mapper ) /*: Record*/
     {
         $this->setRelator($mapper);
         $this->setRecorder($mapper);

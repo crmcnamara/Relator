@@ -20,7 +20,7 @@ use BitBalm\Relator\Mappable;
 trait PDOTrait 
 {
     
-    public function getRelated( GetsRelatedRecords $related_from, Relationship $relationship  ) : RecordSet
+    public function getRelated( GetsRelatedRecords $related_from, Relationship $relationship  ) /*: RecordSet*/
     {
         $statement = $this->getRelatedStatement( $related_from, $relationship );
         $statement->execute();
@@ -40,7 +40,7 @@ trait PDOTrait
         
     }
     
-    public function getRelatedStatement( GetsRelatedRecords $related_from, Relationship $relationship ) : PDOStatement
+    public function getRelatedStatement( GetsRelatedRecords $related_from, Relationship $relationship ) /*: PDOStatement*/
     {
         $to_table  = $relationship->getToTable();
         $to_table_name = $this->getValidator()->validTable($to_table->getTableName());

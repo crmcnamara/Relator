@@ -26,7 +26,7 @@ class Mappable extends ArrayObject implements RecordSet
         
     }
 
-    protected function validRecord( MappableRecord $record ) : MappableRecord
+    protected function validRecord( MappableRecord $record ) /*: MappableRecord*/
     {
         if ( ! isset( $this->record ) ) {
             $this->record = $record;
@@ -48,7 +48,7 @@ class Mappable extends ArrayObject implements RecordSet
         parent::offsetSet( $key, $this->validRecord($value) );
     }
     
-    public function asArrays() : array 
+    public function asArrays() /*: array*/ 
     {
         return array_map( function($record) { return $record->asArray(); }, (array) $this );
     }

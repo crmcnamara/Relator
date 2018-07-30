@@ -84,7 +84,7 @@ class RecordingTest extends SqliteTestCase
     /** 
      * @dataProvider articles
      */
-    public function testLoadArticle( string $article_varname ) 
+    public function testLoadArticle( /*string*/ $article_varname ) 
     {
         $articles = [
             $this->$article_varname->newRecord()->loadRecord(2)->asArray(),
@@ -105,7 +105,7 @@ class RecordingTest extends SqliteTestCase
     /** 
      * @dataProvider articles
      */
-    public function testLoadArticles( string $article_varname ) 
+    public function testLoadArticles( /*string*/ $article_varname ) 
     {
         $articles = $this->$article_varname->newRecord()->loadRecords([ 2, 3, 4, ])->asArrays();
         
@@ -123,7 +123,7 @@ class RecordingTest extends SqliteTestCase
     /**
      * @dataProvider articles
      */
-    public function testUpdateArticles( string $article_varname ) 
+    public function testUpdateArticles( /*string*/ $article_varname ) 
     {
         $article = $this->$article_varname->newRecord()->loadRecord(2);
         
@@ -182,7 +182,7 @@ class RecordingTest extends SqliteTestCase
     /**
      * @dataProvider articles
      */
-    public function testInsertArticle( string $article_varname )
+    public function testInsertArticle( /*string*/ $article_varname )
     {
         $article_with_id = $this->$article_varname->newRecord()->setValues([ 
             'id' => '5', 'title' => 'I Forget', 'author_id' => '3',
@@ -247,7 +247,7 @@ class RecordingTest extends SqliteTestCase
     /**
      * @dataProvider articles
      */
-    public function testDeleteArticle( string $article_varname )
+    public function testDeleteArticle( /*string*/ $article_varname )
     {
         $article = $this->$article_varname->newRecord()->loadRecord(2);
         
@@ -291,7 +291,7 @@ class RecordingTest extends SqliteTestCase
     /**
      * @dataProvider articlesAndMethods
      */
-    public function testRejectsMissingTable( string $article_varname, string $method ) 
+    public function testRejectsMissingTable( /*string*/ $article_varname, /*string*/ $method ) 
     {
         $this->pdo->exec( "DROP table article ; ");
         $this->$article_varname->getRecorder()->getValidator()->refreshSchema();

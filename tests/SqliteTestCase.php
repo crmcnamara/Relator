@@ -34,7 +34,7 @@ class SqliteTestCase extends TestCase
     protected $relator;
         
 
-    public function getPdo() : PDO
+    public function getPdo() /*: PDO*/
     {
         if ( $this->pdo ) { return $this->pdo; }
         
@@ -62,7 +62,7 @@ class SqliteTestCase extends TestCase
         return parent::tearDown();
     }
     
-    public function getMapper() : Mapper
+    public function getMapper() /*: Mapper*/
     {
         if ( $this->mapper ) { return $this->mapper ; }
         

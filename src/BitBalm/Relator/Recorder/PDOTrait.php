@@ -23,7 +23,7 @@ class RecordNotFound extends InvalidArgumentException {}
 trait PDOTrait 
 {
     
-    public function loadRecord( Recordable $record, $record_id ) : Recordable 
+    public function loadRecord( Recordable $record, $record_id ) /*: Recordable*/ 
     {
         $results = $this->loadRecordsByColumnValues( $record, $record->getPrimaryKeyName(), [ $record_id ] )
             ->asArrays();
@@ -50,12 +50,12 @@ trait PDOTrait
         return $record;
     }
     
-    public function loadRecords( Recordable $record, array $record_ids ) : RecordSet 
+    public function loadRecords( Recordable $record, array $record_ids ) /*: RecordSet*/ 
     {
         return $this->loadRecordsByColumnValues( $record, $record->getPrimaryKeyName(), $record_ids );
     }
     
-    public function loadRecordsByColumnValues( Recordable $record, string $column, array $values ) : RecordSet 
+    public function loadRecordsByColumnValues( Recordable $record, /*string*/ $column, array $values ) /*: RecordSet*/ 
     {
         $table  = $this->getValidator()->validTable($record->getTableName());
         $column = $this->getValidator()->validColumn( $table, $column );
@@ -86,7 +86,7 @@ trait PDOTrait
         return $recordset;
     }
     
-    public function saveRecord( Recordable $record ) : Recordable 
+    public function saveRecord( Recordable $record ) /*: Recordable*/
     {
         if ( ! is_null($record->getUpdateId()) ) {
             $this->updateRecord($record);
@@ -100,7 +100,7 @@ trait PDOTrait
         return $record;
     }
     
-    protected function insertRecord( Recordable $record ) : Recordable
+    protected function insertRecord( Recordable $record ) /*: Recordable*/
     {
         
         $table = $this->getValidator()->validTable($record->getTableName());
@@ -125,7 +125,7 @@ trait PDOTrait
         return $record;
     }
     
-    protected function updateRecord( Recordable $record ) : Recordable
+    protected function updateRecord( Recordable $record ) /*: Recordable*/
     {
         $table = $this->getValidator()->validTable($record->getTableName());
         $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
@@ -174,7 +174,7 @@ trait PDOTrait
         return $affected;
     }
     
-    public function getPrimaryKeyName( string $table_name ) : string 
+    public function getPrimaryKeyName( /*string*/ $table_name ) /*: string*/ 
     {
         return $this->getValidator()->getPrimaryKeyName($table_name);
     }

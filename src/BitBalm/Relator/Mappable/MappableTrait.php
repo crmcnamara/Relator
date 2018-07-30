@@ -20,28 +20,28 @@ Trait MappableTrait
     
     protected $record_values = [];
     
-    public function asArray() : array
+    public function asArray() /*: array*/
     {
         return $this->record_values;
     }
     
-    public function setValues( array $values ) : Mappable 
+    public function setValues( array $values ) /*: Mappable*/ 
     {
         $this->record_values = array_replace( (array) $this->record_values, $values ) ;
         return $this;
     }
     
-    public function newRecord() : Mappable
+    public function newRecord() /*: Mappable*/
     {
         return new static;
     }
     
-    public function asRecordSet( RecordSet $recordset = null ) : RecordSet
+    public function asRecordSet( RecordSet $recordset = null ) /*: RecordSet*/
     {
         return $recordset ? new $recordset([ $this ]) : new RecordSet\Simple([ $this ]);
     }
     
-    public function setTableName( string $table_name ) : Mappable
+    public function setTableName( /*string*/ $table_name ) /*: Mappable*/
     {
         $existing_name = static::$table_name;
         
@@ -59,7 +59,7 @@ Trait MappableTrait
         
     }
     
-    public function getTableName() : string
+    public function getTableName() /*: string*/
     {
         #TODO: throw Exception instead of TypeError when not set?
         return static::$table_name;

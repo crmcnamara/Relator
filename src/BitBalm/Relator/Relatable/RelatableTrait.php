@@ -21,7 +21,7 @@ Trait RelatableTrait
     protected static $relator ;
     
     
-    public function setRelator( Relator $relator ) : Relatable
+    public function setRelator( Relator $relator ) /*: Relatable*/
     {
         if ( self::$relator and self::$relator !== $relator ) {
             throw new RelatorAlreadySet("This record's Relator is already set. ");
@@ -32,7 +32,7 @@ Trait RelatableTrait
         return $this;
     }
     
-    public function getRelator() : Relator 
+    public function getRelator() /*: Relator*/ 
     {
         #TODO: throw Exception instead of TypeError when not set?
         return static::$relator;

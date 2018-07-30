@@ -24,7 +24,7 @@ Trait RecordableTrait
     protected $recorder_update_id;
     
     
-    public function setRecorder( Recorder $recorder ) : Recordable
+    public function setRecorder( Recorder $recorder ) /*: Recordable*/
     {
         if ( self::$recorder and self::$recorder !== $recorder ) {
             throw new RecorderAlreadySet("This record's Recorder is already set. ");
@@ -35,24 +35,24 @@ Trait RecordableTrait
         return $this;
     }
     
-    public function getRecorder() : Recorder 
+    public function getRecorder() /*: Recorder*/ 
     {
         #TODO: throw Exception instead of TypeError when not set?
         return self::$recorder;
     }
     
     
-    public function loadRecord( $record_id ) : Recordable 
+    public function loadRecord( $record_id ) /*: Recordable*/ 
     {
         return $this->getRecorder()->loadRecord( $this, $record_id );
     }
 
-    public function loadRecords( array $record_ids ) : RecordSet 
+    public function loadRecords( array $record_ids ) /*: RecordSet*/ 
     {
         return $this->getRecorder()->loadRecords( $this, $record_ids );
     }
     
-    public function saveRecord() : Recordable 
+    public function saveRecord() /*: Recordable*/ 
     {
         return $this->getRecorder()->saveRecord($this);
     }
@@ -63,7 +63,7 @@ Trait RecordableTrait
     }
     
     
-    public function setUpdateId( $id ) : Recordable
+    public function setUpdateId( $id ) /*: Recordable*/
     {
         $this->recorder_update_id = $id ;
         return $this;
@@ -74,7 +74,7 @@ Trait RecordableTrait
         return $this->recorder_update_id ;
     }
     
-    public function getPrimaryKeyName() : string
+    public function getPrimaryKeyName() /*: string*/
     {
         return $this->getRecorder()->getPrimaryKeyName( $this->getTableName() );
     }

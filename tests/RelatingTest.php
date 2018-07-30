@@ -92,7 +92,7 @@ class RelatingTest extends SqliteTestCase
     /** Tests getting articles authored by a person ( one person to many articles )
      * @dataProvider people
      */
-    public function testRelatePersonToArticles( string $person_varname ) 
+    public function testRelatePersonToArticles( /*string*/ $person_varname ) 
     {
         
         $person = $this->$person_varname->newRecord()->setValues(['id'=>2,'name'=>'Dave',]);
@@ -121,7 +121,7 @@ class RelatingTest extends SqliteTestCase
     /** Tests getting the person who authored an article ( one article to one person )
      * @dataProvider articles
      */
-    public function testRelateArticleToAuthor( string $article_varname ) 
+    public function testRelateArticleToAuthor( /*string*/ $article_varname ) 
     {
       
         $article = $this->$article_varname->newRecord()->setValues(['id'=>3,'title'=>'Counterpoint','author_id' => 2]);
@@ -139,7 +139,7 @@ class RelatingTest extends SqliteTestCase
     /** Tests getting articles authored by a person ( one person to many articles )
      * @dataProvider people
      */
-    public function testRelateAuthorsToArticles( string $person_varname ) 
+    public function testRelateAuthorsToArticles( /*string*/ $person_varname ) 
     {
         $authors = new RecordSet\GetsRelated([
             $this->$person_varname->newRecord()->setValues(['id'=>1,'name'=>'Joe',]),

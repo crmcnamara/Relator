@@ -35,14 +35,14 @@ class Generic extends ArrayObject implements Record
     protected static $relators;
     
     
-    public function __construct( string $table_name )
+    public function __construct( /*string*/ $table_name )
     {
         parent::__construct( [], ArrayObject::ARRAY_AS_PROPS );
         
         $this->setTableName( $table_name ) ;
     }
 
-    public function setTableName( string $table_name ) : Generic
+    public function setTableName( /*string*/ $table_name ) /*: Generic*/
     {
         if ( $this->generic_table_name and $this->generic_table_name !== $table_name ) {
             throw Mappable\TableNameAlreadySet('A table name for this record is already set. ');
@@ -53,13 +53,13 @@ class Generic extends ArrayObject implements Record
         return $this ;
     }
     
-    public function getTableName() : string
+    public function getTableName() /*: string*/
     {
         #TODO: throw Exception instead of TypeError when not set?
         return $this->generic_table_name ;
     }
     
-    public function setRecorder( Recorder $recorder ) : Recordable
+    public function setRecorder( Recorder $recorder ) /*: Recordable*/
     {
         $table = $this->getTableName();
         
@@ -72,13 +72,13 @@ class Generic extends ArrayObject implements Record
         return $this;
     }
     
-    public function getRecorder() : Recorder 
+    public function getRecorder() /*: Recorder*/ 
     {
         #TODO: throw Exception instead of TypeError when not set?
         return self::$recorders[$this->getTableName()];
     }
     
-    public function setRelator( Relator $relator ) : Relatable
+    public function setRelator( Relator $relator ) /*: Relatable*/
     {
         $table = $this->getTableName();
         
@@ -91,14 +91,14 @@ class Generic extends ArrayObject implements Record
         return $this;
     }
     
-    public function getRelator() : Relator 
+    public function getRelator() /*: Relator*/ 
     {
         #TODO: throw Exception instead of TypeError when not set?
         return static::$relators[$this->getTableName()];
     }
     
     
-    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : GetsRelatedRecords
+    public function setRelationship( Relationship $relationship, /*string*/ $relationship_name = null ) /*: GetsRelatedRecords*/
     {
         
         if ( empty($relationship_name) ) { $relationship_name = $relationship->getToTable()->getTableName(); }
@@ -133,24 +133,24 @@ class Generic extends ArrayObject implements Record
         return $this;
     }
     
-    public function getRelationship( string $relationship_name ) : Relationship
+    public function getRelationship( /*string*/ $relationship_name ) /*: Relationship*/
     {
         #TODO: throw Exception instead of TypeError when not set?
         return static::$relationships[$this->getTableName()][$relationship_name]; 
     }
     
 
-    public function newRecord() : Mappable 
+    public function newRecord() /*: Mappable*/ 
     {
         return new static( $this->getTableName(), $this->getPrimaryKeyName() );
     }
     
-    public function asArray() : array
+    public function asArray() /*: array*/
     {
         return $this->getArrayCopy();
     }
     
-    public function setValues( array $values ) : Mappable 
+    public function setValues( array $values ) /*: Mappable*/ 
     {
         $this->exchangeArray(array_replace( (array) $this->getArrayCopy(), $values )) ;
         return $this;

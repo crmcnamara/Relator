@@ -27,7 +27,7 @@ Trait GetsRelatedTrait
     protected static $relationships;
     
     
-    public function getRelated( string $relationship_name ) : RecordSet
+    public function getRelated( /*string*/ $relationship_name ) /*: RecordSet*/
     {
         $relationship = $this->getRelationship( $relationship_name );
         
@@ -39,11 +39,11 @@ Trait GetsRelatedTrait
     
     /* A convenience method not strictly required by GetsRelatedRecords */
     public function addRelationship( 
-        string    $fromColumn, 
+        /*string*/    $fromColumn, 
         Mappable  $toTable, 
-        string    $toColumn, 
-        string    $relationship_name = null 
-      ) : GetsRelatedRecords
+        /*string*/    $toColumn, 
+        /*string*/    $relationship_name = null 
+      ) /*: GetsRelatedRecords*/
     {
         $this->setRelationship( 
             new Relationship\Simple( $this, $fromColumn, $toTable, $toColumn ),
@@ -53,7 +53,7 @@ Trait GetsRelatedTrait
         return $this ;
     }
     
-    public function setRelationship( Relationship $relationship, string $relationship_name = null ) : GetsRelatedRecords
+    public function setRelationship( Relationship $relationship, /*string*/ $relationship_name = null ) /*: GetsRelatedRecords*/
     {
         
         if ( empty($relationship_name) ) { $relationship_name = $relationship->getToTable()->getTableName(); }
@@ -88,7 +88,7 @@ Trait GetsRelatedTrait
         return $this;
     }
     
-    public function getRelationship( string $relationship_name ) : Relationship
+    public function getRelationship( /*string*/ $relationship_name ) /*: Relationship*/
     {
         if ( isset(self::$relationships[$relationship_name]) ) { 
             return self::$relationships[$relationship_name]; 
@@ -96,7 +96,7 @@ Trait GetsRelatedTrait
         throw new RelationshipNotYetSet("A relationship to {$relationship_name} is not set. ");
     }
     
-    public function asRecordSet( RecordSet $recordset = null ) : RecordSet
+    public function asRecordSet( RecordSet $recordset = null ) /*: RecordSet*/
     {
         return $recordset ? new $recordset([ $this ]) : new RecordSet\GetsRelated([ $this ]);
     }
