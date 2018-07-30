@@ -60,6 +60,12 @@ class Aura implements SchemaValidator
         return $column;
     }
     
+    public function isPrimaryKey( string $column, string $table ) : bool 
+    {
+        $column = $this->validColumn( $this->validTable($table), $column );
+        return !empty($this->columns[$table][$column]->primary);
+    }
+    
     public function getPrimaryKeyName( string $table ) : string
     {
         $table = $this->validTable($table);
