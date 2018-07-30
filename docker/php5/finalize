@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -ex
+
+: "running $0"
+
+[ "$container" = 'docker' ] || 
+    ( ! : "We do not appear to be in a docker container. Aborting. " )
+    
+composer update 
+composer install 
+
+: "$0 complete"
+

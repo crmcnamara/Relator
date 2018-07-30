@@ -1,0 +1,12 @@
+#!/bin/bash
+set -ex
+
+: "running $0"
+
+# if the source tree is a mountpoint, we're probably in development mode,
+#   and should re-run the build finalization script in case the source has been updated.
+if mountpoint /srv/src ; then 
+    /srv/src/docker/php5/finalize
+fi
+
+exec /bin/bash "$@"
