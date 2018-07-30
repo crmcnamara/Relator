@@ -10,7 +10,6 @@ use RuntimeException;
 
 use Aura\SqlSchema\SchemaInterface;
 
-use BitBalm\Relator\PDO\BaseMapper;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\RecordSet;

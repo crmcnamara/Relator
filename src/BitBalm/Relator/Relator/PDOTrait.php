@@ -9,7 +9,6 @@ use PDOStatement;
 
 use Aura\SqlSchema\SchemaInterface;
 
-use BitBalm\Relator\PDO\BaseMapper;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\RecordSet;

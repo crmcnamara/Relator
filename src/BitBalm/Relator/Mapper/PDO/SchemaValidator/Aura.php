@@ -1,6 +1,6 @@
 <?php
 
-namespace BitBalm\Relator\PDO\SchemaValidator;
+namespace BitBalm\Relator\Mapper\PDO\SchemaValidator;
 
 use PDO;
 use Exception;
@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 use Aura\SqlSchema\SchemaInterface;
 
-use BitBalm\Relator\PDO\SchemaValidator;
+use BitBalm\Relator\Mapper\PDO\SchemaValidator;
 
 
 class Aura implements SchemaValidator

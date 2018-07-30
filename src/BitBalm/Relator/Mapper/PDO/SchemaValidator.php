@@ -1,6 +1,6 @@
 <?php
 
-namespace BitBalm\Relator\PDO;
+namespace BitBalm\Relator\Mapper\PDO;
 
 
 interface InvalidTable {}
@@ -21,4 +21,5 @@ interface SchemaValidator
     public function validColumn( string $table, string $column ) : string ;
     
     public function getPrimaryKeyName( string $table ) : string ;
+    
 }

@@ -7,7 +7,7 @@ namespace BitBalm\Relator\Mapper;
 use BitBalm\Relator\Mapper;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Relator;
-use BitBalm\Relator\PDO\SchemaValidator;
+use BitBalm\Relator\Mapper\PDO\SchemaValidator;
 
 
 class PDO implements Mapper

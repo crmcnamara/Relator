@@ -1,6 +1,6 @@
 <?php
 
-namespace BitBalm\Relator\PDO\SchemaValidator;
+namespace BitBalm\Relator\Mapper\PDO\SchemaValidator;
 
 
 use InvalidArgumentException;

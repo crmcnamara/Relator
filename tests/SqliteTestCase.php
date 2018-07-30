@@ -18,7 +18,7 @@ use BitBalm\Relator\Mappable\MappableTrait;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Relatable;
 use BitBalm\Relator\Relatable\RelatableTrait;
-use BitBalm\Relator\PDO\SchemaValidator;
+use BitBalm\Relator\Mapper\PDO\SchemaValidator;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\RecordSet\GetsRelated;
 
