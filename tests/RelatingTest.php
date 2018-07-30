@@ -16,9 +16,12 @@ use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Mappable\MappableTrait;
+use BitBalm\Relator\Mappable\TableNameAlreadySet;
 use BitBalm\Relator\GetsRelatedRecords;
+use BitBalm\Relator\GetsRelatedRecords\RelationshipAlreadySet;
 use BitBalm\Relator\Relatable;
 use BitBalm\Relator\Relatable\RelatableTrait;
+use BitBalm\Relator\Relatable\RelatorAlreadySet;
 use BitBalm\Relator\PDO\SchemaValidator;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\RecordSet\GetsRelated;
@@ -161,14 +164,18 @@ class RelatingTest extends SqliteTestCase
     
     public function testRejectsChangingTableNames()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->custom_article->setTableName('address');
+        try { $this->custom_article->setTableName('address'); }
+        catch ( TableNameAlreadySet $e ) {}
+        
+        $this->assertInstanceOf( TableNameAlreadySet::class, $e, "An expected exception was not thrown. " );
     }
 
     public function testRejectsChangingRelators()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->custom_article->setRelator(clone $this->relator);
+        try { $this->custom_article->setRelator(clone $this->relator); }
+        catch ( RelatorAlreadySet $e ) {}
+        
+        $this->assertInstanceOf( RelatorAlreadySet::class, $e, "An expected exception was not thrown. " );
     }
     
     public function testRejectsChangingRelationships()
@@ -178,8 +185,10 @@ class RelatingTest extends SqliteTestCase
         // add a 'self' relation to a different class to insure it is accepted.
         $this->custom_article   ->addRelationship( 'id',        $this->generic_person, 'id',  'self'  );
         
-        $this->expectException(InvalidArgumentException::class);
-        $this->custom_person    ->addRelationship( 'id',        $this->generic_person, 'id',  'self'  );
+        try { $this->custom_person    ->addRelationship( 'id',        $this->generic_person, 'id',  'self'  ); }
+        catch ( RelationshipAlreadySet $e ) {}
+        
+        $this->assertInstanceOf( RelationshipAlreadySet::class, $e, "An expected exception was not thrown. " );
         
     }
 

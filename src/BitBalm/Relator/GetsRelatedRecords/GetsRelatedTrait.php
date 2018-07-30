@@ -66,7 +66,7 @@ Trait GetsRelatedTrait
         if ( $relationship === $existing ) { return $this ; }
         
         if ( $existing instanceof Relationship ) {
-            throw new InvalidArgumentException(
+            throw new RelationshipAlreadySet(
                 "A relationship to {$relationship_name} is already set. "
               );
         }

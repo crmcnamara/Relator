@@ -2,9 +2,11 @@
 
 namespace BitBalm\Relator\Tests;
 
-use PDO;
+
 use Exception;
 use InvalidArgumentException;
+
+use PDO;
 
 use PHPUnit\Framework\TestCase;
 require_once __DIR__ .'/SqliteTestCase.php';
@@ -18,9 +20,12 @@ use BitBalm\Relator\Recorder\RecordNotFound;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Mappable\MappableTrait;
+use BitBalm\Relator\Mappable\TableNameAlreadySet;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recordable\RecordableTrait;
+use BitBalm\Relator\Recordable\RecorderAlreadySet;
 use BitBalm\Relator\PDO\SchemaValidator;
+use BitBalm\Relator\Mapper\PDO\SchemaValidator\InvalidTable;
 
 use BitBalm\Relator\Tests\Mocks\Person;
 use BitBalm\Relator\Tests\Mocks\Article;
@@ -253,10 +258,11 @@ class RecordingTest extends SqliteTestCase
           );
           
         $article->deleteRecord(); $article->deleteRecord();
+                
+        try { $deleted_article = $this->$article_varname->newRecord()->loadRecord(2); }
+        catch ( RecordNotFound $e ) {}
         
-        $this->expectException(RecordNotFound::class);
-        
-        $deleted_article = $this->$article_varname->newRecord()->loadRecord(2);
+        $this->assertInstanceOf( RecordNotFound::class, $e, "An expected exception was not thrown. " );
         
     }
     
@@ -290,23 +296,30 @@ class RecordingTest extends SqliteTestCase
         $this->pdo->exec( "DROP table article ; ");
         $this->$article_varname->getRecorder()->getValidator()->refreshSchema();
         
-        $this->expectException(InvalidArgumentException::class);
+        try { 
+          $article = $this->$article_varname->newRecord(); 
+          $this->$article_varname->getRecorder()->$method( $article, [2] );
+        }
+        catch ( InvalidTable $e ) {}
         
-        $article = $this->$article_varname->newRecord();
-        $this->$article_varname->getRecorder()->$method( $article, [2] );
+        $this->assertInstanceOf( InvalidTable::class, $e, "An expected exception was not thrown. " );
         
     }
     
     
     public function testRejectsChangingTableNames()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->custom_article->setTableName('address');
+        try { $this->custom_article->setTableName('address'); }
+        catch ( TableNameAlreadySet $e ) {}
+        
+        $this->assertInstanceOf( TableNameAlreadySet::class, $e, "An expected exception was not thrown. " );
     }
     
     public function testRejectsChangingRecorders()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->custom_article->setRecorder(clone $this->recorder);
+        try { $this->custom_article->setRecorder(clone $this->recorder); }
+        catch ( RecorderAlreadySet $e ) {}
+        
+        $this->assertInstanceOf( RecorderAlreadySet::class, $e, "An expected exception was not thrown. " );
     }
 }
