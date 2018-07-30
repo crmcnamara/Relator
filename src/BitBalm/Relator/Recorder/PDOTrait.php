@@ -45,7 +45,7 @@ trait PDOTrait
         
         $record
             ->setValues($values)
-            ->setUpdateId( $values[ $record->getPrimaryKeyName() ] ?? null );
+            ->setUpdateId( $values[ $record->getPrimaryKeyName() ] );
             
         return $record;
     }
@@ -75,7 +75,7 @@ trait PDOTrait
         foreach ( $results as $idx => $values ) {
             $records[$idx] = $record->newRecord()
                 ->setValues($values)
-                ->setUpdateId( $values[ $record->getPrimaryKeyName() ] ?? null );
+                ->setUpdateId( $values[ $record->getPrimaryKeyName() ] );
         }
         
         // fetch the record's preferred recordset

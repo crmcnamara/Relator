@@ -16,7 +16,7 @@ class PDO implements Mapper
     
     
     protected $pdo ;
-    protected $validator;    
+    protected $validator;
     
     
     public function __construct( \PDO $pdo, SchemaValidator $validator ) 

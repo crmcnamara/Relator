@@ -71,7 +71,7 @@ Trait RecordableTrait
     
     public function getUpdateId() 
     {
-        return $this->recorder_update_id ?? null ;
+        return $this->recorder_update_id ;
     }
     
     public function getPrimaryKeyName() : string

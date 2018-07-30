@@ -30,7 +30,9 @@ class Aura implements SchemaValidator
         $this->columns = [];
         foreach ( (array) $tables as $table ) {
             $this->columns[$table] = $this->schema->fetchTableCols($table);
-            $this->column_names[$table] = array_column( $this->columns[$table], 'name' );
+            foreach ( $this->columns[$table] as $column ) { 
+                $this->column_names[$table][$column->name] = $column->name;
+            }
         }
     }
     
