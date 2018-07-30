@@ -22,6 +22,9 @@ use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recordable\RecordableTrait;
 use BitBalm\Relator\PDO\SchemaValidator;
 
+use BitBalm\Relator\Tests\Mocks\Person;
+use BitBalm\Relator\Tests\Mocks\Article;
+
 
 /**
  * @runTestsInSeparateProcesses
@@ -44,11 +47,11 @@ class RecordingTest extends SqliteTestCase
         $this->generic_article  = (new Record\Generic( 'article' ))->setMapper($mapper);
 
         // Now configure the same thing using anonymous classes that make use of Record/Trait
-        $this->custom_person = (new class() implements Record { use RecordTrait; })
+        $this->custom_person = (new Person)
             ->setTableName('person')
             ->setMapper($mapper);
         
-        $this->custom_article = (new class() implements Record { use RecordTrait; })
+        $this->custom_article = (new Article)
             ->setTableName('article')
             ->setMapper($mapper);
         

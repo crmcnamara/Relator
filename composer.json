@@ -12,6 +12,7 @@
     ],
     "autoload": {
         "psr-4": {
+            "BitBalm\\Relator\\Tests\\": "tests/",
             "": "src/"
         }
     },

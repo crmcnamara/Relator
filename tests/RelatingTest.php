@@ -2,12 +2,12 @@
 
 namespace BitBalm\Relator\Tests;
 
+use Exception;
 use InvalidArgumentException;
 
 use PDO;
 
 use PHPUnit\Framework\TestCase;
-require_once __DIR__ .'/SqliteTestCase.php';
 
 use Aura\SqlSchema\SqliteSchema;
 use Aura\SqlSchema\ColumnFactory;
@@ -22,6 +22,9 @@ use BitBalm\Relator\Relatable\RelatableTrait;
 use BitBalm\Relator\PDO\SchemaValidator;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\RecordSet\GetsRelated;
+
+use BitBalm\Relator\Tests\Mocks\Person;
+use BitBalm\Relator\Tests\Mocks\Article;
 
 
 /**
@@ -51,11 +54,11 @@ class RelatingTest extends SqliteTestCase
 
 
         // Now configure the same thing using anonymous classes that make use of Record/Trait
-        $this->custom_person = (new class() implements Record { use RecordTrait; })
+        $this->custom_person = (new Person)
             ->setTableName('person')
             ->setMapper($mapper);
         
-        $this->custom_article = (new class() implements Record { use RecordTrait; })
+        $this->custom_article = (new Article)
             ->setTableName('article')
             ->setMapper($mapper);
         
