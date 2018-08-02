@@ -15,10 +15,14 @@ use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Mappable;
+use BitBalm\Relator\Mapper\PDO\SchemaValidator;
 
 
 trait PDOTrait 
 {
+    abstract function getPdo() : PDO ;
+    abstract function getValidator() : SchemaValidator ;
+    
     
     public function getRelated( GetsRelatedRecords $related_from, Relationship $relationship  ) : RecordSet
     {
@@ -56,7 +60,7 @@ trait PDOTrait
             $querystring 
           );
         
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         
         foreach ( $values as $index => $value ) {
             $statement->bindValue( $index+1, $value );

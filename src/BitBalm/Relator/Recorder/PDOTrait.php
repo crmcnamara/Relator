@@ -13,6 +13,7 @@ use Aura\SqlSchema\SchemaInterface;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\Mapper\PDO\SchemaValidator;
 
 
 class TooManyRecords extends RuntimeException {}
@@ -22,6 +23,8 @@ class RecordNotFound extends InvalidArgumentException {}
 
 trait PDOTrait 
 {
+    abstract function getPdo() : PDO ;
+    abstract function getValidator() : SchemaValidator ;
     
     public function loadRecord( Recordable $record, $record_id ) : Recordable 
     {
@@ -65,7 +68,7 @@ trait PDOTrait
               . implode( ', ', array_pad( [],  count($values), '?' ) ) 
             ." ) ";
         
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute($values);
@@ -114,11 +117,11 @@ trait PDOTrait
                 . implode( ' , ', array_pad( [], count($values), '?' ) )
             ." ) ";
             
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute(array_values( $values ));
-        $inserted_id = $this->pdo->lastInsertId();
+        $inserted_id = $this->getPdo()->lastInsertId();
         
         $record->setUpdateId( $inserted_id );
         
@@ -143,7 +146,7 @@ trait PDOTrait
                 . implode( ' , ', $setstrings )
             ." WHERE {$prikey} = ? ";
             
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         $query_values = array_values( $values );
         $query_values[] = $update_id;
@@ -165,7 +168,7 @@ trait PDOTrait
         
         $querystring = "DELETE from {$table} WHERE {$prikey} = ? ";
             
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute([ $update_id ]);
