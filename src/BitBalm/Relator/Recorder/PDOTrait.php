@@ -92,7 +92,7 @@ trait PDOTrait
     public function saveRecord( Recordable $record ) : Recordable 
     {
         if ( ! is_null($record->getUpdateId()) ) {
-            $this->updateRecord($record);
+            $this->updateRecord( $record->getUpdateId(), $record );
             
         } else {
             $this->insertRecord($record);
@@ -128,13 +128,13 @@ trait PDOTrait
         return $record;
     }
     
-    protected function updateRecord( Recordable $record ) : Recordable
+    public function updateRecord( $record_id, Recordable $record ) : Recordable
     {
         $table = $this->getValidator()->validTable($record->getTableName());
         $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
         $values = $record->asArray();
         foreach ( $values as $column => $value ) { $this->getValidator()->validColumn( $table, $column ); }
-        $update_id = $record->getUpdateId();
+        $record_id;
         
         $setstrings = [];
         foreach ( $values as $column => $value ) {
@@ -149,13 +149,13 @@ trait PDOTrait
         $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         $query_values = array_values( $values );
-        $query_values[] = $update_id;
+        $query_values[] = $record_id;
         
         $statement->execute($query_values);
         $affected = $statement->rowCount();
         
-        if ( array_key_exists( $prikey, $values ) ) { $update_id = $values[$prikey]; }
-        $record->setUpdateId( $update_id );
+        if ( array_key_exists( $prikey, $values ) ) { $record_id = $values[$prikey]; }
+        $record->setUpdateId( $record_id );
         
         return $record;
     }

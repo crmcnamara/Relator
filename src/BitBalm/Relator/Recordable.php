@@ -17,9 +17,11 @@ interface Recordable extends Mappable
     
     public function saveRecord() : Recordable ;
     
+    public function updateRecord( $record_id ) : Recordable ;
+    
     public function deleteRecord() ;
     
-    public function setUpdateId( $id ) : Recordable ;
+    public function setUpdateId( $record_id ) : Recordable ;
     
     public function getUpdateId() ;
     

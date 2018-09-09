@@ -121,19 +121,30 @@ class RecordingTest extends SqliteTestCase
     }
     
     /**
+     * Tests updating records loaded from the db. 
+     * 
      * @dataProvider articles
      */
-    public function testUpdateArticles( string $article_varname ) 
+    public function testUpdateLoadedArticles( string $article_varname ) 
     {
-        $article = $this->$article_varname->newRecord()->loadRecord(2);
+      
+        $update_article_id  = 2;
+        $new_article_id     = 4;
+        $article = $this->$article_varname->newRecord()->loadRecord($update_article_id);
         
         $expected_fixture = [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ];
         $this->assertEquals( $expected_fixture, $article->asArray(), 
             "An article fixture for the update test was not as expected. "
           );
+        $this->assertEquals( $update_article_id, $article->getUpdateId(),
+            "An update id for an article fixture for the update test was not as expected. "
+          );
         
-        $article->setValues([ 'id' => 4, 'title' => 'I Forget', 'author_id' => 3, ]);
+        
+        $article->setValues([ 'id' => $new_article_id, 'title' => 'I Forget', 'author_id' => 3, ]);
+                
         $article->saveRecord();
+        
         
         $articles = [] ;
         foreach ( [ 1, 2, 3, 4, ] as $idx ) {
@@ -172,11 +183,83 @@ class RecordingTest extends SqliteTestCase
             ),
           ];
         
+        // check values
         $this->assertEquals( $expected_articles, $articles,
             var_export($articles,1) ."\n".
             "The database state was not as expected after updating an article (including its id). "
           );
+          
+        // check update id
+        $this->assertEquals( $new_article_id, $article->getUpdateId(),
+            "The update id for an article that updated it's id via setValues() and SaveRecord() was not as updated. "
+          );
         
+    }
+    
+    /**
+     * Tests updating records populated from sources other than the db, using ->updateRecord(). 
+     * 
+     * @dataProvider articles
+     */
+    public function testUpdatePopulatedArticles( string $article_varname ) 
+    {
+        $update_article_id  = 2;
+        $new_article_id     = 4;
+        
+        $article = $this->$article_varname->newRecord()->setValues(
+            [ 'id' => $new_article_id, 'title' => 'I Forget', 'author_id' => 3, ]
+          );
+        
+        $article->updateRecord($update_article_id);
+        
+        $article_values = [] ;
+        foreach ( [ 1, 2, 3, 4, ] as $idx ) {
+            try { 
+                $articles[$idx] = $this->$article_varname->newRecord()->loadRecord($idx);
+                $article_values[$idx] = $articles[$idx]->asArray();
+            } catch ( RecordNotFound $e ) {
+                $article_values[$idx] = [ 'Exception' => [ 'message' => $e->getMessage() ] ];
+            }
+        }
+        
+        $expected_articles = [
+            1 => 
+            array (
+              'id' => '1',
+              'title' => 'On Something or Other',
+              'author_id' => '1',
+            ),
+            2 => 
+            array (
+              'Exception' => 
+              array (
+                'message' => 'No article records found for id: 2 ',
+              ),
+            ),
+            3 => 
+            array (
+              'id' => '3',
+              'title' => 'Counterpoint',
+              'author_id' => '2',
+            ),
+            4 => 
+            array (
+              'id' => '4',
+              'title' => 'I Forget',
+              'author_id' => '3',
+            ),
+          ];
+        
+        $this->assertEquals( $expected_articles, $article_values,
+            var_export($article_values,1) ."\n".
+            "The database state was not as expected after updating an article (including its id). "
+          );
+          
+        // check update id
+        $this->assertEquals( $new_article_id, $article->getUpdateId(),
+            "The update id for an article that updated it's id via setValues() and SaveRecord() was not as updated. "
+          );
+          
     }
     
     /**
@@ -258,7 +341,8 @@ class RecordingTest extends SqliteTestCase
           );
           
         $article->deleteRecord(); $article->deleteRecord();
-                
+        
+        $e = null;
         try { $deleted_article = $this->$article_varname->newRecord()->loadRecord(2); }
         catch ( RecordNotFound $e ) {}
         

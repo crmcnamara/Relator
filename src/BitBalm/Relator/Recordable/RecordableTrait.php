@@ -57,6 +57,11 @@ Trait RecordableTrait
         return $this->getRecorder()->saveRecord($this);
     }
     
+    public function updateRecord( $record_id ) : Recordable 
+    {
+        return $this->getRecorder()->updateRecord( $record_id, $this );
+    }
+    
     public function deleteRecord() 
     {
         return $this->getRecorder()->deleteRecord($this);
