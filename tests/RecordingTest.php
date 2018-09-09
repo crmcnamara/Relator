@@ -86,18 +86,57 @@ class RecordingTest extends SqliteTestCase
      */
     public function testLoadArticle( string $article_varname ) 
     {
-        $articles = [
-            $this->$article_varname->newRecord()->loadRecord(2)->asArray(),
-            $this->$article_varname->newRecord()->loadRecord(3)->asArray(),
-          ];
-
-        $expected_articles = [ 
+          
+        $expected_article_values = [ 
             [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
             [ 'id' => '3', 'title' => 'Counterpoint',  'author_id' => '2', ],
           ];
           
-        $this->assertEquals( $expected_articles, $articles,
-            "Loaded articles were not as expected. "
+        // check update id
+        foreach ( $expected_article_values as $expected_values ) {
+          
+            $article = $this->$article_varname->newRecord()->loadRecord($expected_values['id']);
+            
+            $this->assertEquals( $expected_values, $article->asArray(),
+                "A loaded article was not as expected. "
+              );
+              
+            $this->assertEquals( $expected_values['id'], $article->getUpdateId(),
+                "An update id for a loaded article was not as expected. "
+              );
+        }
+        
+    
+        
+    }
+    
+    
+    /** 
+     * @dataProvider articles
+     */
+    public function testEditArticle( string $article_varname ) 
+    {
+        $article = $this->$article_varname->newRecord()->loadRecord(2);
+        
+        $expected_fixture = [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ];
+        $this->assertEquals( $expected_fixture, $article->asArray(), 
+            "An article fixture for the update test was not as expected. "
+          );
+        $this->assertEquals( $expected_fixture['id'], $article->getUpdateId(),
+            "An update id for an article fixture for the edit test was not as expected. "
+          );
+          
+        $update_values = [ 'id' => 77, 'title' => 'Something or Other Abandoned', ];
+        $article->setValues($update_values);
+        
+        $expected_values = array_replace( $expected_fixture, $update_values );
+        
+        $this->assertEquals( $expected_values, $article->asArray(), 
+            "After updating values with setValues(), the results of asArray() were not as expected. "
+          );
+          
+        $this->assertEquals( $expected_fixture['id'], $article->getUpdateId(),
+            "An update id for an article fixture for the edit test was changed after changing it with setValues(). "
           );
         
     }
@@ -107,16 +146,24 @@ class RecordingTest extends SqliteTestCase
      */
     public function testLoadArticles( string $article_varname ) 
     {
-        $articles = $this->$article_varname->newRecord()->loadRecords([ 2, 3, 4, ])->asArrays();
+        $articles = $this->$article_varname->newRecord()->loadRecords([ 2, 3, 4, ]);
         
         $expected_articles = [ 
             [ 'id' => '2', 'title' => 'Something or Other Revisited', 'author_id' => '2', ], 
             [ 'id' => '3', 'title' => 'Counterpoint',  'author_id' => '2', ],
           ];
-          
-        $this->assertEquals( $expected_articles, $articles,
+        
+        //check values
+        $this->assertEquals( $expected_articles, $articles->asArrays(),
             "Loaded articles were not as expected. "
           );
+          
+        // check update ids
+        foreach ( $expected_articles as $article_idx => $expected_values ) {              
+            $this->assertEquals( $expected_values['id'], $articles[$article_idx]->getUpdateId(),
+                "An update id for a loaded article was not as expected. "
+              );
+        }
         
     }
     
