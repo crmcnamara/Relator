@@ -87,4 +87,13 @@ trait PDOTrait
         return [ $query_string, $values ];
     }
     
+    public function getRelatedStatement( 
+        GetsRelatedRecords $related_from, 
+        Relationship $relationship  
+      ) : PDOStatement
+    {
+        list ( $query_string, $parameters ) = $this->getRelatedQuery( $related_from, $relationship );
+        return $this->getStatementFromQuery( $query_string, $parameters );
+    }
+    
 }
