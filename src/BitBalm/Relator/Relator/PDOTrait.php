@@ -25,12 +25,12 @@ trait PDOTrait
     public function getRelated( GetsRelatedRecords $related_from, Relationship $relationship  ) : RecordSet
     {
         list ( $query_string, $parameters ) = $this->getRelatedQuery( $related_from, $relationship );
-        return $this->getRelatedFromQuery( $query_string, $parameters, $relationship->getToTable() );
+        return $this->getRecordsFromQuery( $query_string, $parameters, $relationship->getToTable() );
     }
     
-    public function getRelatedFromQuery( string $query_string, array $query_parameters, Relatable $to_table ) : RecordSet
+    public function getRecordsFromQuery( string $query_string, array $query_parameters, Relatable $to_table ) : RecordSet
     {
-        return $this->getRelatedFromStatement(
+        return $this->getRecordsFromStatement(
             $this->getStatementFromQuery( $query_string, $query_parameters ),
             $to_table
           );
@@ -49,7 +49,7 @@ trait PDOTrait
         return $statement;
     }
 
-    public function getRelatedFromStatement( PDOStatement $statement, Relatable $to_table ) : RecordSet
+    public function getRecordsFromStatement( PDOStatement $statement, Relatable $to_table ) : RecordSet
     {
         $statement->execute();
         $results = $statement->fetchAll();
