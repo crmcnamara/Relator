@@ -377,7 +377,7 @@ class RecordingTest extends SqliteTestCase
     /**
      * @dataProvider articles
      */
-    public function testDeleteArticle( string $article_varname )
+    public function testDeleteLoadedArticle( string $article_varname )
     {
         $article = $this->$article_varname->newRecord()->loadRecord(2);
         
@@ -387,10 +387,36 @@ class RecordingTest extends SqliteTestCase
             "Loaded fixture article #2 was not as expected. "
           );
           
-        $article->deleteRecord(); $article->deleteRecord();
+        $article->deleteRecord();
         
         $e = null;
         try { $deleted_article = $this->$article_varname->newRecord()->loadRecord(2); }
+        catch ( RecordNotFound $e ) {}
+        
+        $this->assertInstanceOf( RecordNotFound::class, $e, "An expected exception was not thrown. " );
+        
+    }
+    
+    /**
+     * @dataProvider articles
+     */
+    public function testDeletePopulatedArticle( string $article_varname )
+    {
+        $article_id = 2;
+        
+        $fixture_article = $this->$article_varname->newRecord()->loadRecord($article_id);
+        
+        $expected_article = [ 'id' => $article_id, 'title' => 'Something or Other Revisited', 'author_id' => '2', ];
+        
+        $this->assertEquals( $expected_article, $fixture_article->asArray(), 
+            "Loaded fixture article #2 was not as expected. "
+          );
+        
+        $article = $this->$article_varname->newRecord()->setValues([ 'id' => $article_id ]);  
+        $article->deleteRecord();
+        
+        $e = null;
+        try { $deleted_article = $this->$article_varname->newRecord()->loadRecord($article_id); }
         catch ( RecordNotFound $e ) {}
         
         $this->assertInstanceOf( RecordNotFound::class, $e, "An expected exception was not thrown. " );

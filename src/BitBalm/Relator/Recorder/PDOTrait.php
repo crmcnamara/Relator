@@ -89,21 +89,12 @@ trait PDOTrait
         return $recordset;
     }
     
-    public function saveRecord( Recordable $record, $record_id = null ) : Recordable 
+    public function saveRecord( Recordable $record, $update_id = null ) : Recordable 
     {
-        // to determine a record to update, start with the explicit argument
-        $update_id = $record_id;
-        // falling back on the update id set in the record
+        // use the explicit argument first, falling back on the update id set in the record
         if ( $update_id === null ) { $update_id = $record->getUpdateId(); }
-        // and, lastly, the id set in the record's values. 
-        if ( $update_id === null ) { 
-            $values = $record->asArray(); 
-            if ( array_key_exists( $record->getPrimaryKeyName(), $values ) ) {
-                $update_id = $values[ $record->getPrimaryKeyName() ]; 
-            }
-        }
         
-        if ( ! is_null($update_id) ) {
+        if ( $update_id !== null ) {
             $this->updateRecord( $update_id, $record );
           
         } else {
@@ -140,13 +131,12 @@ trait PDOTrait
         return $record;
     }
     
-    public function updateRecord( $record_id, Recordable $record ) : Recordable
+    public function updateRecord( $update_id, Recordable $record ) : Recordable
     {
         $table = $this->getValidator()->validTable($record->getTableName());
         $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
         $values = $record->asArray();
         foreach ( $values as $column => $value ) { $this->getValidator()->validColumn( $table, $column ); }
-        $record_id;
         
         $setstrings = [];
         foreach ( $values as $column => $value ) {
@@ -161,13 +151,13 @@ trait PDOTrait
         $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         $query_values = array_values( $values );
-        $query_values[] = $record_id;
+        $query_values[] = $update_id;
         
         $statement->execute($query_values);
         $affected = $statement->rowCount();
         
-        if ( array_key_exists( $prikey, $values ) ) { $record_id = $values[$prikey]; }
-        $record->setUpdateId( $record_id );
+        if ( array_key_exists( $prikey, $values ) ) { $update_id = $values[$prikey]; }
+        $record->setUpdateId($update_id);
         
         return $record;
     }
