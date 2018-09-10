@@ -244,7 +244,7 @@ class RecordingTest extends SqliteTestCase
     }
     
     /**
-     * Tests updating records populated from sources other than the db, using ->updateRecord(). 
+     * Tests updating records populated from sources other than the db
      * 
      * @dataProvider articles
      */
@@ -257,7 +257,7 @@ class RecordingTest extends SqliteTestCase
             [ 'id' => $new_article_id, 'title' => 'I Forget', 'author_id' => 3, ]
           );
         
-        $article->updateRecord($update_article_id);
+        $article->saveRecord($update_article_id);
         
         $article_values = [] ;
         foreach ( [ 1, 2, 3, 4, ] as $idx ) {
@@ -316,7 +316,7 @@ class RecordingTest extends SqliteTestCase
     {
         $article_with_id = $this->$article_varname->newRecord()->setValues([ 
             'id' => '5', 'title' => 'I Forget', 'author_id' => '3',
-          ])->saveRecord();
+          ])->insertRecord();
           
         $article_without_id = $this->$article_varname->newRecord()->setValues([ 
             'title' => 'Wandering', 'author_id' => '3',
@@ -427,6 +427,7 @@ class RecordingTest extends SqliteTestCase
         $this->pdo->exec( "DROP table article ; ");
         $this->$article_varname->getRecorder()->getValidator()->refreshSchema();
         
+        $e = null;
         try { 
           $article = $this->$article_varname->newRecord(); 
           $this->$article_varname->getRecorder()->$method( $article, [2] );
@@ -440,6 +441,7 @@ class RecordingTest extends SqliteTestCase
     
     public function testRejectsChangingTableNames()
     {
+        $e = null;
         try { $this->custom_article->setTableName('address'); }
         catch ( TableNameAlreadySet $e ) {}
         
@@ -448,6 +450,7 @@ class RecordingTest extends SqliteTestCase
     
     public function testRejectsChangingRecorders()
     {
+        $e = null;
         try { $this->custom_article->setRecorder(clone $this->recorder); }
         catch ( RecorderAlreadySet $e ) {}
         

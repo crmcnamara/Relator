@@ -89,11 +89,23 @@ trait PDOTrait
         return $recordset;
     }
     
-    public function saveRecord( Recordable $record ) : Recordable 
+    public function saveRecord( Recordable $record, $record_id = null ) : Recordable 
     {
-        if ( ! is_null($record->getUpdateId()) ) {
-            $this->updateRecord( $record->getUpdateId(), $record );
-            
+        // to determine a record to update, start with the explicit argument
+        $update_id = $record_id;
+        // falling back on the update id set in the record
+        if ( $update_id === null ) { $update_id = $record->getUpdateId(); }
+        // and, lastly, the id set in the record's values. 
+        if ( $update_id === null ) { 
+            $values = $record->asArray(); 
+            if ( array_key_exists( $record->getPrimaryKeyName(), $values ) ) {
+                $update_id = $values[ $record->getPrimaryKeyName() ]; 
+            }
+        }
+        
+        if ( ! is_null($update_id) ) {
+            $this->updateRecord( $update_id, $record );
+          
         } else {
             $this->insertRecord($record);
         }
@@ -103,7 +115,7 @@ trait PDOTrait
         return $record;
     }
     
-    protected function insertRecord( Recordable $record ) : Recordable
+    public function insertRecord( Recordable $record ) : Recordable
     {
         
         $table = $this->getValidator()->validTable($record->getTableName());

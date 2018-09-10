@@ -52,16 +52,21 @@ Trait RecordableTrait
         return $this->getRecorder()->loadRecords( $this, $record_ids );
     }
     
-    public function saveRecord() : Recordable 
+    public function saveRecord( $record_id = null ) : Recordable 
     {
-        return $this->getRecorder()->saveRecord($this);
+        return $this->getRecorder()->saveRecord( $this, $record_id );
     }
     
     public function updateRecord( $record_id ) : Recordable 
     {
         return $this->getRecorder()->updateRecord( $record_id, $this );
     }
-    
+
+    public function insertRecord() : Recordable 
+    {
+        return $this->getRecorder()->insertRecord($this);
+    }
+        
     public function deleteRecord() 
     {
         return $this->getRecorder()->deleteRecord($this);
