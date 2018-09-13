@@ -52,11 +52,21 @@ Trait RecordableTrait
         return $this->getRecorder()->loadRecords( $this, $record_ids );
     }
     
-    public function saveRecord() /*: Recordable*/ 
+    public function saveRecord( $update_id = null ) /*: Recordable*/ 
     {
-        return $this->getRecorder()->saveRecord($this);
+        return $this->getRecorder()->saveRecord( $this, $update_id );
     }
-    
+
+    public function insertRecord() /*: Recordable*/ 
+    {
+        return $this->getRecorder()->insertRecord($this);
+    }
+        
+    public function updateRecord( $update_id ) /*: Recordable*/ 
+    {
+        return $this->getRecorder()->updateRecord( $update_id, $this );
+    }
+
     public function deleteRecord() 
     {
         return $this->getRecorder()->deleteRecord($this);
@@ -71,7 +81,18 @@ Trait RecordableTrait
     
     public function getUpdateId() 
     {
-        return $this->recorder_update_id ;
+        $update_id = $this->recorder_update_id;
+        
+        // and, lastly, the id set in the record's values. 
+        if ( $update_id === null ) { 
+            $values = $this->asArray(); 
+            $prikey = $this->getPrimaryKeyName();
+            if ( array_key_exists( $prikey, $values ) ) {
+                $update_id = $values[$prikey]; 
+            }
+        }
+      
+        return $update_id;
     }
     
     public function getPrimaryKeyName() /*: string*/

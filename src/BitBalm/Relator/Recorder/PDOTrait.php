@@ -13,6 +13,7 @@ use Aura\SqlSchema\SchemaInterface;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\RecordSet;
+use BitBalm\Relator\Mapper\PDO\SchemaValidator;
 
 
 class TooManyRecords extends RuntimeException {}
@@ -22,6 +23,8 @@ class RecordNotFound extends InvalidArgumentException {}
 
 trait PDOTrait 
 {
+    abstract function getPdo() /*: PDO*/ ;
+    abstract function getValidator() /*: SchemaValidator*/ ;
     
     public function loadRecord( Recordable $record, $record_id ) /*: Recordable*/ 
     {
@@ -65,7 +68,7 @@ trait PDOTrait
               . implode( ', ', array_pad( [],  count($values), '?' ) ) 
             ." ) ";
         
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute($values);
@@ -86,11 +89,14 @@ trait PDOTrait
         return $recordset;
     }
     
-    public function saveRecord( Recordable $record ) /*: Recordable*/
+    public function saveRecord( Recordable $record, $update_id = null ) /*: Recordable*/ 
     {
-        if ( ! is_null($record->getUpdateId()) ) {
-            $this->updateRecord($record);
-            
+        // use the explicit argument first, falling back on the update id set in the record
+        if ( $update_id === null ) { $update_id = $record->getUpdateId(); }
+        
+        if ( $update_id !== null ) {
+            $this->updateRecord( $update_id, $record );
+          
         } else {
             $this->insertRecord($record);
         }
@@ -100,7 +106,7 @@ trait PDOTrait
         return $record;
     }
     
-    protected function insertRecord( Recordable $record ) /*: Recordable*/
+    public function insertRecord( Recordable $record ) /*: Recordable*/
     {
         
         $table = $this->getValidator()->validTable($record->getTableName());
@@ -114,24 +120,23 @@ trait PDOTrait
                 . implode( ' , ', array_pad( [], count($values), '?' ) )
             ." ) ";
             
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute(array_values( $values ));
-        $inserted_id = $this->pdo->lastInsertId();
+        $inserted_id = $this->getPdo()->lastInsertId();
         
         $record->setUpdateId( $inserted_id );
         
         return $record;
     }
     
-    protected function updateRecord( Recordable $record ) /*: Recordable*/
+    public function updateRecord( $update_id, Recordable $record ) /*: Recordable*/
     {
         $table = $this->getValidator()->validTable($record->getTableName());
         $prikey = $this->getValidator()->validColumn( $table, $record->getPrimaryKeyName() );
         $values = $record->asArray();
         foreach ( $values as $column => $value ) { $this->getValidator()->validColumn( $table, $column ); }
-        $update_id = $record->getUpdateId();
         
         $setstrings = [];
         foreach ( $values as $column => $value ) {
@@ -143,7 +148,7 @@ trait PDOTrait
                 . implode( ' , ', $setstrings )
             ." WHERE {$prikey} = ? ";
             
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         $query_values = array_values( $values );
         $query_values[] = $update_id;
@@ -152,7 +157,7 @@ trait PDOTrait
         $affected = $statement->rowCount();
         
         if ( array_key_exists( $prikey, $values ) ) { $update_id = $values[$prikey]; }
-        $record->setUpdateId( $update_id );
+        $record->setUpdateId($update_id);
         
         return $record;
     }
@@ -165,7 +170,7 @@ trait PDOTrait
         
         $querystring = "DELETE from {$table} WHERE {$prikey} = ? ";
             
-        $statement = $this->pdo->prepare( $querystring );
+        $statement = $this->getPdo()->prepare( $querystring );
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         
         $statement->execute([ $update_id ]);

@@ -25,7 +25,12 @@ class PDO implements Mapper
         $this->validator = $validator;
     }
     
-    public function getValidator() 
+    public function getPdo() /*: \PDO*/
+    {
+        return $this->pdo;
+    }
+    
+    public function getValidator() /*: SchemaValidator*/
     {
         return $this->validator;
     }

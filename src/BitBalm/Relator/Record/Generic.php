@@ -22,9 +22,9 @@ use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
 
 /* The Generic Record is a single class that can be used 
  *    to represent records from //every// table in the database schema. 
- * The table and its primary key must be provided as constructor arguments
+ * The table name must be provided as a constructor argument
  */
-class Generic extends ArrayObject implements Record
+final class Generic extends ArrayObject implements Record
 {
     use RecordTrait;
     
@@ -142,7 +142,7 @@ class Generic extends ArrayObject implements Record
 
     public function newRecord() /*: Mappable*/ 
     {
-        return new static( $this->getTableName(), $this->getPrimaryKeyName() );
+        return new static( $this->getTableName() );
     }
     
     public function asArray() /*: array*/
