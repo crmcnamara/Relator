@@ -6,9 +6,10 @@ set -ex
 
 [ "$container" = 'docker' ] || 
     ( ! : "We do not appear to be in a docker container. Aborting. " )
-    
-composer update 
-composer install 
 
+chown developer -R vendor
+su developer -c " composer update && composer install " 
+
+:
 : "$0 complete"
 
