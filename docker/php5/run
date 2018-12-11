@@ -8,5 +8,7 @@ set -ex
 command_script="${0/#[!\/]*/$PWD/$0}"
 cd "${command_script%/*}"/../..
 
+# If there's no docker image, build one
+docker image ls -q relator:php5 | grep . || docker/php5/build
 
 docker run -it --rm -v "$PWD":/srv/src relator:php5 "$@"
