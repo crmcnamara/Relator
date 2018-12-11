@@ -17,7 +17,8 @@
         }
     },
     "require": {
-        "aura/sqlschema": "^2.0"
+        "aura/sqlschema": "^2.0",
+        "php": "^7.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
