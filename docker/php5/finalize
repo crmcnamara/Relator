@@ -13,8 +13,10 @@ set -ex
 [ "$container" = 'docker' ] || 
     ( ! : "We do not appear to be in a docker container. Aborting. " )
 
-chown developer -R vendor
-su developer -c " composer update && composer install " 
+# only scan for dependency updates in development mode
+chown developer -R composer.json composer.lock vendor
+( ! mountpoint /srv/src ) || su developer -c "composer update"
+su developer -c "composer install" 
 
 :
 : "$0 complete"

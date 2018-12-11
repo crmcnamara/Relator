@@ -21,15 +21,15 @@ RUN set -x \
     && php -r "unlink('composer-setup.php');" 
 
 # Create non-root user to install dependencies
-RUN set -x \
-    && adduser --disabled-password --gecos '' developer \
-    && mkdir -p vendor \
-    && chown developer -R vendor
+RUN set -x && adduser --disabled-password --gecos '' developer 
+    
 
 # Install composer php dependencies
 COPY composer.*  ./
 RUN set -x \
-    && su developer -c " composer update && composer install " 
+    && mkdir -p vendor \
+    && chown developer -R composer.json composer.lock vendor \
+    && su developer -c "composer install" 
 
 # Copy in the rest of source tree    
 COPY ./  ./
