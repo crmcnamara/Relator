@@ -8,4 +8,4 @@ command_script="${0/#[!\/]*/$PWD/$0}"
 cd "${command_script%/*}"/../..
 
 
-docker build -f docker/php5/Dockerfile -t relator:php5 . 
+docker build -f docker/php5/Dockerfile -t relator:php5 "$@" . 

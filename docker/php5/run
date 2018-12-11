@@ -8,4 +8,5 @@ set -ex
 command_script="${0/#[!\/]*/$PWD/$0}"
 cd "${command_script%/*}"/../..
 
-docker run -it --rm -v "$PWD":/srv/src relator:php5
+
+docker run -it --rm -v "$PWD":/srv/src relator:php5 "$@"

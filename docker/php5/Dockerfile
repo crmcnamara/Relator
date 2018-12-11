@@ -34,6 +34,7 @@ RUN set -x \
 # Copy in the rest of source tree    
 COPY ./  ./
 
-ENTRYPOINT /srv/src/docker/php5/init
+ENTRYPOINT [ "/srv/src/docker/php5/init" ]
+CMD [ "vendor/bin/phpunit", "tests/" ]
 
 RUN /srv/src/docker/php5/finalize

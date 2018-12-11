@@ -12,4 +12,4 @@ if mountpoint /srv/src ; then
     /srv/src/docker/php5/finalize
 fi
 
-exec /bin/bash "$@"
+exec "$@"
