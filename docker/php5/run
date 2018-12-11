@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# run: executes a Relator container, mounting the source tree into the it
+#     The docker image will automatically be built if it does not already exist.
+
 set -ex
 
 command_script="${0/#[!\/]*/$PWD/$0}"

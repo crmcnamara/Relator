@@ -3,6 +3,7 @@ FROM ubuntu:trusty
 WORKDIR /srv/src
 ENV container=docker
 
+# Install Ubuntu packages
 RUN set -x \
     && apt-get update \
     && apt-get upgrade -y \
@@ -11,7 +12,8 @@ RUN set -x \
         php5 \
         php5-sqlite \
         wget 
-    
+
+# Install Composer
 RUN set -x \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "if (hash_file('SHA384', 'composer-setup.php') === '$(wget -q -O - https://composer.github.io/installer.sig)') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
@@ -29,6 +31,7 @@ COPY composer.*  ./
 RUN set -x \
     && su developer -c " composer update && composer install " 
 
+# Copy in the rest of source tree    
 COPY ./  ./
 
 ENTRYPOINT /srv/src/docker/php5/init

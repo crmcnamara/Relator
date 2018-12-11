@@ -1,8 +1,14 @@
 #!/bin/bash
 
+# finalize: final steps to seal a docker image build 
+#     This is also re-run by init 
+#         when bind-mounting a work tree inside a new container
+
 set -ex
 
-: "running $0"
+:
+: "running" "$0" "$@"
+:
 
 [ "$container" = 'docker' ] || 
     ( ! : "We do not appear to be in a docker container. Aborting. " )
@@ -12,4 +18,5 @@ su developer -c " composer update && composer install "
 
 :
 : "$0 complete"
+:
 
