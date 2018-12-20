@@ -15,7 +15,7 @@ set -ex
 
 # only scan for dependency updates in development mode
 chown developer -R composer.json composer.lock vendor
-( ! mountpoint /srv/src ) || su developer -c "composer update"
+#( ! mountpoint /srv/src ) || su developer -c "composer update"
 su developer -c "composer install" 
 
 :
