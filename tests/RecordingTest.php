@@ -28,7 +28,7 @@ use BitBalm\Relator\PDO\SchemaValidator;
 use BitBalm\Relator\Mapper\PDO\SchemaValidator\InvalidTable;
 
 use BitBalm\Relator\Tests\Mocks\Person;
-use BitBalm\Relator\Tests\Mocks\Article;
+use BitBalm\Relator\Tests\Mocks\RecordableArticle;
 
 
 /**
@@ -56,9 +56,9 @@ class RecordingTest extends SqliteTestCase
             ->setTableName('person')
             ->setMapper($mapper);
         
-        $this->custom_article = (new Article)
+        $this->custom_article = (new RecordableArticle)
             ->setTableName('article')
-            ->setMapper($mapper);
+            ->setRecorder($mapper);
         
     }
     
