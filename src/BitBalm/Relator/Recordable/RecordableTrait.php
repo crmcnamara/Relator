@@ -11,6 +11,7 @@ use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\AlreadySetException;
+use BitBalm\Relator\Recorder\RecordNotFound;
 
 
 class RecorderAlreadySet extends InvalidArgumentException implements AlreadySetException {}
@@ -99,5 +100,14 @@ Trait RecordableTrait
     {
         return $this->getRecorder()->getPrimaryKeyName( $this->getTableName() );
     }
- 
+    
+    public function loadValues( $record_id ) /*: ?array*/
+    {
+        try {
+            return $this->loadRecord( $record_id )->asArray();
+            
+        } catch ( RecordNotFound $e ) {
+            return null;
+        }
+    }
 }
