@@ -28,4 +28,6 @@ interface Recordable extends Mappable
     public function getUpdateId() ;
     
     public function asRecordSet() : RecordSet ;
+    
+    public function loadValues( $record_id ) : ?array ;
 }
