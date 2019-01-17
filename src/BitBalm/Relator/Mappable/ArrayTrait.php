@@ -12,9 +12,9 @@ use BitBalm\Relator\Mappable;
 Trait ArrayTrait 
 {   
     // setValues() is in the Mappable interface, and implemented in MappableTrait.
-    abstract public function setValues( array $values ) : Mappable ;
+    abstract public function setValues( array $values );
     
-    public function offsetExists ( $offset ) : bool
+    public function offsetExists ( $offset )
     {
         return array_key_exists( $offset, $this->asArray() );
     }
@@ -24,12 +24,12 @@ Trait ArrayTrait
         return $this->asArray()[$offset];
     }
     
-    public function offsetSet ( $offset , $value ) : void
+    public function offsetSet ( $offset , $value )
     {
         $this->setValues([ $offset => $value ]);
     }
     
-    public function offsetUnset ( $offset ) : void
+    public function offsetUnset ( $offset )
     {
         unset( $this->record_values[$offset] );
     }

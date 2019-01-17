@@ -27,7 +27,7 @@ trait PDOTrait
         return $this->loadRecordByColumnValue( $record, $record->getPrimaryKeyName(), $record_id );
     }
     
-    public function loadRecordByColumnValue( Recordable $record, string $column, $value ) : Recordable 
+    public function loadRecordByColumnValue( Recordable $record, $column, $value )
     {
         $results = $this->loadRecordsByColumnValues( $record, $column, [ $value ] );
         
