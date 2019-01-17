@@ -2,17 +2,14 @@
 
 namespace BitBalm\Relator\RecordSet;
 
+use ArrayObject;
+
 use BitBalm\Relator\Mappable as MappableRecord;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
-
-use ArrayObject;
-use InvalidArgumentException;
-
-
-class InvalidRecord extends InvalidArgumentException {}
+use BitBalm\Relator\Exception\InvalidRecord;
 
 
 class Mappable extends ArrayObject implements RecordSet 

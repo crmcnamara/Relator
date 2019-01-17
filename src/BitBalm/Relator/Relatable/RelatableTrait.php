@@ -10,10 +10,7 @@ use BitBalm\Relator\Relatable;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
-use BitBalm\Relator\AlreadySetException;
-
-
-class RelatorAlreadySet extends InvalidArgumentException implements AlreadySetException {}
+use BitBalm\Relator\Exception\RelatorAlreadySet;
 
 
 Trait RelatableTrait

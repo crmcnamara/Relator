@@ -11,15 +11,9 @@ use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\RecordSet\GetsRelated;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
-use BitBalm\Relator\AlreadySetException;
-use BitBalm\Relator\NotYetSetException;
-
-
-class RelationshipAlreadySet extends InvalidArgumentException implements AlreadySetException {}
-
-class InvalidRelationship extends InvalidArgumentException {}
-
-class RelationshipNotYetSet extends InvalidArgumentException implements NotYetSetException {}
+use BitBalm\Relator\Exception\RelationshipAlreadySet;
+use BitBalm\Relator\Exception\InvalidRelationship;
+use BitBalm\Relator\Exception\RelationshipNotYetSet;
 
 
 Trait GetsRelatedTrait 

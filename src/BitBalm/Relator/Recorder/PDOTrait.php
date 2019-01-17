@@ -14,12 +14,8 @@ use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Mapper\PDO\SchemaValidator;
-
-
-class TooManyRecords extends RuntimeException {}
-
-class RecordNotFound extends InvalidArgumentException {}
-
+use BitBalm\Relator\Exception\RecordNotFound;
+use BitBalm\Relator\Exception\TooManyRecords;
 
 trait PDOTrait 
 {

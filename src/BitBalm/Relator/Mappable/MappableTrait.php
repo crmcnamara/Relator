@@ -8,10 +8,7 @@ use InvalidArgumentException;
 
 use BitBalm\Relator\Mappable;
 use BitBalm\Relator\RecordSet;
-use BitBalm\Relator\AlreadySetException;
-
-
-class TableNameAlreadySet extends InvalidArgumentException implements AlreadySetException {}
+use BitBalm\Relator\Exception\TableNameAlreadySet;
 
 
 Trait MappableTrait 
