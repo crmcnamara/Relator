@@ -14,12 +14,8 @@ use BitBalm\Relator\Recorder;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Mapper\PDO\SchemaValidator;
-
-
-class TooManyRecords extends RuntimeException {}
-
-class RecordNotFound extends InvalidArgumentException {}
-
+use BitBalm\Relator\Exception\RecordNotFound;
+use BitBalm\Relator\Exception\TooManyRecords;
 
 trait PDOTrait 
 {
@@ -28,27 +24,31 @@ trait PDOTrait
     
     public function loadRecord( Recordable $record, $record_id ) /*: Recordable*/ 
     {
-        $results = $this->loadRecordsByColumnValues( $record, $record->getPrimaryKeyName(), [ $record_id ] )
-            ->asArrays();
+        return $this->loadRecordByColumnValue( $record, $record->getPrimaryKeyName(), $record_id );
+    }
+    
+    public function loadRecordByColumnValue( Recordable $record, string $column, $value ) : Recordable 
+    {
+        $results = $this->loadRecordsByColumnValues( $record, $column, [ $value ] );
         
         if ( count($results) >1 ) { 
             throw new TooManyRecords( 
-                "Multiple {$record->getTableName()} records loaded for {$record->getPrimaryKeyName()}: {$record_id} " 
+                "Multiple {$record->getTableName()} records loaded for {$column}: {$value} " 
               ) ; 
         }
         
         if ( count($results) <1 ) { 
             throw new RecordNotFound( 
-                "No {$record->getTableName()} records found for {$record->getPrimaryKeyName()}: {$record_id} " 
+                "No {$record->getTableName()} records found for {$column}: {$value} " 
               ) ; 
         }
         
         // transfer values to the passed record
-        $values = current($results);
+        $result = current($results);
         
         $record
-            ->setValues($values)
-            ->setUpdateId( $values[ $record->getPrimaryKeyName() ] );
+            ->setValues($result->asArray())
+            ->setUpdateId($result->getUpdateId());
             
         return $record;
     }

@@ -10,11 +10,9 @@ use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\RecordSet;
-use BitBalm\Relator\AlreadySetException;
+use BitBalm\Relator\Exception\RecorderAlreadySet;
 use BitBalm\Relator\Recorder\RecordNotFound;
 
-
-class RecorderAlreadySet extends InvalidArgumentException implements AlreadySetException {}
 
 
 Trait RecordableTrait

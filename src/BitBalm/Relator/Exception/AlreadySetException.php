@@ -1,6 +1,6 @@
 <?php
 
-namespace BitBalm\Relator;
+namespace BitBalm\Relator\Exception;
 
 
 interface AlreadySetException {}

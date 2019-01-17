@@ -13,10 +13,7 @@ use BitBalm\Relator\Relator;
 use BitBalm\Relator\Relationship;
 use BitBalm\Relator\GetsRelatedRecords;
 use BitBalm\Relator\GetsRelatedRecords\GetsRelatedTrait;
-use BitBalm\Relator\NotYetSetException;
-
-
-class RecordNotYetSet extends RuntimeException implements NotYetSetException {}
+use BitBalm\Relator\Exception\RecordNotYetSet;
 
 
 class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRecords

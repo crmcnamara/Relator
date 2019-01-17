@@ -16,14 +16,14 @@ use Aura\SqlSchema\ColumnFactory;
 
 use BitBalm\Relator\Mapper;
 use BitBalm\Relator\Recorder;
-use BitBalm\Relator\Recorder\RecordNotFound;
+use BitBalm\Relator\Exception\RecordNotFound;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
 use BitBalm\Relator\Mappable\MappableTrait;
-use BitBalm\Relator\Mappable\TableNameAlreadySet;
+use BitBalm\Relator\Exception\TableNameAlreadySet;
 use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recordable\RecordableTrait;
-use BitBalm\Relator\Recordable\RecorderAlreadySet;
+use BitBalm\Relator\Exception\RecorderAlreadySet;
 use BitBalm\Relator\PDO\SchemaValidator;
 use BitBalm\Relator\Mapper\PDO\SchemaValidator\InvalidTable;
 
