@@ -11,7 +11,7 @@ use BitBalm\Relator\Recordable;
 use BitBalm\Relator\Recorder;
 use BitBalm\Relator\RecordSet;
 use BitBalm\Relator\Exception\RecorderAlreadySet;
-use BitBalm\Relator\Recorder\RecordNotFound;
+use BitBalm\Relator\Exception\RecordNotFound;
 
 
 
