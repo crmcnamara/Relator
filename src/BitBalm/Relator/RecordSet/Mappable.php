@@ -16,8 +16,10 @@ class Mappable extends ArrayObject implements RecordSet
 {
     protected $record ;
     
-    public function __construct( array $records, $flags = null )
+    public function __construct( array $records, MappableRecord $record_type, $flags = null )
     {
+        $this->record = $record_type;
+        
         foreach ( $records as $record ) { $this->validRecord($record); }
         parent::__construct( $records, $flags );
         
@@ -25,20 +27,20 @@ class Mappable extends ArrayObject implements RecordSet
 
     protected function validRecord( MappableRecord $record ) /*: MappableRecord*/
     {
-        if ( ! isset( $this->record ) ) {
-            $this->record = $record;
-            
-        } else {
-            if ( ! $record instanceof $this->record ) {
-                throw new InvalidRecord( 
-                    'Passed record of class '. get_class($record)
-                    .' must be an instance of class '. get_class($this->record) .'. '
-                  );
-            }
+        $record_type = $this->getRecordType();
+        if ( ! $record instanceof $record_type ) {
+            throw new InvalidRecord( 
+                'Passed record of class '. get_class($record)
+                .' must be an instance of class '. get_class($record_type) .'. '
+              );
         }
         return $record;
     }
     
+    public function getRecordType() : MappableRecord
+    {
+        return $this->record;
+    }
     
     public  function offsetSet( $key, $value ) 
     {

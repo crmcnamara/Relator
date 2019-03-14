@@ -84,7 +84,7 @@ trait PDOTrait
         // fetch the record's preferred recordset
         $recordset = $record->asRecordSet();
         // and instantiate a new one of the same type, with these new result records
-        $recordset = new $recordset($records);
+        $recordset = new $recordset( $records, $record );
         
         return $recordset;
     }

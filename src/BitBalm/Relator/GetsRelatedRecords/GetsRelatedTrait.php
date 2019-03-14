@@ -72,7 +72,7 @@ Trait GetsRelatedTrait
         }
         
         if ( $from_table_name !== $this->getTableName() ) {
-            throw new RelationshipAlreadySet(
+            throw new InvalidRelationship(
                 "The given Relationship's from table must have a table name of {$from_table_name}. "
               );
         }
@@ -92,7 +92,9 @@ Trait GetsRelatedTrait
     
     public function asRecordSet( RecordSet $recordset = null ) /*: RecordSet*/
     {
-        return $recordset ? new $recordset([ $this ]) : new RecordSet\GetsRelated([ $this ]);
+        return $recordset 
+            ? new $recordset( [ $this ], $this ) 
+            : new RecordSet\GetsRelated( [ $this ], $this );
     }
     
 }

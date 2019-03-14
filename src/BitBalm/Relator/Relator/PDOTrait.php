@@ -62,7 +62,7 @@ trait PDOTrait
         
         $to_recordset = $to_table->asRecordSet();
         
-        $resultset = new $to_recordset( $results );
+        $resultset = new $to_recordset( $results, $to_table );
 
         return $resultset;
     }
@@ -70,12 +70,23 @@ trait PDOTrait
     /* returns array of: 1) query string and 2) array of query parameters */
     public function getRelatedQuery( GetsRelatedRecords $related_from, Relationship $relationship ) /*: array*/
     {
+        $values = array_column( $related_from->asRecordSet()->asArrays(), $relationship->getFromColumn() );
+        
         $to_table  = $relationship->getToTable();
         $to_table_name = $this->getValidator()->validTable($to_table->getTableName());
         $to_column = $this->getValidator()->validColumn( $to_table_name, $relationship->getToColumn() );
-        $query_string = "SELECT * from {$to_table_name} where {$to_column} in ( ? ) ";
         
-        $values = array_column( $related_from->asRecordSet()->asArrays(), $relationship->getFromColumn() );
+        $query_string = "SELECT * from {$to_table_name} ";
+        
+        
+        // empty sets never relate, so an empty set only produces another empty set
+        if ( empty($values) ) {
+            // Some rdbs (MySQL) don't like empty operands for the "in" operator
+            // Others (sqlite3) don't understand FALSE 
+            $query_string .= " where 0 = 1 ";
+        } else {
+            $query_string .= " where {$to_column} in ( ? ) ";
+        }
         
         // Replace the placeholder with as many placeholders as we have values
         $query_string = str_replace( 

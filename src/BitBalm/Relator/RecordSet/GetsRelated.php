@@ -21,6 +21,12 @@ class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRe
     use GetsRelatedTrait;
 
 
+    public function __construct( array $records, RelatableRecord $record_type, $flags = null )
+    {
+        parent::__construct( $records, $record_type, $flags );
+        
+    }
+
     protected function validRecord( Mappable $record ) /*: Mappable*/
     {
         return parent::validRecord($this->validRelatable($record));
@@ -31,27 +37,19 @@ class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRe
         return $record;
     }
     
-    protected function getRecord() /*: RelatableRecord*/
-    {
-        if ( empty($this->record) ) { 
-            throw new RecordNotYetSet("This RecordSet's Record type is not yet set. ");
-        }
-        return $this->record;
-    }
-    
     public function getTableName() /*: string*/
     {
-        return $this->getRecord()->getTableName() ; 
+        return $this->getRecordType()->getTableName() ; 
     }
     
     public function setRelationship( Relationship $relationship, /*string*/ $relationship_name = null ) /*: GetsRelatedRecords*/ 
     {
-        return $this->getRecord()->setRelationship( $relationship, $relationship_name );
+        return $this->getRecordType()->setRelationship( $relationship, $relationship_name );
     }
     
     public function getRelationship( /*string*/ $relationship_name ) /*: Relationship*/
     {
-        return $this->getRecord()->getRelationship($relationship_name);
+        return $this->getRecordType()->getRelationship($relationship_name);
     }
     
     public function asRecordSet() /*: RecordSet*/
