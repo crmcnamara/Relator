@@ -39,17 +39,17 @@ class GetsRelated extends RecordSet\Mappable implements RecordSet, GetsRelatedRe
     
     public function getTableName() : string
     {
-        return $this->getRecord()->getTableName() ; 
+        return $this->getRecordType()->getTableName() ; 
     }
     
     public function setRelationship( Relationship $relationship, string $relationship_name = null ) : GetsRelatedRecords 
     {
-        return $this->getRecord()->setRelationship( $relationship, $relationship_name );
+        return $this->getRecordType()->setRelationship( $relationship, $relationship_name );
     }
     
     public function getRelationship( string $relationship_name ) : Relationship
     {
-        return $this->getRecord()->getRelationship($relationship_name);
+        return $this->getRecordType()->getRelationship($relationship_name);
     }
     
     public function asRecordSet() : RecordSet

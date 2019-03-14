@@ -27,17 +27,17 @@ class Mappable extends ArrayObject implements RecordSet
 
     protected function validRecord( MappableRecord $record ) : MappableRecord
     {
-    
-        if ( ! $record instanceof $this->record ) {
+        $record_type = $this->getRecordType();
+        if ( ! $record instanceof $record_type ) {
             throw new InvalidRecord( 
                 'Passed record of class '. get_class($record)
-                .' must be an instance of class '. get_class($this->record) .'. '
+                .' must be an instance of class '. get_class($record_type) .'. '
               );
         }
         return $record;
     }
     
-    protected function getRecord() : MappableRecord
+    public function getRecordType() : MappableRecord
     {
         return $this->record;
     }
