@@ -15,6 +15,7 @@ use Aura\SqlSchema\ColumnFactory;
 use BitBalm\Relator\Relator;
 use BitBalm\Relator\Record;
 use BitBalm\Relator\Record\RecordTrait;
+use BitBalm\Relator\Mappable;
 use BitBalm\Relator\Mappable\MappableTrait;
 use BitBalm\Relator\Exception\TableNameAlreadySet;
 use BitBalm\Relator\GetsRelatedRecords;
@@ -192,5 +193,48 @@ class RelatingTest extends SqliteTestCase
         
     }
 
+    /**
+     * @dataProvider people
+     */
+    public function testEmptyRecordSetHasRecordType( string $person_varname )
+    {
+        $authors = new RecordSet\GetsRelated( [], $this->$person_varname );
+        
+        $this->assertInstanceOf( 
+            Mappable::class,
+            $authors->getRecordType(),
+            var_export( $authors->getRecordType() , 1 ).
+            "An empty RecordSet lacks a Record type. "
+          );
+    }
+    
+    /** Tests that an empty RecordSet fetches a related RecordSet that is also empty.
+     * 
+     * Interestingly, the SQL clause ' where $column in () ' (with an empty value set)
+     *    Fails on MySQL, but produces an empty set in sqlite3
+     * Meanwhile, ' where false ' fails in sqlite3 (but ' where 1 = 2 ' works)
+     * TODO: This would be a good case for using Docker to test in both SQLite3 and Mysql
+     * 
+     * @dataProvider people
+     */
+    public function testEmptyRecordSetGetsEmptyRelateds( string $person_varname )
+    {
+        $authors = new RecordSet\GetsRelated( [], $this->$person_varname);
+        
+        $this->assertEmpty( 
+            (array) $authors,
+            var_export( (array) $authors, 1 ) ."\n".
+            "An authors RecordSet fixture was not empty. "
+          );
+        
+        $articles = $authors->getRelated('articles');
+        
+        $this->assertEmpty( 
+            (array) $articles,
+            var_export( (array) $articles, 1 ) ."\n".
+            "Articles related to an empty RecordSet of people was not itself empty. "
+          );
+        
+    }
 
 }
