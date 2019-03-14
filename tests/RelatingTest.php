@@ -141,10 +141,10 @@ class RelatingTest extends SqliteTestCase
      */
     public function testRelateAuthorsToArticles( string $person_varname ) 
     {
-        $authors = new RecordSet\GetsRelated([
+        $authors = new RecordSet\GetsRelated( [
             $this->$person_varname->newRecord()->setValues(['id'=>1,'name'=>'Joe',]),
             $this->$person_varname->newRecord()->setValues(['id'=>2,'name'=>'Dave',])
-          ]);
+          ], $this->$person_varname );
          
         $articles = $authors->getRelated('articles')->asArrays();
         

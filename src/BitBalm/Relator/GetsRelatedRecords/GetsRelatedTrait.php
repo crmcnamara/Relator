@@ -92,7 +92,9 @@ Trait GetsRelatedTrait
     
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet
     {
-        return $recordset ? new $recordset([ $this ]) : new RecordSet\GetsRelated([ $this ]);
+        return $recordset 
+            ? new $recordset( [ $this ], $this ) 
+            : new RecordSet\GetsRelated( [ $this ], $this );
     }
     
 }

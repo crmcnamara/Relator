@@ -62,7 +62,7 @@ trait PDOTrait
         
         $to_recordset = $to_table->asRecordSet();
         
-        $resultset = new $to_recordset( $results );
+        $resultset = new $to_recordset( $results, $to_table );
 
         return $resultset;
     }

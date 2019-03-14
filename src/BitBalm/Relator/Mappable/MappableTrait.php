@@ -35,7 +35,9 @@ Trait MappableTrait
     
     public function asRecordSet( RecordSet $recordset = null ) : RecordSet
     {
-        return $recordset ? new $recordset([ $this ]) : new RecordSet\Mappable([ $this ]);
+        return $recordset 
+            ? new $recordset( [ $this ], $this ) 
+            : new RecordSet\Mappable( [ $this ], $this );
     }
     
     public function setTableName( string $table_name ) : Mappable
