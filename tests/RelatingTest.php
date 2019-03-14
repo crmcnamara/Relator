@@ -196,7 +196,7 @@ class RelatingTest extends SqliteTestCase
     /**
      * @dataProvider people
      */
-    public function testEmptyRecordSetHasRecordType( string $person_varname )
+    public function testEmptyRecordSetHasRecordType( /*string*/ $person_varname )
     {
         $authors = new RecordSet\GetsRelated( [], $this->$person_varname );
         
@@ -217,7 +217,7 @@ class RelatingTest extends SqliteTestCase
      * 
      * @dataProvider people
      */
-    public function testEmptyRecordSetGetsEmptyRelateds( string $person_varname )
+    public function testEmptyRecordSetGetsEmptyRelateds( /*string*/ $person_varname )
     {
         $authors = new RecordSet\GetsRelated( [], $this->$person_varname);
         

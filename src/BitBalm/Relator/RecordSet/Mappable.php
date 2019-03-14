@@ -37,7 +37,7 @@ class Mappable extends ArrayObject implements RecordSet
         return $record;
     }
     
-    public function getRecordType() : MappableRecord
+    public function getRecordType() /*: MappableRecord*/
     {
         return $this->record;
     }
