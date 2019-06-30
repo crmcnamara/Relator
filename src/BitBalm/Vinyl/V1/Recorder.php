@@ -1,7 +1,7 @@
 <?php 
 declare (strict_types=1);
 
-namespace BitBalm\Vinyl;
+namespace BitBalm\Vinyl\V1;
 
 
 interface Recorder 
