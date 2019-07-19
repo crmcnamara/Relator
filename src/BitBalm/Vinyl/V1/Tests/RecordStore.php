@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace BitBalm\Vinyl\V1\Tests;
 
+use InvalidArgumentException;
 use PDO;
 
 use PHPUnit\Framework\TestCase;
@@ -78,37 +79,34 @@ abstract class RecordStore extends TestCase
           )->Equals($record_id);
     }
 
-    
-    protected function getIdFields( Vinyl\Record $record ) : array
+
+    protected function getIdFields( Vinyl\RecordStore $store, $record_id ) : array
     {
-        // operate on a clone of the passed record
-        $record = clone $record;
+        // fetch the fixture record directly from the store
+        $record = $store->getRecord( $record_id );
+        $values = $record->getAllValues();
         
-        // mutate the record id of the clone
-        $record_id = $record->getRecordId();
-        $new_record_id = is_numeric($record_id) ? $record_id +99999 : $record_id .'_TEST';
+        // Identify fields whose values match that match the current record id
+        // Some or all of these values may match purely coincidentally,
+        //    rather than because they're the id field.
+        $id_fields = array_keys( $values, $record->getRecordId() );
         
-        $record->initializeRecord( $new_record_id, $record->getAllValues() );
+        // mutate the value of only those fields, 
+        $insert_values = array_merge( 
+            $values, 
+             array_intersect_key( $this->mutateValues($record), array_flip($id_fields) )
+          );
+          
+        // and insert a new record with those values
+        $record = $store->insertRecord( $insert_values );
         
-        // record any fields whose values match the mutated id
-        $fields = [];
-        foreach ( $record->getAllValues() as $field => $value ) {
-            if ( $value == $new_record_id ) { $fields[] = $field; }
-        }
+        // now check again - any fields whose values matched purely coincidentally should be eliminated.
+        $id_fields = array_keys( $record->getAllValues(), $record->getRecordId() );
         
-        return $fields;
-    }
-    
-    protected function getValuesWithoutId( Vinyl\Record $record ) : array
-    {
-        $id_fields = $this->getIdFields($record);
+        // cleanup
+        $store->deleteRecord( $record );
         
-        $values = [];
-        foreach ( $record->getAllValues() as $field => $value ) {
-            if ( ! in_array( $field, $id_fields, true ) ) { $values[$field] = $value; }
-        }
-        
-        return $values;
+        return $id_fields;
     }
     
     public function getRecordsScenarios()
@@ -127,7 +125,7 @@ abstract class RecordStore extends TestCase
               ] as $subtitle => $requested_record_ids )
             {
                 $scenarios[ "{$storename} - {$subtitle}" ] = 
-                    [ $store, $fixture_record_id, $requested_record_ids, ];
+                    [ $store, $requested_record_ids, ];
             }
         }
         return $scenarios;
@@ -136,17 +134,22 @@ abstract class RecordStore extends TestCase
     /** 
      * @dataProvider getRecordsScenarios
      */
-    public function testGetRecords( Vinyl\RecordStore $store, $fixture_record_id, array $record_ids )
+    public function testGetRecords( Vinyl\RecordStore $store, array $record_ids )
     {
         $expected_records = [];
         
         try {
             // attempt to fetch the first record id as a fixture record
-            $record = $store->getRecord( current( $record_ids ) );
+            $record_id = current( $record_ids );
+            $record = $store->getRecord( $record_id );
             $expected_records[] = $record;
             
             // and, if found, insert a second for good measure
-            $insert_values = $this->mutateValues( $this->getValuesWithoutId($record) );
+            // strip field-value pairs containing ids, if any
+            $insert_values = array_diff_key(
+                $record->getAllValues(), 
+                array_flip( $this->getIdFields( $store, $record_id ) )
+              );
             $inserted_record = $store->insertRecord($insert_values);
             $record_ids[] = $inserted_record->getRecordId();
             $expected_records[] = $inserted_record;
@@ -188,7 +191,11 @@ abstract class RecordStore extends TestCase
     {
         $record = $store->getRecord($record_id);
         
-        $insert_values = $this->mutateValues( $this->getValuesWithoutId($record) );
+        // strip field-value pairs containing ids, if any
+        $insert_values = array_diff_key(            
+            $this->mutateValues($record),
+            array_flip( $this->getIdFields( $store, $record_id ) )
+          );
         $inserted_record = $store->insertRecord( $insert_values );
         
         verify(
