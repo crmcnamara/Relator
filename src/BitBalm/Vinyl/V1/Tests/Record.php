@@ -11,6 +11,10 @@ abstract class Record extends TestCase
 {
     abstract public function getRecords() : array ;
     
+    
+    use TestTrait;
+    
+    
     public function RecordScenarios()
     {
         // cache the result of the first call to this method
@@ -40,33 +44,31 @@ abstract class Record extends TestCase
           )->lessThan(count($initial_values));
     }
     
-    protected function alterValues( array $values ) : array 
-    {   
-        $number = 1;
-        foreach( $values as $key => $value ) {
-            $number++;
-            $altered_values[$key] = 
-                is_numeric( $value ) 
-                    ? $value + $number
-                    : $values[$key] . $number;
-        }
-        return $altered_values;
-    }
-    
     /**
      * @dataProvider RecordScenarios
      */
-    public function testInitializeValues( Vinyl\Record $record )
-    {
-        // to determine what fields are valid for this record, we ask it
-        $initial_values = $record->getAllValues();
+    public function testInitializeRecord( Vinyl\Record $record )
+    {        
+        $altered_values = $this->mutateValues($record);
         
-        $altered_values = $this->alterValues( $initial_values );
-        $record->initializeValues( $altered_values );
+        $new_record_id = 999999;
+        
+        
+        $record->initializeRecord( $new_record_id, $altered_values );
+        
         
         verify( 
-            "The Record must persist values passed to a call to initializeValues(). ", 
-            $record->getAllValues()
+            "The Record must persist the record id passed to a call to initializeRecord(). ",
+            $record->getRecordId()
+          )->Equals($new_record_id);
+        
+        ksort($altered_values);
+        $persisted_values = $record->getAllValues();
+        ksort($persisted_values);
+        
+        verify( 
+            "The Record must persist values passed to a call to initializeRecord(). ",
+            $persisted_values
           )->equals($altered_values);
         
     }
@@ -77,29 +79,11 @@ abstract class Record extends TestCase
     public function testGetRecordId( Vinyl\Record $record )
     {
         $initial_record_id = $record->getRecordId();
-        $initial_values = $record->getAllValues();
         
         verify(
             "The Record should return a non-empty value for getRecordId(). ",
             $initial_record_id
           )->notEmpty();
-          
-        // to determine the id field for this record, 
-        //    we look for the value returned by getRecordId() in getAllValues()
-        $id_field = array_search( $initial_record_id, $initial_values, true );
-        
-        verify( 
-            "The initial call to getAllValues() should include the value returned by GetRecordId(). ",
-            $initial_values
-          )->contains($initial_record_id);
-            
-        $altered_values = $this->alterValues( $record->getAllValues() );
-        $record->initializeValues( $altered_values );
-        
-        verify(
-            "After a call to initializeValues(), getRecordId() should return the id value passed to the first call. ",
-            $record->getAllValues()[$id_field]
-          )->Equals( $altered_values[$id_field] );
         
     }
     
