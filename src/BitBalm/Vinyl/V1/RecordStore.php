@@ -6,8 +6,6 @@ namespace BitBalm\Vinyl\V1;
 
 interface RecordStore
 {
-    public function setMasterRecord( Record $prototype );
-    
     public function getRecord( $record_id ) : Record ;
     public function getRecords( array $record_ids ) : Collection\Records ;
     public function getRecordByFieldValues( string $field, $value ) : Record ; 
