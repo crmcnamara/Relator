@@ -183,7 +183,143 @@ abstract class RecordStore extends TestCase
         
     }
 
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testGetRecordByFieldValueThrowsInvalidField( Vinyl\RecordStore $store )
+    {
+        $exception = null; 
+        try {
+            $store->getRecordByFieldValue( 'TEST_bogus_fieldname', 1 );
+        } catch ( InvalidArgumentException $exception ) {}
+        
+        verify(
+            "The RecordStore should throw an exception when passed an invalid fieldname. ",
+            $exception
+          )->notEmpty();
+    }
 
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */    
+    public function testGetRecordByFieldValueThrowsRecordNotFound( Vinyl\RecordStore $store )
+    {
+        $exception = null;
+        try {
+            $store->getRecordByFieldValue( $field, 'TEST_bogus_value' );
+        } catch ( RecordNotFound $exception ) {}
+        
+        verify(
+            "The RecordStore should throw an exception when it can't find matching records. ",
+            $exception
+          )->notEmpty();
+        
+    }
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */    
+    public function testGetRecordByFieldValueThrowsTooManyRecords( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord( $record_id ) ;
+        
+        // strip field-value pairs containing ids, if any
+        $insert_values = array_diff_key(
+            $this->mutateValues($record),
+            array_flip( $this->getIdFields( $store, $record_id ) )
+          );
+        $store->insertRecord($insert_values);
+        $store->insertRecord($insert_values);
+        
+        $field = current( array_keys( $insert_values ) );
+        $value = $insert_values[$field];
+        
+        $exception = null;
+        try {
+            $store->getRecordByFieldValue( $field, $value );
+        } catch ( TooManyRecords $exception ) {}
+        
+        verify(
+            "The RecordStore should throw an exception when it can't find matching records. ",
+            $exception
+          )->notEmpty();
+    }
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testGetRecordByFieldValue( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord( $record_id );
+        
+        // strip field-value pairs containing ids, if any
+        $insert_values = array_diff_key(
+            $this->mutateValues($record),
+            array_flip( $this->getIdFields( $store, $record_id ) )
+          );
+        $store->insertRecord($insert_values);
+        
+        $field = current( array_keys( $insert_values ) );
+        $value = $insert_values[$field];
+        
+        $new_record = $store->getRecordByFieldValue( $field, $value );
+    }
+    
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testGetRecordsByFieldValuesThrowsInvalidField( Vinyl\RecordStore $store )
+    {
+        $exception = null; 
+        try {
+            $store->getRecordsByFieldValues( 'TEST_bogus_fieldname', 1 );
+        } catch ( InvalidArgumentException $exception ) {}
+        
+        verify(
+            "The RecordStore should throw an exception when passed an invalid fieldname. ",
+            $exception
+          )->notEmpty();
+    }
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testGetRecordsByFieldValues( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord( $record_id );
+        
+        $id_fields = $this->getIdFields( $store, $record_id );
+        
+        // strip field-value pairs containing ids, if any
+        $insert_values = array_diff_key(
+            $this->mutateValues($record),
+            array_flip( $id_fields )
+          );
+        $store->insertRecord($insert_values);
+        $store->insertRecord($insert_values);
+        
+        $field = current( array_keys( $insert_values ) );
+        $value = $insert_values[$field];
+        
+        $records = $store->getRecordsByFieldValues( $field, $value );
+        
+        verify(
+            "The Recordstore should be able to get multiple records by a field's value. ",
+            count($records)
+          )->Equals(2);
+        
+        ksort($insert_values);
+        
+        foreach ( $records as $record ) {
+            verify(
+                "The RecordStore should get multiple records with the correct field's value. ",
+                $record->getAllValues()[$field]
+              )->Equals($value);
+        }
+    }
+    
+    
     /**
      * @dataProvider getRecordStoreScenarios
      */
@@ -210,8 +346,84 @@ abstract class RecordStore extends TestCase
                 "Inserting a new record yields a Record with all the inserted values. ",
                 $inserted_values[$field]
               )->Equals($insert_values[$field]);
+        }
         
     }
     
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testUpdateRecordThrowsNotFound( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord( $record_id );
+        $exception = null;
+        
+        // re-initialize the record with a  bogus id
+        $record->initializeRecord( 999999, $record->getAllValues() );
+        
+        try {
+            $record->updateRecord($record);
+        } catch ( RecordNotFound $exception ) {}
+        
+        verify(
+            "The RecordStore should throw an exception when it can't find a record to update. ",
+            $exception
+          )->notEmpty();
+    }
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testUpdateRecord( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord( $record_id );
+        
+        $updated_record = $record->updateRecord($record);
+        
+        verify(
+            "The RecordStore should return the same record object instance when updating a record. ",
+            $updated_record
+          )->same($record);
+    }
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testDeleteRecordThrowsNotFound( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord( $record_id );
+        $exception = null;
+        
+        // re-initialize the record with a  bogus id
+        $record->initializeRecord( 999999, $record->getAllValues() );
+        
+        try {
+            $record->deleteRecord($record);
+        } catch ( RecordNotFound $exception ) {}
+        
+        verify(
+            "The RecordStore should throw an exception when it can't find a record to delete. ",
+            $exception
+          )->notEmpty();
+    }
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testDeleteRecord( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord( $record_id );
+        
+        $record->deleteRecord($record);
+        
+        try {
+            $store->getRecord( $record_id );
+        } catch ( RecordNotFound $exception ) {}
+        
+        verify(
+            "The RecordStore should delete records. ",
+            $exception
+          )->notEmpty();
+    }
     
 }
