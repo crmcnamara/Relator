@@ -6,7 +6,7 @@ namespace BitBalm\Vinyl\V1;
 
 interface Record
 {
-    public function initializeValues( array $values );
+    public function initializeRecord( $record_id, array $values );
     public function getRecordId();
     public function getUpdatedValues() : array ;
     public function getAllValues() : array ;
