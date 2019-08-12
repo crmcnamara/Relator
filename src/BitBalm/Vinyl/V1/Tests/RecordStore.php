@@ -14,35 +14,15 @@ use BitBalm\Vinyl\V1\Exception\TooManyRecords;
 
 abstract class RecordStore extends TestCase
 {
-    abstract public function getRecordStores() : array ;
-    
-    /**
-     * This should provide a record id of a pre-existing record 
-     *    in each RecordStore provided by getRecordStores().
-     */
-    abstract public function getFixtureRecordIds() : array ;
-    
     
     use TestTrait;
     
-    
-    public function getRecordStoreScenarios()
-    {
-        // cache the result of the first call to this method
-        static $scenarios;
-        if ( !empty($scenarios) ) { return $scenarios; }
-        
-        $record_ids = array_values( $this->getFixtureRecordIds() ); 
-          
-        foreach ( $this->getRecordStores()  as $storename => $store ) {
-            $record_id = array_shift( $record_ids );
-            $scenarios["store {$storename}"] = [ $store, $record_id ]; 
-        }
-        
-        return $scenarios;
-    }
-    
-
+    /**
+     * returns an array of two elements:
+     *    1) A RecordStore implementation - the subject under test
+     *    2) A Record id of a record that already exists in the RecordStore
+     */
+    abstract public function getRecordStoreScenarios();
     
     
     /**
@@ -296,26 +276,31 @@ abstract class RecordStore extends TestCase
             $this->mutateValues($record),
             array_flip( $id_fields )
           );
-        $store->insertRecord($insert_values);
-        $store->insertRecord($insert_values);
+        $inserted_ids[] = $store->insertRecord($insert_values)->getRecordId();
+        $inserted_ids[] = $store->insertRecord($insert_values)->getRecordId();
         
-        $field = current( array_keys( $insert_values ) );
-        $value = $insert_values[$field];
+        foreach ( array_keys($insert_values) as $field ) {
+            
+            $value = $insert_values[$field];
         
-        $records = $store->getRecordsByFieldValues( $field, $value );
+            $records = $store->getRecordsByFieldValues( $field, $value );
         
-        verify(
-            "The Recordstore should be able to get multiple records by a field's value. ",
-            count($records)
-          )->Equals(2);
-        
-        ksort($insert_values);
-        
-        foreach ( $records as $record ) {
             verify(
-                "The RecordStore should get multiple records with the correct field's value. ",
-                $record->getAllValues()[$field]
-              )->Equals($value);
+                "The Recordstore should be able to get multiple records by a field's value. ",
+                count($records)
+              )->isGreaterThan(1);
+            
+            $retrieved_ids = [];
+            foreach ( $records as $record ) {
+                $retrieved_ids[] = $record->getRecordId();
+            }
+
+            foreach ( $inserted_ids as $inserted_id ) {
+                verify(
+                    "The RecordStore should get all records inserted with a particular field value. ",
+                    $retrieved_ids
+                  )->contains($inserted_id);
+            }
         }
     }
     
@@ -328,7 +313,7 @@ abstract class RecordStore extends TestCase
         $record = $store->getRecord($record_id);
         
         // strip field-value pairs containing ids, if any
-        $insert_values = array_diff_key(            
+        $insert_values = array_diff_key(
             $this->mutateValues($record),
             array_flip( $this->getIdFields( $store, $record_id ) )
           );
@@ -339,7 +324,7 @@ abstract class RecordStore extends TestCase
             $inserted_record->getRecordId()
           )->notEmpty()->notEquals( $record->getRecord_id() );
         
-        $inserted_values = $record->getAllValues();        
+        $inserted_values = $record->getAllValues();
         
         foreach ( $insert_values as $field => $value ) {
             verify(
@@ -347,7 +332,13 @@ abstract class RecordStore extends TestCase
                 $inserted_values[$field]
               )->Equals($insert_values[$field]);
         }
+
+        $second_inserted_record = $store->insertRecord( $insert_values );
         
+        verify(
+            "A second record insertion with the same values should yield a record with a different id. ",
+            $second_inserted_record->getRecordId()
+          )->notEquals( $inserted_record->getRecordId() );
     }
     
     /**
