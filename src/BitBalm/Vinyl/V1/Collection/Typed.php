@@ -25,7 +25,7 @@ class Typed extends ArrayObject
         $iterator_class = "ArrayIterator" 
       )
     {
-        $this->validator = $validator;
+        $this->validator = $validator->bindTo($this);
         #TODO: bind $validator closure to $this
         $this->validateItems($input);
         parent::__construct( $input, $flags, $iterator_class);

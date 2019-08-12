@@ -3,9 +3,16 @@ declare (strict_types=1);
 
 namespace BitBalm\Vinyl\V1\Tests\Collection;
 
+
 use InvalidArgumentException;
+use TypeError;
+use ArgumentCountError;
+
+use stdClass;
 
 use PHPUnit\Framework\TestCase;
+
+
 use BitBalm\Vinyl\V1 as Vinyl;
 
 
@@ -57,13 +64,14 @@ class Typed extends TestCase
             foreach( $bogus_items as $item ) {
                 $collection['bogus_test_key'] = $item; 
             }
-        } catch ( InvalidArgumentException $e ) {}
+        } catch ( InvalidArgumentException $e ) {
+        } catch ( TypeError $exception ) {}
         
-        verify(
-            "The typed collection should throw an InvalidArgumentException "
-                ."when a user attempts to set an invalid item. ",
-            $exception
-          )->isNotEmpty();
+        $this->assertNotEmpty(
+            $exception,
+            "The typed collection should throw an InvalidArgumentException or TypeError "
+                ."when a user attempts to set an invalid item. "
+          );
         
         
         // Same as above, but for appending
@@ -72,13 +80,14 @@ class Typed extends TestCase
             foreach( $bogus_items as $item ) {
                 $collection[] = $item;
             }
-        } catch ( InvalidArgumentException $exception ) {}
+        } catch ( InvalidArgumentException $exception ) {
+        } catch ( TypeError $exception ) {}
         
-        verify(
-            "The typed collection should throw an InvalidArgumentException "
-                ."when a user attempts to append an invalid item. ",
-            $exception
-          )->isNotEmpty();    
+        $this->assertNotEmpty(
+            $exception,
+            "The typed collection should throw an InvalidArgumentException or TypeError "
+                ."when a user attempts to set an invalid item. "
+          ); 
             
     }
     
@@ -89,6 +98,7 @@ class Typed extends TestCase
     {
         $collection['bogus_test_key'] = $accepted;
         $collection[] = $accepted;
+        $this->assertTrue(true);
     }
 
     
@@ -102,12 +112,13 @@ class Typed extends TestCase
     {
         try {
             new Vinyl\Collection\Typed( function( int $item ) {}, [ 9, 'bogus test string', ] );
-        } catch ( InvalidArgumentException $exception ) {}
+        } catch ( InvalidArgumentException $exception ) {
+        } catch ( TypeError $exception ) {}
         
-        verify_that(
-            "A typed collection should throw an InvalidArgumentException "
-                ."when passed invalid items as constructor arguments. ",
-            !empty($exception)
+        $this->assertTrue(
+            !empty($exception),
+            "A typed collection should throw an InvalidArgumentException or TypeError "
+                ."when passed invalid items as constructor arguments. "
           );
     }
     
@@ -115,12 +126,12 @@ class Typed extends TestCase
     {
         try {
             new Vinyl\Collection\Typed();
-        } catch ( Throwable $error ) {}
+        } catch ( ArgumentCountError $error ) {}
         
-        verify_that(
-            "A typed collection should throw an error "
-                ."when instantiated without a validator callable. ",
-            !empty($error)
+        $this->assertTrue(
+            !empty($error),
+            "A typed collection should throw an ArgumentCountError "
+                ."when instantiated without a validator callable. "
           );
     }
     
@@ -128,6 +139,7 @@ class Typed extends TestCase
     {
         new Vinyl\Collection\Typed( function( int $item ) {}, [] );
         new Vinyl\Collection\Typed( function( int $item ) {} );
+        $this->assertTrue(true);
     }
     
     public function testAcceptsInitialItems()
@@ -135,10 +147,11 @@ class Typed extends TestCase
         $items = [ 9, 12, 99999999, ];
         $collection = new Vinyl\Collection\Typed( function( int $item ) {}, $items );
         
-        verify( 
-            "A typed collection should accept items provided as constructor arguments. ",
-            (array) $collection
-          )->Equals($items);
+        $this->assertEquals( 
+            (array) $collection,
+            $items,
+            "A typed collection should accept items provided as constructor arguments. "
+          );
     }
         
     public function testBindsClosures()
@@ -149,9 +162,9 @@ class Typed extends TestCase
         
         $collection = new Vinyl\Collection\Typed( $validator, [ 9 ] );
         
-        verify_that(
-            "A typed array should bind its validator closure to itself. ",
-            !empty($collection->test_var)
+        $this->assertTrue(
+            !empty($collection->test_prop),
+            "A typed array should bind its validator closure to itself. "
           );
     }
     
