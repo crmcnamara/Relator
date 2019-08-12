@@ -16,7 +16,7 @@ trait TestTrait
      * Currently supports numeric and string values.
      * Implementors may need to override this to support their own value types. 
      */
-    protected function mutateValues( Vinyl\Record $record, int $seed = 1 ) : array 
+    protected function mutateValues( Vinyl\Record $record, int $seed = 1 ) : array #Vinyl\Collection\Uniques
     {
         $values = $record->getAllValues();
         $mutated = [];
@@ -24,7 +24,7 @@ trait TestTrait
             $seed++;
             $mutated[$key] = 
                 is_numeric( $value ) 
-                    ? $value + intval( str_repeat( $seed, 4 ) )
+                    ? $value + intval( str_repeat( (string) $seed, 4 ) )
                     : $values[$key] . $seed;
         }
         return $mutated;

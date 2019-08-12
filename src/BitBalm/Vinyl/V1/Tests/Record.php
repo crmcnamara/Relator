@@ -38,10 +38,11 @@ abstract class Record extends TestCase
         $null_count = 0;
         foreach( $initial_values as $key => $value ) { if ( is_null($value) ) { $null_count++; } }
             
-        verify(
-            "The Record's getAllValues() call must provide at least some non-null values. ",
-            $null_count
-          )->lessThan(count($initial_values));
+        $this->assertLessThan(
+            count($initial_values),
+            $null_count,
+            "The Record's getAllValues() call must provide at least some non-null values. "            
+          );
     }
     
     /**
@@ -57,19 +58,21 @@ abstract class Record extends TestCase
         $record->initializeRecord( $new_record_id, $altered_values );
         
         
-        verify( 
-            "The Record must persist the record id passed to a call to initializeRecord(). ",
-            $record->getRecordId()
-          )->Equals($new_record_id);
+        $this->assertEquals( 
+            $new_record_id,
+            $record->getRecordId(),
+            "The Record must persist the record id passed to a call to initializeRecord(). "
+          );
         
         ksort($altered_values);
         $persisted_values = $record->getAllValues();
         ksort($persisted_values);
         
-        verify( 
-            "The Record must persist values passed to a call to initializeRecord(). ",
-            $persisted_values
-          )->equals($altered_values);
+        $this->assertEquals( 
+            $altered_values,
+            $persisted_values,
+            "The Record must persist values passed to a call to initializeRecord(). "
+          );
         
     }
     
@@ -80,10 +83,10 @@ abstract class Record extends TestCase
     {
         $initial_record_id = $record->getRecordId();
         
-        verify(
-            "The Record should return a non-empty value for getRecordId(). ",
-            $initial_record_id
-          )->notEmpty();
+        $this->assertTrue(
+            !empty($initial_record_id),
+            "The Record should return a non-empty value for getRecordId(). "
+          );
         
     }
     
