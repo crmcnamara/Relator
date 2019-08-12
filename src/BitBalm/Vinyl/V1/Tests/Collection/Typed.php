@@ -14,6 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 
 use BitBalm\Vinyl\V1 as Vinyl;
+use BitBalm\Vinyl\V1\Collection\Arrays;
+use BitBalm\Vinyl\V1\Collection\Records;
+use BitBalm\Vinyl\V1\Collection\PDOs;
 
 
 class Typed extends TestCase
@@ -22,17 +25,22 @@ class Typed extends TestCase
     {
         $scenarios = [
         
-            'RecordCollection' => [ 
+            'integer collection' => [ 
             
                 // the collection subject under test
                 'collection'  => new Vinyl\Collection\Typed( 
-                    function( Vinyl\Record $record ) {} 
+                    function( int $item ) {} 
                   ),
                 
                 // an example item the collection will accept.
-                'accepted'    => new Vinyl\Record\Generic,
+                'accepted'    => 99,
                 
               ],
+              
+            Arrays::class   => [ new Arrays,  [1], ],
+            Records::class  => [ new Records, new Vinyl\Record\Generic, ],
+            PDOs::class     => [ new PDOs,    new Vinyl\Tests\RecordStore\SQL\PDO\SQLite, ],
+            
           ];    
         
         return $scenarios;
