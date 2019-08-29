@@ -18,7 +18,8 @@
     },
     "require": {
         "aura/sqlschema": "^2.0",
-        "php": "^7.1"
+        "php": "^7.1",
+        "atlas/query": "^1.2"
     },
     "require-dev": {
         "ext-sqlite3": "*",
