@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace BitBalm\Vinyl\V1\Tests;
 
 use InvalidArgumentException;
+use RuntimeException;
 use PDO;
 
 use PHPUnit\Framework\TestCase;
@@ -18,7 +19,7 @@ abstract class RecordStore extends TestCase
     use TestTrait;
     
     /**
-     * returns an array of two elements:
+     * provides an array of scenarios, each of which consists of an array of two elements:
      *    1) A RecordStore implementation - the subject under test
      *    2) A Record id of a record that already exists in the RecordStore
      */
@@ -38,10 +39,10 @@ abstract class RecordStore extends TestCase
                 $record = $store->getRecord( $record_id );
             } catch ( RecordNotFound $exception ) {}
         
-            verify(
-                "Throws RecordNotFound when a missing record is requested. ",
-                $exception
-              )->notEmpty();
+            $this->assertNotEmpty(
+                $exception,
+                "Throws RecordNotFound when a missing record is requested. "
+              );
         }
     }
         
@@ -53,10 +54,11 @@ abstract class RecordStore extends TestCase
     {
         $record = $store->getRecord( $record_id );
         
-        verify(
-            "Gets a record by id that matches the id from the resulting Record. ",
-            $record->getRecordId()
-          )->Equals($record_id);
+        $this->assertEquals(
+            $record_id,
+            $record->getRecordId(),
+            "Gets a record by id that matches the id from the resulting Record. "
+          );
     }
 
 
@@ -92,11 +94,10 @@ abstract class RecordStore extends TestCase
     public function getRecordsScenarios()
     {
         $scenarios = [];
-        $record_stores = $this->getRecordStores();
-        $fixture_record_ids = array_values( $this->getFixtureRecordIds() ); 
         
-        foreach ( $this->getRecordStores() as $storename => $store ) {
-            $fixture_record_id = array_shift( $fixture_record_ids );
+        foreach ( $this->getRecordStoreScenarios() as $storename => $scenario ) {
+            $store = current( $scenario );
+            $fixture_record_id = end( $scenario );
             foreach ( [ 
                 'all records' => [ $fixture_record_id ], 
                 'some records' => [ $fixture_record_id, 'TEST_bogus_record_id_9999', 999999, ],
@@ -142,10 +143,11 @@ abstract class RecordStore extends TestCase
         $records = $store->getRecords( $record_ids );
         
         
-        verify(
-            "The RecordStore provides {$expected_record_count} results. ",
-            count($records)
-          )->Equals($expected_record_count);
+        $this->assertEquals(
+            $expected_record_count,
+            count($records),
+            "The RecordStore provides {$expected_record_count} results. "
+          );
           
         foreach( $expected_records as $expected_record ) {
             $found = 0;
@@ -155,10 +157,11 @@ abstract class RecordStore extends TestCase
                     break; 
                 }
             }
-            verify(
-                "The RecordStore provides a record for id {$expected_record->getRecordId()}. ",
-                $found
-              )->Equals(1);
+            $this->assertEquals(
+                1,
+                $found,
+                "The RecordStore provides a record for id {$expected_record->getRecordId()}. "
+              );
         }
         
     }
@@ -171,28 +174,31 @@ abstract class RecordStore extends TestCase
         $exception = null; 
         try {
             $store->getRecordByFieldValue( 'TEST_bogus_fieldname', 1 );
-        } catch ( InvalidArgumentException $exception ) {}
+        } catch ( RuntimeException | InvalidArgumentException $exception ) {}
         
-        verify(
-            "The RecordStore should throw an exception when passed an invalid fieldname. ",
-            $exception
-          )->notEmpty();
+        $this->assertNotEmpty(
+            $exception,
+            "The RecordStore should throw an exception when passed an invalid fieldname. "
+          );
     }
 
     /**
      * @dataProvider getRecordStoreScenarios
      */    
-    public function testGetRecordByFieldValueThrowsRecordNotFound( Vinyl\RecordStore $store )
+    public function testGetRecordByFieldValueThrowsRecordNotFound( Vinyl\RecordStore $store, $record_id )
     {
+        $record = $store->getRecord( $record_id ) ;
+        $field = current( array_keys( $record->getAllValues() ) );
+        
         $exception = null;
         try {
             $store->getRecordByFieldValue( $field, 'TEST_bogus_value' );
         } catch ( RecordNotFound $exception ) {}
         
-        verify(
-            "The RecordStore should throw an exception when it can't find matching records. ",
-            $exception
-          )->notEmpty();
+        $this->assertNotEmpty(
+            $exception,
+            "The RecordStore should throw an exception when it can't find matching records. "
+          );
         
     }
     
@@ -219,10 +225,10 @@ abstract class RecordStore extends TestCase
             $store->getRecordByFieldValue( $field, $value );
         } catch ( TooManyRecords $exception ) {}
         
-        verify(
-            "The RecordStore should throw an exception when it can't find matching records. ",
-            $exception
-          )->notEmpty();
+        $this->assertNotEmpty(
+            $exception,
+            "The RecordStore should throw an exception when it finds more than one Record for single-record call. "
+          );
     }
     
     /**
@@ -243,6 +249,8 @@ abstract class RecordStore extends TestCase
         $value = $insert_values[$field];
         
         $new_record = $store->getRecordByFieldValue( $field, $value );
+        
+        $this->assertTrue(true);
     }
     
     
@@ -253,13 +261,13 @@ abstract class RecordStore extends TestCase
     {
         $exception = null; 
         try {
-            $store->getRecordsByFieldValues( 'TEST_bogus_fieldname', 1 );
-        } catch ( InvalidArgumentException $exception ) {}
-        
-        verify(
-            "The RecordStore should throw an exception when passed an invalid fieldname. ",
-            $exception
-          )->notEmpty();
+            $records = $store->getRecordsByFieldValues( 'TEST_bogus_fieldname', [ 1 ] );
+        } catch ( RuntimeException | InvalidArgumentException $exception ) {}
+
+        $this->assertNotEmpty(
+            $exception,
+            "The RecordStore should throw an exception when passed an invalid fieldname. "
+          );
     }
     
     /**
@@ -279,16 +287,15 @@ abstract class RecordStore extends TestCase
         $inserted_ids[] = $store->insertRecord($insert_values)->getRecordId();
         $inserted_ids[] = $store->insertRecord($insert_values)->getRecordId();
         
-        foreach ( array_keys($insert_values) as $field ) {
+        foreach ( $insert_values as $field => $value ) {
             
-            $value = $insert_values[$field];
+            $records = $store->getRecordsByFieldValues( $field, [ $value ] );
         
-            $records = $store->getRecordsByFieldValues( $field, $value );
-        
-            verify(
-                "The Recordstore should be able to get multiple records by a field's value. ",
-                count($records)
-              )->isGreaterThan(1);
+            $this->assertGreaterthan(
+                1,
+                count($records),
+                "The Recordstore should be able to get multiple records by a field's value. "
+              );
             
             $retrieved_ids = [];
             foreach ( $records as $record ) {
@@ -296,10 +303,11 @@ abstract class RecordStore extends TestCase
             }
 
             foreach ( $inserted_ids as $inserted_id ) {
-                verify(
-                    "The RecordStore should get all records inserted with a particular field value. ",
-                    $retrieved_ids
-                  )->contains($inserted_id);
+                $this->assertContains(
+                    $inserted_id,
+                    $retrieved_ids,
+                    "The RecordStore should get all records inserted with a particular field value. "
+                  );
             }
         }
     }
@@ -319,26 +327,34 @@ abstract class RecordStore extends TestCase
           );
         $inserted_record = $store->insertRecord( $insert_values );
         
-        verify(
-            "Inserting a new record yields a Record with a new, non-empty id. ",
-            $inserted_record->getRecordId()
-          )->notEmpty()->notEquals( $record->getRecord_id() );
-        
-        $inserted_values = $record->getAllValues();
+        $this->assertNotEmpty(
+            $inserted_record->getRecordId(),
+            "Inserting a new record yields a Record with a new, non-empty id. "
+          );
+          
+        $this->assertNotEquals(
+            $record->getRecordId(),
+            $inserted_record->getRecordId(),
+            "Inserting a new record yields a Record with a new, non-empty id. "
+          );
+          
+        $inserted_values = $inserted_record->getAllValues();
         
         foreach ( $insert_values as $field => $value ) {
-            verify(
-                "Inserting a new record yields a Record with all the inserted values. ",
-                $inserted_values[$field]
-              )->Equals($insert_values[$field]);
+            $this->assertEquals(
+                $insert_values[$field],
+                $inserted_values[$field],
+                "Inserting a new record yields a Record with all the inserted values. "
+              );
         }
 
         $second_inserted_record = $store->insertRecord( $insert_values );
         
-        verify(
-            "A second record insertion with the same values should yield a record with a different id. ",
-            $second_inserted_record->getRecordId()
-          )->notEquals( $inserted_record->getRecordId() );
+        $this->assertNotEquals(
+            $inserted_record->getRecordId(),
+            $second_inserted_record->getRecordId(),
+            "A second record insertion with the same values should yield a record with a different id. "
+          );
     }
     
     /**
@@ -349,19 +365,56 @@ abstract class RecordStore extends TestCase
         $record = $store->getRecord( $record_id );
         $exception = null;
         
-        // re-initialize the record with a  bogus id
-        $record->initializeRecord( 999999, $record->getAllValues() );
         
+        // strip the id fields from values of the fixture record
+        $update_values = array_diff_key(
+            $record->getAllValues(), 
+            array_flip( $this->getIdFields( $store, $record_id ) )
+          );
+        // re-initialize the record with a bogus id
+        $record->initializeRecord( 999999, $update_values );
+
         try {
-            $record->updateRecord($record);
+            $store->updateRecord($record);
         } catch ( RecordNotFound $exception ) {}
         
-        verify(
-            "The RecordStore should throw an exception when it can't find a record to update. ",
-            $exception
-          )->notEmpty();
+        $this->assertNotEmpty(
+            $exception,
+            "The RecordStore should throw an exception when it can't find a record to update. "
+          );
+          
+        
     }
-    
+
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testUpdateMovingRecordThrowsNotFound( Vinyl\RecordStore $store, $record_id )
+    {
+        $exception = null;
+        
+        $id_fields = $this->getIdFields( $store, $record_id );
+        if ( ! empty(count($id_fields)) ) {
+            
+            $record = $store->getRecord( $record_id );
+            
+            // re-initialize the record with a bogus id for a non-existent record,
+            //    but keep the original id as an update value
+            $record->initializeRecord( 999999, $record->getUpdatedValues() );
+
+            try {
+                $store->updateRecord($record);
+            } catch ( RecordNotFound $exception ) {}
+            
+            $this->assertNotEmpty(
+                $exception,
+                "The RecordStore should throw an exception when it can't find a record to update. "
+              );
+
+        }
+        
+    }
+
     /**
      * @dataProvider getRecordStoreScenarios
      */
@@ -369,12 +422,13 @@ abstract class RecordStore extends TestCase
     {
         $record = $store->getRecord( $record_id );
         
-        $updated_record = $record->updateRecord($record);
+        $updated_record = $store->updateRecord($record);
         
-        verify(
-            "The RecordStore should return the same record object instance when updating a record. ",
-            $updated_record
-          )->same($record);
+        $this->assertSame(
+            $record,
+            $updated_record,
+            "The RecordStore should return the same record object instance when updating a record. "
+          );
     }
     
     /**
@@ -389,13 +443,13 @@ abstract class RecordStore extends TestCase
         $record->initializeRecord( 999999, $record->getAllValues() );
         
         try {
-            $record->deleteRecord($record);
+            $store->deleteRecord($record);
         } catch ( RecordNotFound $exception ) {}
         
-        verify(
-            "The RecordStore should throw an exception when it can't find a record to delete. ",
-            $exception
-          )->notEmpty();
+        $this->assertNotEmpty(
+            $exception,
+            "The RecordStore should throw an exception when it can't find a record to delete. "
+          );
     }
     
     /**
@@ -405,16 +459,20 @@ abstract class RecordStore extends TestCase
     {
         $record = $store->getRecord( $record_id );
         
-        $record->deleteRecord($record);
+        $store->deleteRecord($record);
         
         try {
             $store->getRecord( $record_id );
         } catch ( RecordNotFound $exception ) {}
         
-        verify(
-            "The RecordStore should delete records. ",
-            $exception
-          )->notEmpty();
+        $this->assertNotEmpty(
+            $exception,
+            "The RecordStore should delete records. "
+          );
     }
+    
+    # TODO: what happens when attempt is made to update or delete a record in the db that has been deleted (or moved) since last being fetched?
+    #   an update would fail silently; there would just be no matches. however, the following get might fail. 
+    # This will be ok for updates and inserts, as the following getRecord() will fail - but perhaps not for delete.
     
 }

@@ -47,7 +47,7 @@ class PeopleArticles extends Schema
             
         (new Table( 'article', [], $adapter ))->insert([
             [ 'id' => 5, 'title' => 'Something or Other', 'author_id' => 3, ],
-            ])->save();
+          ])->save();
         $fixture_record_ids['article'] = 5;
         
         return $fixture_record_ids;
