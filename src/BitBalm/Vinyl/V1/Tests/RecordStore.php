@@ -330,6 +330,23 @@ abstract class RecordStore extends TestCase
         }
     }
     
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testGetRecordsByFieldValuesAcceptsEmptyValues( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord( $record_id );
+        foreach ( array_keys( $record->getAllValues() ) as $field ) {
+            $records = $store->getRecordsByFieldValues( $field, [] );
+            
+            $this->assertEquals(
+                count($records),
+                0,
+                "The RecordStore should return an empty Record collection when provided no values for any field. "
+              );
+        }
+    }
+    
     
     /**
      * @dataProvider getRecordStoreScenarios
