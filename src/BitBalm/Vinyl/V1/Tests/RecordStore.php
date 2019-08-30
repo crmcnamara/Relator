@@ -271,6 +271,23 @@ abstract class RecordStore extends TestCase
           );
     }
     
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testInsertRecordThrowsInvalidField( Vinyl\RecordStore $store )
+    {
+        try {
+            $store->insertRecord([ 'TEST_bogus_fieldname' => 1 ]);
+        } catch ( RuntimeException $exception ) {}
+
+        $this->assertNotEmpty(
+            $exception,
+            "The RecordStore should throw an exception when passed an invalid fieldname. "
+          );
+    }
+    
+    
     /**
      * @dataProvider getRecordStoreScenarios
      */
