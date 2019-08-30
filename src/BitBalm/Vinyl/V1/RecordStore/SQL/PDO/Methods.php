@@ -175,7 +175,6 @@ trait Methods /* implements Vinyl\RecordStore\SQL\PDO */
     /* implements Vinyl\RecordStore\SQL */
     public function getRecordsByQueryString( string $query, array $parameters ) : Collection\Records 
     {
-#throw new \Exception(var_export([(__METHOD__?:__FILE__)=>__LINE__,func_get_args(),],true));
         $statement = $this->connection->perform( $query, $parameters );
         return $this->getRecordsByStatement($statement); 
     }
