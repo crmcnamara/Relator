@@ -174,7 +174,8 @@ abstract class RecordStore extends TestCase
         $exception = null; 
         try {
             $store->getRecordByFieldValue( 'TEST_bogus_fieldname', 1 );
-        } catch ( RuntimeException | InvalidArgumentException $exception ) {}
+        } catch ( RuntimeException $exception ) {}
+
         
         $this->assertNotEmpty(
             $exception,
@@ -262,7 +263,7 @@ abstract class RecordStore extends TestCase
         $exception = null; 
         try {
             $records = $store->getRecordsByFieldValues( 'TEST_bogus_fieldname', [ 1 ] );
-        } catch ( RuntimeException | InvalidArgumentException $exception ) {}
+        } catch ( RuntimeException $exception ) {}
 
         $this->assertNotEmpty(
             $exception,
