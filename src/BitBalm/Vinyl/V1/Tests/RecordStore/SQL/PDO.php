@@ -10,53 +10,27 @@ use Atlas\Query\QueryFactory;
 
 
 use BitBalm\Vinyl\V1 as Vinyl;
+use BitBalm\Vinyl\V1\Collection\PDOs;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\Exception\TooManyRecords;
 
-class PDO extends Vinyl\Tests\RecordStore\SQL
+abstract class PDO extends Vinyl\Tests\RecordStore\SQL
 {
     /**
      * returns a RecordStore instance and fixture record id
      *    for every table of every schema, using each PDO instance.
      */
-    public function getRecordStoreScenarios() : array
-    {
-        $scenarios = [];
-        
-        foreach ( $this->getSchemas() as $schema ) {
-            foreach ( $this->getPDOs() as $pdo ) {
-                
-                $schema->injectSchema($pdo);
-                $record_ids = $schema->injectRecords($pdo);
-                
-                foreach ( $record_ids as $table => $record_id ) {
-                    $scenarios[ implode( ' ', [ $table, get_class($schema), get_class($pdo), ] ) ] = [
-                        new Vinyl\RecordStore\SQL\PDO\Atlas( 
-                            $table, 
-                            'id',
-                            Connection::new($pdo),
-                            new QueryFactory,
-                            new Vinyl\Record\Generic,
-                            new Vinyl\Collection\Records
-                          ),
-                        $record_id,
-                      ];
-                }
-            }
-        }
-        
-        return $scenarios;
-    }
+    abstract public function getRecordStoreScenarios() : array ;
     
 
-    public function getPDOs() : array 
+    public function getPDOs() : PDOs 
     {
         $pdos = [
             new PDO\SQLite,
             #TODO: new PDO\MySQL,
             #TODO: new PDO\PostgreSQL,
           ];
-        return $pdos;
+        return new PDOs($pdos);
     }
     
     public function getSchemas() : array
