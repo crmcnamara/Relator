@@ -5,6 +5,7 @@ namespace BitBalm\Vinyl\V1\Tests\RecordStore\SQL;
 
 use PDO as PDOConnection;
 
+use Atlas\Pdo\Connection;
 use Atlas\Query\QueryFactory;
 
 
@@ -33,7 +34,7 @@ class PDO extends Vinyl\Tests\RecordStore\SQL
                         new Vinyl\RecordStore\SQL\PDO\Atlas( 
                             $table, 
                             'id',
-                            $pdo,
+                            Connection::new($pdo),
                             new QueryFactory,
                             new Vinyl\Record\Generic,
                             new Vinyl\Collection\Records

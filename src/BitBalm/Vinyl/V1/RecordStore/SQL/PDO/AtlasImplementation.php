@@ -32,7 +32,7 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function __construct( 
         string $table_name, 
         string $primary_key_name, 
-        PDO $pdo, 
+        Connection $connection, 
         QueryFactory $query_factory,
         Vinyl\Record $record,
         Collection\Records $records
@@ -40,7 +40,7 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     {
         parent::__construct( $table_name, $primary_key_name );
         
-        $this->connection     = Connection::new($pdo);
+        $this->connection     = $connection;
         $this->query_factory  = $query_factory;
         $this->record         = $record;
         $this->records        = $records;
