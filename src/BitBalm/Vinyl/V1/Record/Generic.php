@@ -12,7 +12,7 @@ use BitBalm\Vinyl\V1 as Vinyl;
 
 class Generic extends ArrayObject implements Vinyl\Record, ArrayAccess
 {
-    use Methods;
+    use GenericImplementation;
     
     
     public function initializeRecord( $record_id, array $values )

@@ -13,7 +13,7 @@ use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\Exception\TooManyRecords;
 
 
-trait Methods /* implements Vinyl\RecordStore\SQL */
+trait GenericImplementation /* implements Vinyl\RecordStore\SQL */
 {
     protected $table_name;
     protected $primary_key_name;

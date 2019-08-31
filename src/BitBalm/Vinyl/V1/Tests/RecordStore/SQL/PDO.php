@@ -30,7 +30,7 @@ class PDO extends Vinyl\Tests\RecordStore\SQL
                 
                 foreach ( $record_ids as $table => $record_id ) {
                     $scenarios[ implode( ' ', [ $table, get_class($schema), get_class($pdo), ] ) ] = [
-                        new Vinyl\RecordStore\SQL\PDO\Generic( 
+                        new Vinyl\RecordStore\SQL\PDO\Atlas( 
                             $table, 
                             'id',
                             $pdo,

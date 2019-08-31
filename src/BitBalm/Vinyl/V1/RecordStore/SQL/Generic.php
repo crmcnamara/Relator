@@ -8,5 +8,5 @@ use BitBalm\Vinyl\V1 as Vinyl;
 
 abstract class Generic implements Vinyl\RecordStore\SQL
 {
-    use Methods;
+    use GenericImplementation;
 }

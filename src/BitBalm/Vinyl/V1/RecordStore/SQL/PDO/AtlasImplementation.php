@@ -21,7 +21,7 @@ use BitBalm\Vinyl\V1\Collection as Collection;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 
 
-trait Methods /* implements Vinyl\RecordStore\SQL\PDO */
+trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
 {
     protected $connection;
     protected $query_factory;

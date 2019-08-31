@@ -6,7 +6,7 @@ namespace BitBalm\Vinyl\V1\Record;
 use BitBalm\Vinyl\V1 as Vinyl;
 
 
-Trait Methods /* implements Vinyl\Record */
+Trait GenericImplementation /* implements Vinyl\Record */
 {
     private $record_id;
     private $record_values = [];
