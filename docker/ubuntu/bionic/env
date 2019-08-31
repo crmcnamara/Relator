@@ -1,0 +1,17 @@
+#!/bin/bash
+
+command_dir="$( cd "${0%/*}" && echo $PWD )"
+
+project=vinyl
+
+# pull distro and release names from grandparent and parent directory names
+distro="$( cd "$command_dir"/../ && echo "${PWD##*/}" )"
+distro_release="$( cd "$command_dir" && echo "${PWD##*/}" )"
+
+image_repo="$project"
+image_tag="$distro"-"$distro_release"
+image="$image_repo":"$image_tag"
+
+
+source_dir=/srv/src/"$project"
+docker_dir="$source_dir"/docker/"$distro"/"$distro_release"

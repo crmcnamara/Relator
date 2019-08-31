@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+source "${0%/*}"/env
+
+command=(
+    docker build 
+        -f "$command_dir"/Dockerfile 
+        -t "$image" 
+        --cache-from="$image" 
+        --build-arg source_dir="$source_dir"
+        --build-arg docker_dir="$docker_dir"
+        "$@" .
+  )
+
+set -x  
+
+"${command[@]}"

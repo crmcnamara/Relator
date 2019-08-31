@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# run: executes a container, mounting the local source tree into it
+#     The docker image will automatically be built if it does not already exist.
+
+set -e
+
+source "${0%/*}"/env
+
+set -x
+
+# If there's no docker image, build one
+docker image ls -q "$project":"$distro"-"$distro_release" | grep . || "$command_dir"/build
+
+docker run -it --rm -v "$PWD":"$source_dir" "$image" "$@"
