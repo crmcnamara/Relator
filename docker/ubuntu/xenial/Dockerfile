@@ -33,13 +33,7 @@ RUN set -x &&\
         composer \
         mysql-client \
         mysql-server \
-        php-mbstring \
-        php-mysql \
-        php-pgsql \
-        php-sqlite3 \
-        php-xml \
-        php-zip \
-        php7.1 \
+        php7.1-cli \
         php7.1-mbstring \
         php7.1-mysql \
         php7.1-pgsql \
