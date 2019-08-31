@@ -41,7 +41,7 @@ class RelatingTest extends SqliteTestCase
     protected $custom_person;
     protected $custom_article;
 
-    public function setUp()
+    public function setUp() : void
     {
 
         $pdo = $this->getPdo();
@@ -71,7 +71,7 @@ class RelatingTest extends SqliteTestCase
 
     }
     
-    public function tearDown() 
+    public function tearDown() : void
     {
         unset(
             $this->relator,
@@ -80,7 +80,7 @@ class RelatingTest extends SqliteTestCase
             $this->generic_article,
             $this->custom_article
           );
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     

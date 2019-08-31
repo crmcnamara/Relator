@@ -56,10 +56,10 @@ class SqliteTestCase extends TestCase
         return $this->pdo;
     }
     
-    public function tearDown()
+    public function tearDown() : void
     {
         unset( $this->pdo, $this->mapper, $this->recorder, $this->relator );
-        return parent::tearDown();
+        parent::tearDown();
     }
     
     public function getMapper() : Mapper

@@ -32,7 +32,7 @@ class GenericRecordTest extends SqliteTestCase
     protected $generic_article;
 
 
-    public function setUp()
+    public function setUp() : void
     {
         $pdo = $this->getPdo();
         
@@ -48,7 +48,7 @@ class GenericRecordTest extends SqliteTestCase
 
     }
     
-    public function tearDown() 
+    public function tearDown() : void
     {
         unset(
             $this->recorder,
@@ -57,7 +57,7 @@ class GenericRecordTest extends SqliteTestCase
             $this->generic_article,
             $this->custom_article
           );
-        return parent::tearDown();
+        parent::tearDown();
     }
 
 
