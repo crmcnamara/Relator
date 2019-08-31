@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+source "${0%/*}"/env
+
+set -x
+
+:
+: "running" "$0" "$@"
+:
+
+[ "$container" = 'docker' ] || 
+    ( ! : "We do not appear to be in a docker container. Aborting. " )
+
+# if the source tree is a mountpoint, we're probably in development mode,
+#   and should re-run the build finalization script in case the source has been updated.
+if mountpoint "$source_dir" ; then 
+    "$command_dir"/finalize
+fi
+
+exec "$@"
