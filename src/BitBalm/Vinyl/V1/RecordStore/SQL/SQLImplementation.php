@@ -3,9 +3,6 @@ declare (strict_types=1);
 
 namespace BitBalm\Vinyl\V1\RecordStore\SQL;
 
-use Doctrine\QueryBuilderQuery as Query;
-
-
 use BitBalm\Vinyl\V1 as Vinyl;
 use BitBalm\Vinyl\V1\Record as Record;
 use BitBalm\Vinyl\V1\Collection as Collection;
@@ -13,7 +10,7 @@ use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\Exception\TooManyRecords;
 
 
-trait GenericImplementation /* implements Vinyl\RecordStore\SQL */
+trait SQLImplementation /* implements Vinyl\RecordStore\SQL */
 {
     protected $table_name;
     protected $primary_key_name;

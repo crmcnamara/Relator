@@ -8,7 +8,7 @@ use PDO;
 use BitBalm\Vinyl\V1 as Vinyl;
 
 
-class Atlas extends Vinyl\RecordStore\SQL\Generic implements Vinyl\RecordStore\SQL\PDO 
+class Atlas implements Vinyl\RecordStore
 {
     use AtlasImplementation;
 }

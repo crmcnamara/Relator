@@ -23,6 +23,9 @@ use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 
 trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
 {
+    use PDOImplementation;
+    
+    
     protected $connection;
     protected $query_factory;
     protected $record;
@@ -38,35 +41,18 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         Collection\Records $records
       )
     {
-        parent::__construct( $table_name, $primary_key_name );
-        
-        $this->connection     = $connection;
-        $this->query_factory  = $query_factory;
-        $this->record         = $record;
-        $this->records        = $records;
+        $this->table_name       = $table_name;
+        $this->primary_key_name = $primary_key_name;
+        $this->connection       = $connection;
+        $this->pdo              = $connection->getPdo();
+        $this->query_factory    = $query_factory;
+        $this->record           = $record;
+        $this->records          = $records;
     }
     
     
     /* implements Vinyl\RecordStore */
     
-    public function getRecord( $record_id ) : Record 
-    {
-        return $this->getRecordByFieldValue( $this->getPrimaryKey(), $record_id );
-    }
-
-    
-    public function getRecords( array $record_ids ) : Collection\Records 
-    {
-        return $this->getRecordsByFieldValues( $this->getPrimaryKey(), $record_ids );
-    }
-    
-    public function getRecordByFieldValue( string $field, $value ) : Record 
-    {
-        $records = $this->getRecordsByFieldValues( $field, [ $value ] );
-        $this->hasOnlyOneRecord($records);
-        return current($records);
-    }
- 
     public function getSelectQuery( string $field, array $values ) : Select
     {
         #TODO: validate $field
@@ -180,43 +166,4 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         return $this->getRecordsByStatement($statement); 
     }
     
-    
-    /* implements Vinyl\RecordStore\SQL\PDO */
-  
-    public function getPDO() : PDO 
-    {
-        return $this->connection->getPdo();
-    }
-
-    public function getRecordByStatement( PDOStatement $statement, array $parameters ) : Record 
-    {
-        $records = $this->getRecordsByStatement( $statement, $parameters );
-        $this->hasOnlyOneRecord($records);
-        return current($records);
-    }
-    
-    public function getRecordsByStatement( PDOStatement $statement, array $parameters = [] ) : Collection\Records 
-    {
-        // Some statements may already be executed - execute it ourselves only if provided parameters, or if it hasn't been executed.
-        if ( !empty($parameters) or $statement->columnCount() == 0 ) { 
-            $statement->execute($parameters); 
-        }
-        $rows = $statement->fetchAll(PDO::FETCH_ASSOC); #TODO: generator?
-        
-        return $this->getRecordsFromRows($rows);
-    }
-    
-    protected function getRecordsFromRows( array $rows ) : Collection\Records
-    {
-        $records = clone $this->records;
-        foreach( $rows as $row ) {
-            $record = clone $this->record;
-            $record->initializeRecord( $row[$this->getPrimaryKey()], $row );
-            $records[] = $record;
-        }
-        
-        return $records;
-    }
-    
-
 }
