@@ -4,6 +4,10 @@ set -e
 
 source "${0%/*}"/env
 
+# if the image is 'docker run' without the -t option, 
+#   provide a proper docker run command line and exit
+[ -t 0 ] || ( ! echo docker run --rm -it "$image" "$@" )
+
 set -x
 
 :
