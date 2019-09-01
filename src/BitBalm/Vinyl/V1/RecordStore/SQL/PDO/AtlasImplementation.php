@@ -67,14 +67,13 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         return current($records);
     }
  
-    public function getSelectQuery( string $field, array $values )
+    public function getSelectQuery( string $field, array $values ) : Select
     {
         #TODO: validate $field
         $query = $this->query_factory->newSelect( $this->connection );
         $query
             ->columns('*')
             ->from( $query->quoteidentifier($this->getTable()) )        
-            # TODO: handle empty $values
             ->where( $field .' IN ', $values )
             #TODO ->where()->orWhere()....->orWhere()... ?
             ;
@@ -84,6 +83,8 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     
     public function getRecordsByFieldValues( string $field, array $values ) : Collection\Records 
     {
+        // Mysql, for one, does not handle empty "IN ()" conditions well. 
+        if ( empty($values) ) { return clone $this->records; }
         $query = $this->getSelectQuery( $field, $values );            
         return $this->getRecordsByQueryString( $query->getStatement(), $query->getBindValues() );
     }

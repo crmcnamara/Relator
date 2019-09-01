@@ -56,6 +56,13 @@ RUN set -x &&\
     su developer -c "php7.1 /usr/bin/composer install" &&\
     :
 
+
+# prep MySQL Vinyl user access
+RUN set -x &&\
+    service mysql start &&\
+    mysql -e 'create user vinyl ; grant all on `vinyl\_%`.* to vinyl ' &&\
+    :
+
 # Copy in the rest of source tree    
 COPY ./  ./
 

@@ -13,6 +13,6 @@ class SQLite extends PDO
     
     public function __construct()
     {
-        parent::__construct($this->dsn);
+        parent::__construct( $this->dsn, null, null, [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ] );
     }
 }

@@ -26,10 +26,8 @@ abstract class Schema
     public function getAdapter( PDO $pdo ) : Adapter 
     {
         $config = new Config([ 'environments' => [
-            'default_migration_table' => 'phinxlog',
-            'default_database' => 'vinyl_test',
             'vinyl_test' => [
-                'name' => 'vinyl_test',
+                'name' => $pdo->database ?? null,
                 'connection' => $pdo,
               ],
           ]]);

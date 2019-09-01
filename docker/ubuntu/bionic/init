@@ -23,4 +23,6 @@ if mountpoint "$source_dir" ; then
     "$command_dir"/finalize
 fi
 
+service mysql start
+
 exec "$@"

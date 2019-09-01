@@ -15,19 +15,13 @@ use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\Exception\TooManyRecords;
 
 abstract class PDO extends Vinyl\Tests\RecordStore\SQL
-{
-    /**
-     * returns a RecordStore instance and fixture record id
-     *    for every table of every schema, using each PDO instance.
-     */
-    abstract public function getRecordStoreScenarios() : array ;
-    
+{   
 
     public function getPDOs() : PDOs 
     {
         $pdos = [
             new PDO\SQLite,
-            #TODO: new PDO\MySQL,
+            new PDO\MySQL,
             #TODO: new PDO\PostgreSQL,
           ];
         return new PDOs($pdos);
