@@ -469,6 +469,52 @@ abstract class RecordStore extends TestCase
     /**
      * @dataProvider getRecordStoreScenarios
      */
+    public function testUpdateMovesRecord( Vinyl\RecordStore $store, $record_id )
+    {
+        $target_id = 999999;
+      
+        $id_fields = $this->getIdFields( $store, $record_id );
+        foreach ( $id_fields as $id_field ) {
+          
+            $record = $store->getRecord( $record_id );
+            $values = $record->getAllValues();
+            $values[$id_field] = $target_id;
+            $record->initializeRecord( $record_id, $values );
+            
+            $store->updateRecord($record);
+            
+            $this->assertEquals(
+                $target_id,
+                $record->getRecordId(),
+                "A RecordStore that allows updates to id fields should move them properly. "
+              );
+              
+            $this->assertEquals(
+                $target_id,
+                $record->getAllValues()[$id_field],
+                "A RecordStore that allows updates to id fields should move them properly. "
+              );
+              
+            $exception = null;
+            
+            try {
+                $store->getRecord($record_id);
+            } catch ( RecordNotFound $exception ) {}
+            
+            $this->assertNotEmpty(
+                $exception,
+                "A RecordStore that allows moving records by updating id fields "
+                    ."should not be able to retrieve the original record after moving it. "
+              );
+        }
+        
+        $this->assertTrue(true);
+    }
+    
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
     public function testDeleteRecordThrowsNotFound( Vinyl\RecordStore $store, $record_id )
     {
         $record = $store->getRecord( $record_id );

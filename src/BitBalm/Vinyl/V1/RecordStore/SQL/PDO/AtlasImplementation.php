@@ -123,16 +123,24 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         if ( 
             // If we're moving the record by changing its id,
             array_key_exists( $id_field, $updated_values ) and
-            $updated_values[$id_field] != $record->getRecordId() and 
-            // and the update didn't have any affect,
-            $pdo_statement->rowCount() <1
-          ) 
+            $updated_values[$id_field] != $record_id 
+          )
         {
-            throw new RecordNotFound;
+            // and the update didn't have any affect,
+            if ( $pdo_statement->rowCount() <1 ) { 
+                throw new RecordNotFound(
+                    "An attempt to change a {$this->getTable()} record's id "
+                        ."from {$record_id} to {$updated_values[$id_field]} "
+                        ."did not affect any records. "
+                  ); 
+            }
+            
+            $record_id = $updated_values[$id_field];
         } 
         
         $updated_record = $this->getRecord($record_id);
         
+        // re-initialize the same record object that was passed to us. 
         $record->initializeRecord( $record_id, $updated_record->getAllValues() );
         
         return $record;
