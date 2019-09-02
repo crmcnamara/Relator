@@ -1,9 +1,15 @@
 <phpunit>
 
     <testsuites>
-        <testsuite name="Vinyl">
+
+        <testsuite name="vinyl">
             <directory suffix=".php">src/BitBalm/Vinyl/V1/Tests/</directory>
         </testsuite>
+
+        <testsuite name="relator">
+            <directory suffix=".php">tests/</directory>
+        </testsuite>
+
     </testsuites>
 
     <filter>
