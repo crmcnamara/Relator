@@ -8,6 +8,7 @@ use PDOStatement;
 
 use Atlas\Pdo\Connection;
 use Atlas\Query\QueryFactory;
+use Atlas\Query\Query;
 use Atlas\Query\Select;
 use Atlas\Query\Insert;
 use Atlas\Query\Update;
@@ -71,11 +72,14 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     {
         // Mysql, for one, does not handle empty "IN ()" conditions well. 
         if ( empty($values) ) { return clone $this->records; }
-        $query = $this->getSelectQuery( $field, $values );            
-        return $this->getRecordsByQueryString( $query->getStatement(), $query->getBindValues() );
+        
+        $query = $this->getSelectQuery( $field, $values );
+        return $this->getRecordsByQueryString( 
+            $query->getStatement(), 
+            $this->normalizeBindValues( $query->getBindValues() )
+          );
     }
  
-    
     
     public function getInsertQuery( array $values ) : Insert
     {
@@ -167,11 +171,31 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     }
     
     
-    /* implements Vinyl\RecordStore\SQL */
-    public function getRecordsByQueryString( string $query, array $parameters ) : Collection\Records 
+    protected function normalizeBindValues( array $bind_values )
     {
-        $statement = $this->connection->perform( $query, $parameters );
-        return $this->getRecordsByStatement($statement); 
+        foreach ( $bind_values as $element ) {
+            if ( ! ( 
+                is_array($element) and
+                array_key_exists( 0, $element )
+              ) )
+            {
+                throw new InvalidArgumentException(
+                    "Invalid Atlas bind values: \n". var_export($bind_values,true)
+                  );
+            }
+        }
+        
+        $normalized = array_combine( array_keys($bind_values), array_column( $bind_values, 0 ) );
+
+        return $normalized;
+    }
+    
+    protected function executeQuery( Query $query ) : int 
+    {
+        return $this->execute(
+            $query->getStatement(), 
+            $this->normalizeBindValues( $query->getBindValues() )
+          );
     }
     
 }
