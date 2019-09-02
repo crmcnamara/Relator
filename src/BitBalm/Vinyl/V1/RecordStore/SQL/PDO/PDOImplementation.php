@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace BitBalm\Vinyl\V1\RecordStore\SQL\PDO;
 
+use Throwable;
 use PDO;
 use PDOStatement;
 
@@ -59,6 +60,43 @@ trait PDOImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         return current($records);
     }
     
+    
+    /* completes implementation of Vinyl\RecordStore\SQL\PDO */
+    
+    public function getRecordsByQueryString( string $query, array $parameters ) : Collection\Records 
+    {
+        try {
+            $statement = $this->pdo->prepare($query);
+            return $this->getRecordsByStatement( $statement, $parameters ); 
+            
+        } catch ( Throwable $x ) { 
+            $x->caused_by = [
+                'query_string'  => $query,
+                'parameters'    => $parameters,
+              ];
+            throw new $x( 
+                $x->getMessage() ."\n". var_export([$x->caused_by],true)
+              );
+        }
+    }
+    
+    protected function execute( string $query, array $parameters ) : int 
+    {
+        try {
+            $statement = $this->pdo->prepare($query);
+            $statement->execute($parameters);
+            return $statement->rowCount();
+            
+        } catch ( Throwable $x ) { 
+            $x->caused_by = [
+                'query_string'  => $query,
+                'parameters'    => $parameters,
+              ];
+            throw new $x( 
+                $x->getMessage() ."\n". var_export([$x->caused_by],true)
+              );
+        }
+    }
     
     /* implements Vinyl\RecordStore\SQL\PDO */
 
