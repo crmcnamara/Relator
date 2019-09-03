@@ -6,12 +6,11 @@ namespace BitBalm\Vinyl\V1\Tests\RecordStore\SQL\PDO;
 use PDO as PDOConnection;
 
 use Atlas\Pdo\Connection;
-use Atlas\Query\QueryFactory;
-
 
 use BitBalm\Vinyl\V1 as Vinyl;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\Exception\TooManyRecords;
+use BitBalm\Vinyl\V1\RecordStore\SQL\PDO\Atlas\Factory as AtlasFactory;
 
 
 class Atlas extends Vinyl\Tests\RecordStore\SQL\PDO
@@ -35,8 +34,7 @@ class Atlas extends Vinyl\Tests\RecordStore\SQL\PDO
                         new Vinyl\RecordStore\SQL\PDO\Atlas( 
                             $table, 
                             'id',
-                            Connection::new($pdo),
-                            new QueryFactory,
+                            new AtlasFactory( Connection::new($pdo) ),
                             new Vinyl\Record\Generic,
                             new Vinyl\Collection\Records
                           ),

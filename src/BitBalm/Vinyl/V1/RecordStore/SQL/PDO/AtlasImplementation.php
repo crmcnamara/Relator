@@ -7,6 +7,7 @@ use PDO;
 use PDOStatement;
 
 use Atlas\Pdo\Connection;
+use Atlas\Info\Info as SchemaInfo;
 use Atlas\Query\QueryFactory;
 use Atlas\Query\Query;
 use Atlas\Query\Select;
@@ -20,6 +21,7 @@ use BitBalm\Vinyl\V1 as Vinyl;
 use BitBalm\Vinyl\V1\Record as Record;
 use BitBalm\Vinyl\V1\Collection as Collection;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
+use BitBalm\Vinyl\V1\RecordStore\SQL\PDO\Atlas\Factory as AtlasFactory;
 
 
 trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
@@ -28,6 +30,7 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     
     
     protected $connection;
+    protected $schema_info;
     protected $query_factory;
     protected $record;
     protected $records;
@@ -36,19 +39,20 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function __construct( 
         string $table_name, 
         string $primary_key_name, 
-        Connection $connection, 
-        QueryFactory $query_factory,
+        AtlasFactory $atlas_factory,
         Vinyl\Record $record,
         Collection\Records $records
       )
     {
         $this->table_name       = $table_name;
         $this->primary_key_name = $primary_key_name;
-        $this->connection       = $connection;
-        $this->pdo              = $connection->getPdo();
-        $this->query_factory    = $query_factory;
+        $this->connection       = $atlas_factory->getConnection();
+        $this->schema_info      = $atlas_factory->getInfo();
+        $this->pdo              = $this->connection->getPdo();
+        $this->query_factory    = $atlas_factory->getQueryFactory();
         $this->record           = $record;
         $this->records          = $records;
+        
     }
     
     
