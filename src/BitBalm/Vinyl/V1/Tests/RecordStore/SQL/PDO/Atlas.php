@@ -33,7 +33,6 @@ class Atlas extends Vinyl\Tests\RecordStore\SQL\PDO
                     $scenarios[ implode( ' ', [ $table, get_class($schema), get_class($pdo), ] ) ] = [
                         new Vinyl\RecordStore\SQL\PDO\Atlas( 
                             $table, 
-                            'id',
                             new AtlasFactory( Connection::new($pdo) ),
                             new Vinyl\Record\Generic,
                             new Vinyl\Collection\Records

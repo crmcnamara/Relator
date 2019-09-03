@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace BitBalm\Vinyl\V1\RecordStore\SQL\PDO;
 
+use InvalidArgumentException;
 use PDO;
 use PDOStatement;
 
@@ -34,18 +35,16 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     protected $query_factory;
     protected $record;
     protected $records;
+    protected $columns;
     
     
     public function __construct( 
         string $table_name, 
-        string $primary_key_name, 
         AtlasFactory $atlas_factory,
         Vinyl\Record $record,
         Collection\Records $records
       )
     {
-        $this->table_name       = $table_name;
-        $this->primary_key_name = $primary_key_name;
         $this->connection       = $atlas_factory->getConnection();
         $this->schema_info      = $atlas_factory->getInfo();
         $this->pdo              = $this->connection->getPdo();
@@ -53,6 +52,62 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         $this->record           = $record;
         $this->records          = $records;
         
+        $this->table_name       = $this->validTable($table_name);
+        $this->primary_key_name = $this->getPrimaryKey();
+        $this->field_names      = $this->getFieldNames();
+    }
+    
+    protected function validTable( string $table ) : string
+    {
+        $tables = $this->schema_info->fetchTableNames();
+        $valid_table = array_combine( $tables, $tables )[$table] ?? null;
+        
+        if ( empty($valid_table) ) {
+            throw new InvalidArgumentException("Invalid table for connection: {$table} ");
+        }
+        
+        return $valid_table;
+    }
+    
+    protected function getColumns()
+    {
+        if ( empty($this->columns) ) { 
+            $this->columns = $this->schema_info->fetchColumns( $this->getTable() );
+        }
+        
+        return $this->columns; 
+    }
+    
+    public function getPrimaryKey() : string
+    {
+        if ( ! empty($this->primary_key_name) ) { return $this->primary_key_name; }
+        
+        $primary_key = null;
+        foreach ( $this->getColumns() as $column => $attributes ) {
+            if ( ! empty($attributes['primary']) ) {
+                if ( 
+                    ( ! empty($primary_key) ) and 
+                    $primary_key !== $column
+                  )
+                {
+                    throw new Exception(
+                        "Multiple primary keys {$primary_key}, {$column} are not supported for table {$this->getTable()} . "
+                      );
+                }
+                $primary_key = $column;
+            }
+        }
+        
+        if ( empty($primary_key) ) {
+            throw new Exception("No primary key found for table {$table->getTable()}. ");
+        }
+        
+        return $primary_key;
+    }
+    
+    protected function getFieldNames()
+    {
+        return array_keys( $this->getColumns() );
     }
     
     
@@ -60,7 +115,8 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     
     public function getSelectQuery( string $field, array $values ) : Select
     {
-        #TODO: validate $field
+        $field = $this->validField($field);
+        
         $query = $this->query_factory->newSelect( $this->connection );
         $query
             ->columns('*')
@@ -77,6 +133,8 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         // Mysql, for one, does not handle empty "IN ()" conditions well. 
         if ( empty($values) ) { return clone $this->records; }
         
+        $field = $this->validField($field);
+        
         $query = $this->getSelectQuery( $field, $values );
         return $this->getRecordsByQueryString( 
             $query->getStatement(), 
@@ -88,11 +146,11 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function getInsertQuery( array $values ) : Insert
     {
         $query = $this->query_factory->newInsert( $this->connection );
-        $query
-            ->into( $query->quoteidentifier( $this->getTable() ) )
-            #TODO: validate columns
-            ->columns($values);
-        
+        $query->into( $this->getTable() );
+        foreach ( $values as $field => $value ) {
+            $query->column( $this->validField($field), $value );
+        }
+
         return $query;
     }
     
@@ -108,14 +166,11 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function getUpdateQuery( $record_id, array $updated_values ) : Update
     {
         $query = $this->query_factory->newupdate( $this->connection );
-        $query
-            ->table( $query->quoteidentifier( $this->getTable() ) )
-            #TODO: validate columns
-            ->columns( $updated_values )
-            ->where( 
-                $query->quoteIdentifier($this->getPrimaryKey()) .' = ', 
-                $record_id 
-              );
+        $query->table( $this->getTable() );
+        foreach ( $updated_values as $field => $value ) {
+            $query->column( $this->validField($field), $value );
+        }
+        $query->where( $this->getPrimaryKey() .' = ', $record_id );
         
         return $query;
     }
@@ -158,10 +213,9 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function getDeleteQuery( $record_id ) : Delete
     {
         $query = $this->query_factory->newDelete( $this->connection );
-        $query
-            ->from( $query->quoteIdentifier($this->getTable()) )
-            ->where( $query->quoteIdentifier($this->getPrimaryKey()) .' = ', $record_id )
-            ;
+        $query->from( $this->getTable() )
+            ->where( $this->getPrimaryKey() .' = ', $record_id );
+            
         return $query;
     }
     
