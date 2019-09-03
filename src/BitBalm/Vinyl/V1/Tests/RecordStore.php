@@ -4,13 +4,14 @@ declare (strict_types=1);
 namespace BitBalm\Vinyl\V1\Tests;
 
 use InvalidArgumentException;
-use RuntimeException;
 use PDO;
+
 
 use PHPUnit\Framework\TestCase;
 use BitBalm\Vinyl\V1 as Vinyl;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\Exception\TooManyRecords;
+use BitBalm\Vinyl\V1\Exception\InvalidField;
 
 
 abstract class RecordStore extends TestCase
@@ -174,12 +175,13 @@ abstract class RecordStore extends TestCase
         $exception = null; 
         try {
             $store->getRecordByFieldValue( 'TEST_bogus_fieldname', 1 );
-        } catch ( RuntimeException $exception ) {}
-
+        } catch ( InvalidField $exception ) {}
+        
+        $class = InvalidField::class;
         
         $this->assertNotEmpty(
             $exception,
-            "The RecordStore should throw an exception when passed an invalid fieldname. "
+            "The RecordStore should throw {$class} when passed an invalid fieldname. "
           );
     }
 
@@ -263,11 +265,13 @@ abstract class RecordStore extends TestCase
         $exception = null; 
         try {
             $records = $store->getRecordsByFieldValues( 'TEST_bogus_fieldname', [ 1 ] );
-        } catch ( RuntimeException $exception ) {}
+        } catch ( InvalidField $exception ) {}
 
+        $class = InvalidField::class;
+        
         $this->assertNotEmpty(
             $exception,
-            "The RecordStore should throw an exception when passed an invalid fieldname. "
+            "The RecordStore should throw {$class} when passed an invalid fieldname. "
           );
     }
     
@@ -279,11 +283,13 @@ abstract class RecordStore extends TestCase
     {
         try {
             $store->insertRecord([ 'TEST_bogus_fieldname' => 1 ]);
-        } catch ( RuntimeException $exception ) {}
+        } catch ( InvalidField $exception ) {}
 
+        $class = InvalidField::class;
+        
         $this->assertNotEmpty(
             $exception,
-            "The RecordStore should throw an exception when passed an invalid fieldname. "
+            "The RecordStore should throw {$class} when passed an invalid fieldname. "
           );
     }
     

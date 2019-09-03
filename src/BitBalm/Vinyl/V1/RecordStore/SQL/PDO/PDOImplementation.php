@@ -26,12 +26,14 @@ trait PDOImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function __construct( 
         string $table_name, 
         string $primary_key_name, 
-        PDO $pdo
+        PDO $pdo,
+        array  $field_names = []
       )
     {
         $this->table_name       = $table_name;
         $this->primary_key_name = $primary_key_name;
         $this->pdo              = $connection->getPdo();
+        $this->field_names      = $field_names;
     }
   
     public function getPDO() : PDO 
