@@ -26,7 +26,7 @@ use BitBalm\Relator\RecordSet\GetsRelated;
 /**
  * @runTestsInSeparateProcesses
  */
-class SqliteTestCase extends TestCase
+abstract class SqliteTestCase extends TestCase
 {
     protected $pdo;
     protected $mapper;
