@@ -20,6 +20,7 @@
         "aura/sqlschema": "^2.0",
         "php": "^7.1",
         "atlas/query": "^1.2",
+        "doctrine/dbal": "^2.9",
         "atlas/info": "^1.2"
     },
     "require-dev": {
