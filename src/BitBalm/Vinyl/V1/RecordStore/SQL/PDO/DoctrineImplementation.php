@@ -13,8 +13,9 @@ use Doctrine\DBAL\Schema\Table as DoctrineTable;
 
 
 use BitBalm\Vinyl\V1 as Vinyl;
-use BitBalm\Vinyl\V1\Record as Record;
-use BitBalm\Vinyl\V1\Collection as Collection;
+use BitBalm\Vinyl\V1\Record;
+use BitBalm\Vinyl\V1\RecordStore;
+use BitBalm\Vinyl\V1\Collection;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 
 
@@ -98,6 +99,11 @@ trait DoctrineImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     
     
     /* implements Vinyl\RecordStore */
+    
+    public function withRecord( Record $record ) : RecordStore
+    {
+        return new $this( $this->table_name, $this->query_builder, $record, $this->records );
+    }
     
     public function getSelectQuery( string $field, array $values ) : QueryBuilder
     {

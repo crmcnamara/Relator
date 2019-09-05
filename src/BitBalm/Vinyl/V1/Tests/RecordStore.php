@@ -36,7 +36,6 @@ abstract class RecordStore extends TestCase
           
             $exception = null;
             try {
-                
                 $record = $store->getRecord( $record_id );
             } catch ( RecordNotFound $exception ) {}
         
@@ -558,8 +557,50 @@ abstract class RecordStore extends TestCase
           );
     }
     
-    # TODO: what happens when attempt is made to update or delete a record in the db that has been deleted (or moved) since last being fetched?
-    #   an update would fail silently; there would just be no matches. however, the following get might fail. 
-    # This will be ok for updates and inserts, as the following getRecord() will fail - but perhaps not for delete.
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testWithRecordGet( Vinyl\RecordStore $store, $record_id )
+    {
+        $prototype_record = new class extends Vinyl\Record\Generic {};
+        $new_store = $store->withRecord($prototype_record);
+        
+        $record = $new_store->getRecord($record_id);
+        
+        $this->assertInstanceOf(
+            get_class($prototype_record),
+            $record,
+            "A record retrieved from a RecordStore returned from RecordStore::withRecord() "
+                ."should be the same class as the record passed to withRecord() . "
+          );
+    }
+    
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testWithRecordInsert( Vinyl\RecordStore $store, $record_id )
+    {
+        $record = $store->getRecord($record_id);
+        
+        // strip field-value pairs containing ids, if any
+        $insert_values = array_diff_key(
+            $this->mutateValues($record),
+            array_flip( $this->getIdFields( $store, $record_id ) )
+          );
+          
+        $prototype_record = new class extends Vinyl\Record\Generic {};
+        $new_store = $store->withRecord($prototype_record);
+        
+        
+        $new_record = $new_store->insertRecord($insert_values);
+        
+        
+        $this->assertInstanceOf(
+            get_class($prototype_record),
+            $new_record,
+            "A record inserted to a RecordStore returned from RecordStore::withRecord() "
+                ."should be the same class as the record passed to withRecord() . "
+          );
+    }
     
 }

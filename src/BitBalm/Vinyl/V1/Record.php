@@ -15,7 +15,7 @@ interface Record
     public function initializeRecord( $record_id, array $values );
     
     /**
-     * This method should provide the record id value passed to the last call to initializeValues(),
+     * This method should provide the record id value passed to the last call to initializeRecord(),
      * even if the id value on the Record object itself is updated in the interim.
      * This id value should be used to target the record in the source database to be updated
      *    when the Record is to be saved.

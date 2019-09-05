@@ -10,6 +10,12 @@ use BitBalm\Vinyl\V1\Exception\TooManyRecords;
 
 interface RecordStore
 {   
+    /**
+     * Returns a new RecordStore instance 
+     *    using the given Record as the template for Records produced by the other methods
+     */
+    public function withRecord( Record $prototype_record ) : RecordStore ;
+    
     /** 
      * Returns a single record uniquely identified by its primary key id.
      * Throws RecordNotFound when it comes up empty. 

@@ -17,10 +17,10 @@ use Atlas\Query\Update;
 use Atlas\Query\Delete;
 
 
-
 use BitBalm\Vinyl\V1 as Vinyl;
-use BitBalm\Vinyl\V1\Record as Record;
-use BitBalm\Vinyl\V1\Collection as Collection;
+use BitBalm\Vinyl\V1\Record;
+use BitBalm\Vinyl\V1\RecordStore;
+use BitBalm\Vinyl\V1\Collection;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\RecordStore\SQL\PDO\Atlas\Factory as AtlasFactory;
 
@@ -56,6 +56,7 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         $this->primary_key_name = $this->getPrimaryKey();
         $this->field_names      = $this->getFieldNames();
     }
+    
     
     protected function validTable( string $table ) : string
     {
@@ -112,6 +113,16 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
     
     
     /* implements Vinyl\RecordStore */
+    
+    public function withRecord( Record $record ) : RecordStore
+    {
+        return new $this( 
+            $this->table_name, 
+            new AtlasFactory( $this->connection, $this->query_factory, get_class( $this->schema_info ) ),
+            $record,
+            $this->records
+          );
+    }
     
     public function getSelectQuery( string $field, array $values ) : Select
     {
