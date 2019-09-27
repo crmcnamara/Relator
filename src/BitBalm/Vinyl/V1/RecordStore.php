@@ -26,7 +26,7 @@ interface RecordStore
      * Returns a Collection of Records uniquely identified by the passed ids.
      * The Collection may be empty if there are no matches. 
      */
-    public function getRecords( array $record_ids ) : Collection\Records ;
+    public function getRecords( array $record_ids ) : RecordProducer ;
     
     /**
      * Returns a single record 
@@ -43,7 +43,7 @@ interface RecordStore
      * The Collection may be empty if there are no matches. 
      * Throws InvalidArgumentException if the field is not valid for the record type.
      */
-    public function getRecordsByFieldValues( string $field, array $values ) : Collection\Records ;
+    public function getRecordsByFieldValues( string $field, array $values ) : RecordProducer ;
     
     
     /**

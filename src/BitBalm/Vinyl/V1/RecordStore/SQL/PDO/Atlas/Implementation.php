@@ -1,7 +1,7 @@
 <?php 
 declare (strict_types=1);
 
-namespace BitBalm\Vinyl\V1\RecordStore\SQL\PDO;
+namespace BitBalm\Vinyl\V1\RecordStore\SQL\PDO\Atlas;
 
 use InvalidArgumentException;
 use PDO;
@@ -20,12 +20,14 @@ use Atlas\Query\Delete;
 use BitBalm\Vinyl\V1 as Vinyl;
 use BitBalm\Vinyl\V1\Record;
 use BitBalm\Vinyl\V1\RecordStore;
+use BitBalm\Vinyl\V1\RecordStore\SQL\PDO\Implementation as PDOImplementation;
 use BitBalm\Vinyl\V1\Collection;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\RecordStore\SQL\PDO\Atlas\Factory as AtlasFactory;
 
 
-trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
+
+trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
 {
     use PDOImplementation;
     
@@ -42,13 +44,14 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         string $table_name, 
         AtlasFactory $atlas_factory,
         Vinyl\Record $record,
-        Collection\Records $records
+        Vinyl\RecordProducer\PDO $records
       )
     {
         $this->connection       = $atlas_factory->getConnection();
         $this->schema_info      = $atlas_factory->getInfo();
-        $this->pdo              = $this->connection->getPdo();
         $this->query_factory    = $atlas_factory->getQueryFactory();
+        
+        $this->pdo              = $this->connection->getPdo();
         $this->record           = $record;
         $this->records          = $records;
         
@@ -139,10 +142,10 @@ trait AtlasImplementation /* implements Vinyl\RecordStore\SQL\PDO */
 
     }
     
-    public function getRecordsByFieldValues( string $field, array $values ) : Collection\Records 
+    public function getRecordsByFieldValues( string $field, array $values ) : Vinyl\RecordProducer 
     {
         // Mysql, for one, does not handle empty "IN ()" conditions well. 
-        if ( empty($values) ) { return clone $this->records; }
+        if ( empty($values) ) { return new Vinyl\Collection\Records; }
         
         $field = $this->validField($field);
         

@@ -9,5 +9,5 @@ use BitBalm\Vinyl\V1 as Vinyl;
 
 class Atlas implements Vinyl\RecordStore
 {
-    use AtlasImplementation;
+    use Atlas\Implementation;
 }

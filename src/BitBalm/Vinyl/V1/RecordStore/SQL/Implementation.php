@@ -11,7 +11,7 @@ use BitBalm\Vinyl\V1\Exception\TooManyRecords;
 use BitBalm\Vinyl\V1\Exception\InvalidField;
 
 
-trait SQLImplementation /* implements Vinyl\RecordStore\SQL */
+trait Implementation /* implements Vinyl\RecordStore\SQL */
 {
     protected $table_name;
     protected $primary_key_name;
@@ -53,18 +53,22 @@ trait SQLImplementation /* implements Vinyl\RecordStore\SQL */
     public function getRecordByQueryString(  string $query, array $parameters ) : Record 
     {
         $records = $this->getRecordsByQueryString( $query, $parameters );
-        $this->hasOnlyOneRecord($records);
-        return current($records);
+        return $this->getOnlyRecord($records);
     }
-
-    abstract public function getRecordsByQueryString( string $query, array $parameters ) : Collection\Records ;
     
 
-    protected function hasOnlyOneRecord( Collection\Records $records )
+    protected function getOnlyRecord( Vinyl\RecordProducer $records )
     {
-        if ( count($records) <1 ) { throw new RecordNotFound; }
-        if ( count($records) >1 ) { throw new TooManyRecords; }
-        return $records;
+
+        $records->rewind();
+        
+        if ( ! $records->valid() )  { throw new RecordNotFound; }
+        
+        $record = $records->current();
+        $records->next();
+        if ( $records->valid() )    { throw new TooManyRecords; }
+        
+        return $record;
     }
 
 }

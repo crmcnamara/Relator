@@ -1,7 +1,7 @@
 <?php 
 declare (strict_types=1);
 
-namespace BitBalm\Vinyl\V1\RecordStore\SQL\PDO;
+namespace BitBalm\Vinyl\V1\RecordStore\SQL\PDO\Doctrine;
 
 use Exception;
 use InvalidArgumentException; 
@@ -15,18 +15,17 @@ use Doctrine\DBAL\Schema\Table as DoctrineTable;
 use BitBalm\Vinyl\V1 as Vinyl;
 use BitBalm\Vinyl\V1\Record;
 use BitBalm\Vinyl\V1\RecordStore;
+use BitBalm\Vinyl\V1\RecordStore\SQL\PDO\Implementation as PDOImplementation;
 use BitBalm\Vinyl\V1\Collection;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 
 
-trait DoctrineImplementation /* implements Vinyl\RecordStore\SQL\PDO */
+trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
 {
     use PDOImplementation;
     
     
     protected $query_builder;
-    protected $record;
-    protected $records;
     protected $doctrine_table;
     
     
@@ -34,11 +33,12 @@ trait DoctrineImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         string $table_name, 
         QueryBuilder $query_builder,
         Vinyl\Record $record,
-        Collection\Records $records
+        Vinyl\RecordProducer\PDO $records
       )
     {
-        $this->pdo              = $query_builder->getConnection()->getWrappedConnection();
         $this->query_builder    = clone $query_builder;        
+          
+        $this->pdo              = $query_builder->getConnection()->getWrappedConnection();
         $this->record           = $record;
         $this->records          = $records;
         
@@ -118,10 +118,10 @@ trait DoctrineImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         return $query;
     }
     
-    public function getRecordsByFieldValues( string $field, array $values ) : Collection\Records 
+    public function getRecordsByFieldValues( string $field, array $values ) : Vinyl\RecordProducer
     {
         // Mysql, for one, does not handle empty "IN ()" conditions well. 
-        if ( empty($values) ) { return clone $this->records; }
+        if ( empty($values) ) { return new Vinyl\Collection\Records; }
         
         $query = $this->getSelectQuery( $field, $values );
 
@@ -163,7 +163,7 @@ trait DoctrineImplementation /* implements Vinyl\RecordStore\SQL\PDO */
         foreach ( $updated_values as $field => $value ) { 
             $query
                 ->set( $this->validField($field), '?' )
-                ->setParameter( $param_idx++,$value );
+                ->setParameter( $param_idx++, $value );
         }
         
         $query->where( $query->expr()->in( $this->getPrimaryKey(), '?' ) )

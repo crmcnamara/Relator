@@ -9,5 +9,5 @@ use BitBalm\Vinyl\V1 as Vinyl;
 
 class Doctrine implements Vinyl\RecordStore
 {
-    use DoctrineImplementation;
+    use Doctrine\Implementation;
 }

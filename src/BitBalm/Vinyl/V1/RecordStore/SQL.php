@@ -14,6 +14,6 @@ interface SQL extends RecordStore
     public function getPrimaryKey();
     
     public function getRecordByQueryString(  string $query, array $parameters ) : Record ;
-    public function getRecordsByQueryString( string $query, array $parameters ) : Collection\Records ;
+    public function getRecordsByQueryString( string $query, array $parameters ) : Vinyl\RecordProducer ;
     
 }
