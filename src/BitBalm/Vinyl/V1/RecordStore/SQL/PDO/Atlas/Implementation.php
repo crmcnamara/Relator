@@ -218,7 +218,7 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
         $updated_record = $this->getRecord($record_id);
         
         // re-initialize the same record object that was passed to us. 
-        $record->initializeRecord( $record_id, $updated_record->getAllValues() );
+        $record = $record->withValues( $record_id, $updated_record->getAllValues() );
         
         return $record;
     }

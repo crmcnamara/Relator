@@ -48,20 +48,20 @@ abstract class Record extends TestCase
     /**
      * @dataProvider RecordScenarios
      */
-    public function testInitializeRecord( Vinyl\Record $record )
+    public function testWithValues( Vinyl\Record $record )
     {        
         $altered_values = $this->mutateValues($record);
         
         $new_record_id = 999999;
         
         
-        $record->initializeRecord( $new_record_id, $altered_values );
+        $record = $record->withValues( $new_record_id, $altered_values );
         
         
         $this->assertEquals( 
             $new_record_id,
             $record->getRecordId(),
-            "The Record must persist the record id passed to a call to initializeRecord(). "
+            "The Record must persist the record id passed to a call to withValues(). "
           );
         
         ksort($altered_values);
@@ -71,7 +71,7 @@ abstract class Record extends TestCase
         $this->assertEquals( 
             $altered_values,
             $persisted_values,
-            "The Record must persist values passed to a call to initializeRecord(). "
+            "The Record must persist values passed to a call to withValues(). "
           );
         
     }

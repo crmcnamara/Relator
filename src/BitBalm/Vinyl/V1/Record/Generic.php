@@ -12,14 +12,12 @@ use BitBalm\Vinyl\V1 as Vinyl;
 
 class Generic extends ArrayObject implements Vinyl\Record, ArrayAccess
 {
-    use GenericImplementation;
+    use Generic\Implementation;
     
     
-    public function initializeRecord( $record_id, array $values )
+    protected function setValues( array $values )
     {
         $this->exchangeArray($values);
-        $this->record_id = $record_id;
-        return $this;
     }
     
     public function getAllValues() : array 

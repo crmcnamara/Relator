@@ -431,7 +431,7 @@ abstract class RecordStore extends TestCase
             array_flip( $this->getIdFields( $store, $record_id ) )
           );
         // re-initialize the record with a bogus id
-        $record->initializeRecord( 999999, $update_values );
+        $record = $record->withValues( 999999, $update_values );
 
         try {
             $store->updateRecord($record);
@@ -459,7 +459,7 @@ abstract class RecordStore extends TestCase
             
             // re-initialize the record with a bogus id for a non-existent record,
             //    but keep the original id as an update value
-            $record->initializeRecord( 999999, $record->getUpdatedValues() );
+            $record = $record->withValues( 999999, $record->getUpdatedValues() );
 
             try {
                 $store->updateRecord($record);
@@ -488,7 +488,7 @@ abstract class RecordStore extends TestCase
             array_flip( $this->getIdFields( $store, $record_id ) )
           );
         
-        $record = $record->initializeRecord( $record->getRecordId(), $update_values );
+        $record = $record->withValues( $record->getRecordId(), $update_values );
         
         $updated_record = $store->updateRecord($record);
           
@@ -538,7 +538,7 @@ abstract class RecordStore extends TestCase
             $record = $store->getRecord( $record_id );
             $update_values = $this->mutateValues($record);
             $update_values[$id_field] = $target_id;
-            $passed_record = $record->initializeRecord( $record_id, $update_values );
+            $passed_record = $record->withValues( $record_id, $update_values );
             
             $updated_record = $store->updateRecord($passed_record);
             
@@ -588,7 +588,7 @@ abstract class RecordStore extends TestCase
         $exception = null;
         
         // re-initialize the record with a  bogus id
-        $record->initializeRecord( 999999, $record->getAllValues() );
+        $record = $record->withValues( 999999, $record->getAllValues() );
         
         try {
             $store->deleteRecord($record);

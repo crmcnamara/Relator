@@ -7,12 +7,13 @@ namespace BitBalm\Vinyl\V1;
 interface Record
 {
     /**
-     * This method should be used to hydrate the record with values from the source database. 
+     * This method is used to hydrate records with values from the source database. 
      * The record id and all key-value pairs valid for the Record should be passed.
      * Implementors are free to require, prohibit, or ignore passing the record id 
      *    as a field-value item in the $values argument.
+     * The returned record is not required to be the same record instance as the one that was called. 
      */
-    public function initializeRecord( $record_id, array $values );
+    public function withValues( $record_id, array $values ) : Record ;
     
     /**
      * This method should provide the record id value passed to the last call to initializeRecord(),
