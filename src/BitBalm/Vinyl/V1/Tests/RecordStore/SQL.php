@@ -132,11 +132,13 @@ abstract class SQL extends Vinyl\Tests\RecordStore
         
         foreach ( $insert_values as $field => $value ) {
             
-            $records = $store->getRecordsByQueryString( 
+            $producer = $store->getRecordsByQueryString( 
                 "SELECT * from {$store->getTable()} where {$field} = ? ", 
                 [ $value ]
               );
-        
+            $records = [];
+            foreach ( $producer as $key => $r ) { $records[$key] = $r; }
+            
             $this->assertGreaterThan(
                 1,
                 count($records),

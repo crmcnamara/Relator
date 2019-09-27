@@ -146,11 +146,13 @@ abstract class PDO extends Vinyl\Tests\RecordStore\SQL
         
         foreach ( $insert_values as $field => $value ) {
             
-            $records = $store->getRecordsByStatement( 
+            $producer = $store->getRecordsByStatement( 
                 $store->getPDO()->prepare( "SELECT * from {$store->getTable()} where {$field} = ? " ), 
                 [ $value ]
               );
-        
+            $records = [];
+            foreach ( $producer as $key => $r ) { $records[$key] = $r; }
+            
             $this->assertGreaterThan(
                 1,
                 count($records),

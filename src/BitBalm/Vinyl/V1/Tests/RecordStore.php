@@ -27,6 +27,16 @@ abstract class RecordStore extends TestCase
     abstract public function getRecordStoreScenarios();
     
     
+    public function getRecordProducers()
+    {
+        $producers = [
+            new Vinyl\RecordProducer\PDO\Statement( new Vinyl\Record\Generic ),
+            #TODO: Vinyl\RecordProducer\Caching
+            #TODO: Vinyl\Colleciton\Records
+          ];
+        return $producers ;
+    }
+    
     /**
      * @dataProvider getRecordStoreScenarios
      */
@@ -140,13 +150,15 @@ abstract class RecordStore extends TestCase
         $expected_record_count = count($expected_records);
         
         
-        $records = $store->getRecords( $record_ids );
+        $producer = $store->getRecords( $record_ids );
         
+        $records = [];
+        foreach ( $producer as $key => $r ) { $records[$key] = $r; }
         
         $this->assertEquals(
             $expected_record_count,
             count($records),
-            "The RecordStore provides {$expected_record_count} results. "
+            "The RecordStore should provide {$expected_record_count} result(s). "
           );
           
         foreach( $expected_records as $expected_record ) {
@@ -160,7 +172,7 @@ abstract class RecordStore extends TestCase
             $this->assertEquals(
                 1,
                 $found,
-                "The RecordStore provides a record for id {$expected_record->getRecordId()}. "
+                "The RecordStore should provide a record for id {$expected_record->getRecordId()}. "
               );
         }
         
@@ -313,18 +325,20 @@ abstract class RecordStore extends TestCase
         foreach ( $insert_values as $field => $value ) {
             
             $records = $store->getRecordsByFieldValues( $field, [ $value ] );
-        
+            
+            $record_count = 0;
+            $retrieved_ids = [];
+            foreach ( $records as $record ) {
+                $record_count++;
+                $retrieved_ids[] = $record->getRecordId();
+            }
+            
             $this->assertGreaterthan(
                 1,
-                count($records),
+                $record_count,
                 "The Recordstore should be able to get multiple records by a field's value. "
               );
             
-            $retrieved_ids = [];
-            foreach ( $records as $record ) {
-                $retrieved_ids[] = $record->getRecordId();
-            }
-
             foreach ( $inserted_ids as $inserted_id ) {
                 $this->assertContains(
                     $inserted_id,
@@ -342,11 +356,16 @@ abstract class RecordStore extends TestCase
     {
         $record = $store->getRecord( $record_id );
         foreach ( array_keys( $record->getAllValues() ) as $field ) {
+          
             $records = $store->getRecordsByFieldValues( $field, [] );
             
+            // not all RecordProducers implement Countable, so we can't use count()
+            $record_count = 0;
+            foreach ( $records as $item ) { $record_count++; }
+            
             $this->assertEquals(
-                count($records),
                 0,
+                $record_count,
                 "The RecordStore should return an empty Record collection when provided no values for any field. "
               );
         }
@@ -462,13 +481,48 @@ abstract class RecordStore extends TestCase
     {
         $record = $store->getRecord( $record_id );
         
-        $updated_record = $store->updateRecord($record);
         
-        $this->assertSame(
-            $record,
-            $updated_record,
-            "The RecordStore should return the same record object instance when updating a record. "
+        // strip field-value pairs containing ids, if any
+        $update_values = array_diff_key(
+            $this->mutateValues($record),
+            array_flip( $this->getIdFields( $store, $record_id ) )
           );
+        
+        $record = $record->initializeRecord( $record->getRecordId(), $update_values );
+        
+        $updated_record = $store->updateRecord($record);
+          
+        $updated_values = $updated_record->getAllValues();
+        
+        $original_record_values = $record->getAllValues();
+        
+        foreach ( $update_values as $field => $value ) {
+          
+            $this->assertEquals(
+                $update_values[$field],
+                $original_record_values[$field],
+                "Updating a Record updates all the values of the passed Record object. "
+              );
+            $this->assertEquals(
+                $update_values[$field],
+                $updated_values[$field],
+                "Updating a record returns a Record with all the same updated values. "
+              );
+            
+        }
+
+        $this->assertEquals(
+            $record_id,
+            $record->getRecordId(),
+            "Updating a record's values (except its id) leaves the passed Record object with the same record id. "
+          );
+          
+        $this->assertEquals(
+            $record_id,
+            $updated_record->getRecordId(),
+            "Updating a record's values (except its id) leaves the returned Record object with the same record id. "
+          );
+         
     }
     
     /**
@@ -482,23 +536,31 @@ abstract class RecordStore extends TestCase
         foreach ( $id_fields as $id_field ) {
           
             $record = $store->getRecord( $record_id );
-            $values = $record->getAllValues();
-            $values[$id_field] = $target_id;
-            $record->initializeRecord( $record_id, $values );
+            $update_values = $this->mutateValues($record);
+            $update_values[$id_field] = $target_id;
+            $passed_record = $record->initializeRecord( $record_id, $update_values );
             
-            $store->updateRecord($record);
+            $updated_record = $store->updateRecord($passed_record);
             
-            $this->assertEquals(
-                $target_id,
-                $record->getRecordId(),
-                "A RecordStore that allows updates to id fields should move them properly. "
-              );
-              
-            $this->assertEquals(
-                $target_id,
-                $record->getAllValues()[$id_field],
-                "A RecordStore that allows updates to id fields should move them properly. "
-              );
+            foreach ( [ 'passed' => $passed_record, 'returned' => $updated_record, ] as $name => $record ) {
+            
+                $this->assertEquals(
+                    $target_id,
+                    $record->getRecordId(),
+                    "A RecordStore that allows moving records by updating id fields "
+                        ."should update the record id on the {$name} Record. "
+                  );
+                
+                $record_values = $record->getAllValues();
+                foreach ( $update_values as $field => $value ) {
+                    $this->assertEquals(
+                        $update_values[$field],
+                        $record_values[$field],
+                        "Moving a record by updating its id should update all the values of the {$name} Record object. "
+                      );
+                }
+
+            }
               
             $exception = null;
             
@@ -534,7 +596,7 @@ abstract class RecordStore extends TestCase
         
         $this->assertNotEmpty(
             $exception,
-            "The RecordStore should throw an exception when it can't find a record to delete. "
+            "The RecordStore should throw a RecordNotFound exception when it can't find a record to delete. "
           );
     }
     

@@ -29,5 +29,15 @@ trait TestTrait
         }
         return $mutated;
     }
+    
+    protected function abbreviateClass( /*object*/ $object, $count = 2 )
+    {
+        $bits = explode( '\\', get_class($object) );
+        $short_bits = [];
+        while ( $count-- >0 ) {
+            array_unshift( $short_bits, array_pop( $bits ) );
+        }
+        return implode( '\\', $short_bits );
+    }
 
 }

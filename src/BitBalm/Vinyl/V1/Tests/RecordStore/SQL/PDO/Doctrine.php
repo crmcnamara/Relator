@@ -5,6 +5,7 @@ namespace BitBalm\Vinyl\V1\Tests\RecordStore\SQL\PDO;
 
 use PDO as PDOConnection;
 
+
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Configuration;
 
@@ -26,21 +27,29 @@ class Doctrine extends Vinyl\Tests\RecordStore\SQL\PDO
             $scenarios = [];
             
             foreach ( $this->getSchemas() as $schema ) {
-                foreach ( $this->getPDOs() as $pdo ) {
-                    
-                    $schema->injectSchema($pdo);
-                    $record_ids = $schema->injectRecords($pdo);
-                    
-                    foreach ( $record_ids as $table => $record_id ) {
-                        $scenarios[ implode( ' ', [ $table, get_class($schema), get_class($pdo), ] ) ] = [
-                            new Vinyl\RecordStore\SQL\PDO\Doctrine( 
+                foreach ( $this->getRecordProducers() as $producer ) {
+                    foreach ( $this->getPDOs() as $pdo ) {
+                        
+                        $schema->injectSchema($pdo);
+                        $record_ids = $schema->injectRecords($pdo);
+                        
+                        foreach ( $record_ids as $table => $record_id ) {
+                            $title = implode( ' ', [ 
+                                $this->abbreviateClass($pdo), 
+                                $this->abbreviateClass($schema), 
                                 $table, 
-                                DriverManager::getConnection( [ 'pdo' => $pdo ], new Configuration )->createQueryBuilder(),
-                                new Vinyl\Record\Generic,
-                                new Vinyl\Collection\Records
-                              ),
-                            $record_id,
-                          ];
+                                $this->abbreviateClass($producer), 
+                              ] );
+                            $scenarios[$title] = [
+                                new Vinyl\RecordStore\SQL\PDO\Doctrine( 
+                                    $table, 
+                                    DriverManager::getConnection( [ 'pdo' => $pdo ], new Configuration )->createQueryBuilder(),
+                                    $record = new Vinyl\Record\Generic,
+                                    $producer
+                                  ),
+                                $record_id,
+                              ];
+                        }
                     }
                 }
             }

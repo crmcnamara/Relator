@@ -25,21 +25,29 @@ class Atlas extends Vinyl\Tests\RecordStore\SQL\PDO
             $scenarios = [];
             
             foreach ( $this->getSchemas() as $schema ) {
-                foreach ( $this->getPDOs() as $pdo ) {
-                    
-                    $schema->injectSchema($pdo);
-                    $record_ids = $schema->injectRecords($pdo);
-                    
-                    foreach ( $record_ids as $table => $record_id ) {
-                        $scenarios[ implode( ' ', [ $table, get_class($schema), get_class($pdo), ] ) ] = [
-                            new Vinyl\RecordStore\SQL\PDO\Atlas( 
+                foreach ( $this->getRecordProducers() as $producer ) {
+                    foreach ( $this->getPDOs() as $pdo ) {
+                        
+                        $schema->injectSchema($pdo);
+                        $record_ids = $schema->injectRecords($pdo);
+                        
+                        foreach ( $record_ids as $table => $record_id ) {
+                            $title = implode( ' ', [ 
+                                $this->abbreviateClass($pdo), 
+                                $this->abbreviateClass($schema), 
                                 $table, 
-                                new AtlasFactory( Connection::new($pdo) ),
-                                new Vinyl\Record\Generic,
-                                new Vinyl\Collection\Records
-                              ),
-                            $record_id,
-                          ];
+                                $this->abbreviateClass($producer), 
+                              ] );
+                            $scenarios[$title] = [
+                                new Vinyl\RecordStore\SQL\PDO\Atlas( 
+                                    $table, 
+                                    new AtlasFactory( Connection::new($pdo) ),
+                                    new Vinyl\Record\Generic,
+                                    $producer
+                                  ),
+                                $record_id,
+                              ];
+                        }
                     }
                 }
             }
