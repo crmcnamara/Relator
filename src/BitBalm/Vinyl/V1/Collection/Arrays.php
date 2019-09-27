@@ -4,10 +4,13 @@ declare (strict_types=1);
 namespace BitBalm\Vinyl\V1\Collection;
 
 
-class Arrays extends Typed
+use BitBalm\Vinyl\V1 as Vinyl;
+
+
+class Arrays extends Vinyl\Collection
 {
-    public function __construct() 
+    public function validItem( $item ) : array
     {
-        parent::__construct( function( array $item ) {}, ...func_get_args() );
+        return $item;
     }
 }

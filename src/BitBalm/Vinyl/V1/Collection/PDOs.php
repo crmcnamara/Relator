@@ -5,11 +5,13 @@ namespace BitBalm\Vinyl\V1\Collection;
 
 use PDO;
 
+use BitBalm\Vinyl\V1 as Vinyl;
 
-class PDOs extends Typed
+
+class PDOs extends Vinyl\Collection
 {
-    public function __construct() 
+    public function validItem( $item ) : PDO
     {
-        parent::__construct( function( PDO $item ) {}, ...func_get_args() );
+        return $item;
     }
 }
