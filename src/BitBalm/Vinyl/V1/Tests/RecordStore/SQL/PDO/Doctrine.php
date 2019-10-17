@@ -44,7 +44,6 @@ class Doctrine extends Vinyl\Tests\RecordStore\SQL\PDO
                                 new Vinyl\RecordStore\SQL\PDO\Doctrine( 
                                     $table, 
                                     DriverManager::getConnection( [ 'pdo' => $pdo ], new Configuration )->createQueryBuilder(),
-                                    $record = new Vinyl\Record\Generic,
                                     $producer
                                   ),
                                 $record_id,

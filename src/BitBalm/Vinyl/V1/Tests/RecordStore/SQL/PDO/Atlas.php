@@ -42,7 +42,6 @@ class Atlas extends Vinyl\Tests\RecordStore\SQL\PDO
                                 new Vinyl\RecordStore\SQL\PDO\Atlas( 
                                     $table, 
                                     new AtlasFactory( Connection::new($pdo) ),
-                                    new Vinyl\Record\Generic,
                                     $producer
                                   ),
                                 $record_id,

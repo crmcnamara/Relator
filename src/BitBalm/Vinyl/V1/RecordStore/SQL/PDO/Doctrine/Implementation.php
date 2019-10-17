@@ -32,14 +32,12 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function __construct( 
         string $table_name, 
         QueryBuilder $query_builder,
-        Vinyl\Record $record,
         Vinyl\RecordProducer\PDO $records
       )
     {
         $this->query_builder    = clone $query_builder;        
           
         $this->pdo              = $query_builder->getConnection()->getWrappedConnection();
-        $this->record           = $record;
         $this->records          = $records;
         
         $this->table_name       = $table_name;
@@ -105,7 +103,6 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
         return new $this( 
             $this->table_name, 
             $this->query_builder, 
-            $record, 
             $this->records->withRecord($record)
           );
     }

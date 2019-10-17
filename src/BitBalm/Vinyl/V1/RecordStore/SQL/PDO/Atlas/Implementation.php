@@ -35,15 +35,12 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     protected $connection;
     protected $schema_info;
     protected $query_factory;
-    protected $record;
-    protected $records;
     protected $columns;
     
     
     public function __construct( 
         string $table_name, 
         AtlasFactory $atlas_factory,
-        Vinyl\Record $record,
         Vinyl\RecordProducer\PDO $records
       )
     {
@@ -52,7 +49,6 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
         $this->query_factory    = $atlas_factory->getQueryFactory();
         
         $this->pdo              = $this->connection->getPdo();
-        $this->record           = $record;
         $this->records          = $records;
         
         $this->table_name       = $this->validTable($table_name);
@@ -122,7 +118,6 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
         return new $this( 
             $this->table_name, 
             new AtlasFactory( $this->connection, $this->query_factory, get_class( $this->schema_info ) ),
-            $record,
             $this->records->withRecord($record)
           );
     }

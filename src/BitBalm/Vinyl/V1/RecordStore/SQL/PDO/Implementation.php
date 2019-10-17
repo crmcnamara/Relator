@@ -21,7 +21,6 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     
     
     protected $pdo;
-    protected $record;
     protected $records;
     
 
@@ -35,7 +34,6 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
       )
     {
         $this->pdo              = $pdo;
-        $this->record           = $record;
         $this->records          = $records;
         
         $this->table_name       = $table_name;
@@ -66,8 +64,6 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     {
         $records = $this->getRecordsByFieldValues( $field, [ $value ] );
         return $this->getOnlyRecord($records);
-
-        return current($records);
     }
     
     

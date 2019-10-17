@@ -32,7 +32,7 @@ abstract class RecordStore extends TestCase
         $producers = [
             new Vinyl\RecordProducer\PDO\Statement( new Vinyl\Record\Generic ),
             #TODO: Vinyl\RecordProducer\Caching
-            #TODO: Vinyl\Colleciton\Records
+            #TODO: Vinyl\Collection\Records
           ];
         return $producers ;
     }
