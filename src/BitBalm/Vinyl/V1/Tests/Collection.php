@@ -28,7 +28,7 @@ class Collection extends TestCase
         $scenarios = [        
             Arrays::class   => [ new Arrays,  [1], ],
             Records::class  => [ new Records, new Vinyl\Record\Generic, ],
-            PDOs::class     => [ new PDOs,    new Vinyl\Tests\RecordStore\SQL\PDO\SQLite, ],            
+            PDOs::class     => [ new PDOs,    new Vinyl\Tests\SQL\PDO\SQLite, ],
           ];    
         
         return $scenarios;

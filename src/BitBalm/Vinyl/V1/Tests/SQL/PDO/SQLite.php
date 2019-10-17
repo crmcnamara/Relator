@@ -1,7 +1,7 @@
 <?php 
 declare (strict_types=1);
 
-namespace BitBalm\Vinyl\V1\Tests\RecordStore\SQL\PDO;
+namespace BitBalm\Vinyl\V1\Tests\SQL\PDO;
 
 use PDO;
 

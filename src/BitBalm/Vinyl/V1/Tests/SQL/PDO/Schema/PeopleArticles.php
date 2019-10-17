@@ -1,14 +1,14 @@
 <?php 
 declare (strict_types=1);
 
-namespace BitBalm\Vinyl\V1\Tests\RecordStore\SQL\PDO\Schema;
+namespace BitBalm\Vinyl\V1\Tests\SQL\PDO\Schema;
 
 use PDO;
 
 use Phinx\Db\Table;
 use Phinx\Db\Adapter\AdapterInterface as Adapter;
 
-use BitBalm\Vinyl\V1\Tests\RecordStore\SQL\PDO\Schema;
+use BitBalm\Vinyl\V1\Tests\SQL\PDO\Schema;
 
 
 class PeopleArticles extends Schema

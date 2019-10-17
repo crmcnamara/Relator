@@ -21,8 +21,8 @@ abstract class PDO extends Vinyl\Tests\RecordStore\SQL
     public function getPDOs() : PDOs 
     {
         $pdos = [
-            new PDO\SQLite,
-            new PDO\MySQL,
+            new Vinyl\Tests\SQL\PDO\SQLite,
+            new Vinyl\Tests\SQL\PDO\MySQL,
             #TODO: new PDO\PostgreSQL,
           ];
         return new PDOs($pdos);
@@ -31,7 +31,7 @@ abstract class PDO extends Vinyl\Tests\RecordStore\SQL
     public function getSchemas() : array
     {
         $schemas = [ 
-            new PDO\Schema\PeopleArticles,
+            new Vinyl\Tests\SQL\PDO\Schema\PeopleArticles,
           ];
         return $schemas;
     }
