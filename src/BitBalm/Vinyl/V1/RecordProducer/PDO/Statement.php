@@ -33,21 +33,23 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
         $this->rewind();
     }
     
-    public function withStatement( 
-        PDOStatement $statement, 
-        Vinyl\Record $prototype = null, 
-        string $id_field = null 
-      ) : Vinyl\RecordProducer\PDO
+    public function withStatement( PDOStatement $statement ) : Vinyl\RecordProducer\PDO
     {
-        $producer = new self( $prototype ?: $this->record, $id_field ?: $this->id_field);
+        $producer = new self( $this->record, $this->id_field );
         $producer->setStatement($statement);
         return $producer;
     }
     
-    public function getMasterRecord() : Vinyl\Record
+    public function withRecord(
+        Vinyl\Record $prototype, 
+        string $id_field = null 
+      ) : Vinyl\RecordProducer\PDO
     {
-        return $this->record;
+        $producer = new self( $prototype, $id_field ?: $this->id_field );
+        if ( ! empty( $this->statement ) ) { $producer->setStatement( $this->statement ); }
+        return $producer;
     }
+    
     
     public function current() : Vinyl\Record 
     {
@@ -58,6 +60,7 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
     
     public function count() 
     {
+        #TODO: throw if statement has not executed?
         return $this->statement->rowCount();
     }
     

@@ -123,7 +123,7 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
             $this->table_name, 
             new AtlasFactory( $this->connection, $this->query_factory, get_class( $this->schema_info ) ),
             $record,
-            $this->records
+            $this->records->withRecord($record)
           );
     }
     

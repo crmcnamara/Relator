@@ -102,7 +102,12 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     
     public function withRecord( Record $record ) : RecordStore
     {
-        return new $this( $this->table_name, $this->query_builder, $record, $this->records );
+        return new $this( 
+            $this->table_name, 
+            $this->query_builder, 
+            $record, 
+            $this->records->withRecord($record)
+          );
     }
     
     public function getSelectQuery( string $field, array $values ) : QueryBuilder

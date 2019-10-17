@@ -119,12 +119,13 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     
     public function getRecordsByStatement( PDOStatement $statement, array $parameters = [] ) : Vinyl\RecordProducer
     {
-        // Some statements may already be executed - execute it ourselves only if provided parameters, or if it hasn't been executed.
+        // Some statements may already be executed - 
+        //    execute it ourselves only if provided parameters, or if it hasn't been executed.
         if ( !empty($parameters) or $statement->columnCount() == 0 ) { 
             $statement->execute($parameters); 
         }
         
-        $records = $this->records->withStatement( $statement, $this->record, $this->getPrimaryKey() );
+        $records = $this->records->withStatement($statement);
 
         return $records;
     }

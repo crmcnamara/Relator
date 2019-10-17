@@ -59,7 +59,6 @@ trait Implementation /* implements Vinyl\RecordStore\SQL */
 
     protected function getOnlyRecord( Vinyl\RecordProducer $records )
     {
-
         $records->rewind();
         
         if ( ! $records->valid() )  { throw new RecordNotFound; }
