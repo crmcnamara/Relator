@@ -7,5 +7,5 @@ namespace BitBalm\Vinyl\V1;
 interface Relator
 {
     public function setRelationship( string $relationship_name, Relationship $relationship );
-    public function getRelationship( string $source_class, string $relationship_name );
+    public function getRelationship( Record $source_record, string $relationship_name ) : Relationship ;
 }
