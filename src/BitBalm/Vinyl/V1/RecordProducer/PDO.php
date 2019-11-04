@@ -9,12 +9,8 @@ use BitBalm\Vinyl\V1 as Vinyl;
 
 interface PDO extends Vinyl\RecordProducer
 {
-    public function withStatement( PDOStatement $statement ) : Vinyl\RecordProducer\PDO ;
+    public function withStatement( PDOStatement $statement, string $id_field = 'id' ) : Vinyl\RecordProducer\PDO ;
     
-    public function withRecord( 
-        Vinyl\Record $prototype, 
-        string $id_field = null 
-      ) : Vinyl\RecordProducer\PDO ;
+    public function withRecord( Vinyl\Record $prototype ) : Vinyl\RecordProducer\PDO ;
     
-    public function getMasterRecord() : Vinyl\Record;
 }

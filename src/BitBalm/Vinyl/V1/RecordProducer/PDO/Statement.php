@@ -19,10 +19,9 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
     protected /*string*/ $id_field;
     
     
-    public function __construct( Vinyl\Record $prototype, string $id_field = 'id' )
+    public function __construct( Vinyl\Record $prototype )
     {
         $this->record     = $prototype;
-        $this->id_field   = $id_field;
     }
     
     protected function setStatement( PDOStatement $statement )
@@ -33,19 +32,19 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
         $this->rewind();
     }
     
-    public function withStatement( PDOStatement $statement ) : Vinyl\RecordProducer\PDO
+    public function withStatement( PDOStatement $statement, string $id_field = 'id' ) : Vinyl\RecordProducer\PDO
     {
-        $producer = new self( $this->record, $this->id_field );
+        $producer = new self( $this->record );
         $producer->setStatement($statement);
+        $producer->id_field = $id_field;
         return $producer;
     }
     
     public function withRecord(
-        Vinyl\Record $prototype, 
-        string $id_field = null 
+        Vinyl\Record $prototype 
       ) : Vinyl\RecordProducer\PDO
     {
-        $producer = new self( $prototype, $id_field ?: $this->id_field );
+        $producer = new self( $prototype );
         if ( ! empty( $this->statement ) ) { $producer->setStatement( $this->statement ); }
         return $producer;
     }

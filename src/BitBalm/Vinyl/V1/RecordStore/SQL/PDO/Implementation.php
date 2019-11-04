@@ -121,7 +121,7 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
             $statement->execute($parameters); 
         }
         
-        $records = $this->records->withStatement($statement);
+        $records = $this->records->withStatement( $statement, $this->getPrimaryKey() );
 
         return $records;
     }
