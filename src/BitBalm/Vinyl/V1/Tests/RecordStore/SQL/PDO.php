@@ -10,32 +10,13 @@ use Atlas\Query\QueryFactory;
 
 
 use BitBalm\Vinyl\V1 as Vinyl;
-use BitBalm\Vinyl\V1\Collection\PDOs;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\Exception\TooManyRecords;
 
 
 abstract class PDO extends Vinyl\Tests\RecordStore\SQL
-{   
-
-    public function getPDOs() : PDOs 
-    {
-        $pdos = [
-            new Vinyl\Tests\SQL\PDO\SQLite,
-            new Vinyl\Tests\SQL\PDO\MySQL,
-            #TODO: new PDO\PostgreSQL,
-          ];
-        return new PDOs($pdos);
-    }
-    
-    public function getSchemas() : array
-    {
-        $schemas = [ 
-            new Vinyl\Tests\SQL\PDO\Schema\PeopleArticles,
-          ];
-        return $schemas;
-    }
-    
+{
+    use Vinyl\Tests\SQL\PDO\DataProviders;
     
     /**
      * @dataProvider getRecordStoreScenarios

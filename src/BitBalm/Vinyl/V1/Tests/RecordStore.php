@@ -16,7 +16,6 @@ use BitBalm\Vinyl\V1\Exception\InvalidField;
 
 abstract class RecordStore extends TestCase
 {
-    
     use TestTrait;
     
     /**
@@ -26,16 +25,6 @@ abstract class RecordStore extends TestCase
      */
     abstract public function getRecordStoreScenarios();
     
-    
-    public function getRecordProducers()
-    {
-        $producers = [
-            new Vinyl\RecordProducer\PDO\Statement( new Vinyl\Record\Generic ),
-            #TODO: Vinyl\RecordProducer\Caching
-            #TODO: Vinyl\Collection\Records
-          ];
-        return $producers ;
-    }
     
     /**
      * @dataProvider getRecordStoreScenarios
