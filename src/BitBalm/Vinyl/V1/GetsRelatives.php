@@ -6,13 +6,7 @@ namespace BitBalm\Vinyl\V1;
 
 interface GetsRelatives
 {
-    public function getRelative(  
-        string $relationship_name, 
-        Record $source_record = null      
-      ) : Record ;
+    public function getRelative( string $relationship_name ) : Record ;
       
-    public function getRelatives( 
-        string $relationship_name, 
-        Collection\Records $source_records = null  
-      ) : Collection\Records ;
+    public function getRelatives( string $relationship_name ) : RecordProducer ;
 }
