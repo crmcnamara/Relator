@@ -8,6 +8,8 @@ use PDO;
 use Phinx\Db\Table;
 use Phinx\Db\Adapter\AdapterInterface as Adapter;
 
+
+use BitBalm\Vinyl\V1 as Vinyl;
 use BitBalm\Vinyl\V1\Tests\SQL\PDO\Schema;
 
 
@@ -46,11 +48,28 @@ class PeopleArticles extends Schema
         $fixture_record_ids['person'] = 3;
             
         (new Table( 'article', [], $adapter ))->insert([
-            [ 'id' => 5, 'title' => 'Something or Other', 'author_id' => 3, ],
+            [ 'id' => 5, 'title' => 'Something or Other',           'author_id' => 3, ],
+            [ 'id' => 6, 'title' => 'Something or Other Revisited', 'author_id' => 3, ],
           ])->save();
         $fixture_record_ids['article'] = 5;
         
         return $fixture_record_ids;
+    }
+    
+    
+    public function getOneToManySourceTable() : string 
+    {
+        return 'person';
+    }
+    
+    public function getManyToOneSourceTable() : string
+    {
+        return 'article';
+    }
+    
+    public function getManyToOneSourceField() : string
+    {
+        return 'author_id';
     }
     
 }

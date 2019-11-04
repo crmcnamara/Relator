@@ -10,6 +10,9 @@ use Phinx\Config\Config;
 use Phinx\Migration\Manager\Environment;
 
 
+use BitBalm\Vinyl\V1 as Vinyl;
+
+
 abstract class Schema
 {
     /**
@@ -21,6 +24,10 @@ abstract class Schema
      * returns an array of fixture record ids, indexed by table names
      */
     abstract public function injectRecords( PDO $pdo ) : array ;
+    
+    abstract public function getOneToManySourceTable() : string ;
+    abstract public function getManyToOneSourceTable() : string ;
+    abstract public function getManyToOneSourceField() : string ;
     
     
     public function getAdapter( PDO $pdo ) : Adapter 
