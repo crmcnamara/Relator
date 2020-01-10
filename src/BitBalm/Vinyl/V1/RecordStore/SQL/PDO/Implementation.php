@@ -55,9 +55,12 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     }
 
     
-    public function getRecords( array $record_ids ) : Vinyl\RecordProducer
+    public function getRecords( array $record_ids = null ) : Vinyl\RecordProducer
     {
-        return $this->getRecordsByFieldValues( $this->getPrimaryKey(), $record_ids );
+        return $this->getRecordsByFieldValues( 
+            is_null($record_ids) ? '' : $this->getPrimaryKey(), 
+            (array) $record_ids 
+          );
     }
     
     public function getRecordByFieldValue( string $field, $value ) : Record 

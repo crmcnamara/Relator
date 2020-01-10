@@ -98,10 +98,11 @@ abstract class RecordStore extends TestCase
             $store = current( $scenario );
             $fixture_record_id = end( $scenario );
             foreach ( [ 
-                'all records' => [ $fixture_record_id ], 
+                'one record' => [ $fixture_record_id ], 
                 'some records' => [ $fixture_record_id, 'TEST_bogus_record_id_9999', 999999, ],
                 'only missing records' => [ 'TEST_bogus_record_id_9999', 999999, ],
                 'no records' => [], 
+                'all records' => null,
               ] as $subtitle => $requested_record_ids )
             {
                 $scenarios[ "{$storename} - {$subtitle}" ] = 
@@ -114,13 +115,13 @@ abstract class RecordStore extends TestCase
     /** 
      * @dataProvider getRecordsScenarios
      */
-    public function testGetRecords( Vinyl\RecordStore $store, array $record_ids )
+    public function testGetRecords( Vinyl\RecordStore $store, array $record_ids = null )
     {
         $expected_records = [];
         
         try {
             // attempt to fetch the first record id as a fixture record
-            $record_id = current( $record_ids );
+            $record_id = current( (array) $record_ids );
             $record = $store->getRecord( $record_id );
             $expected_records[] = $record;
             
@@ -144,12 +145,21 @@ abstract class RecordStore extends TestCase
         $records = [];
         foreach ( $producer as $key => $r ) { $records[$key] = $r; }
         
-        $this->assertEquals(
-            $expected_record_count,
-            count($records),
-            "The RecordStore should provide {$expected_record_count} result(s). "
-          );
-          
+        if ( is_null($record_ids) ) {
+            $this->assertGreaterThan(
+                $expected_record_count,
+                count($records),
+                "The RecordStore should provide more than {$expected_record_count} result(s). "
+              );
+        
+        } else {
+            $this->assertEquals(
+                $expected_record_count,
+                count($records),
+                "The RecordStore should provide {$expected_record_count} result(s). "
+              );
+        }
+        
         foreach( $expected_records as $expected_record ) {
             $found = 0;
             foreach ( $records as $record ) {

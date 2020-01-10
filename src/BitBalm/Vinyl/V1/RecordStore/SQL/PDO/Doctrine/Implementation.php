@@ -110,12 +110,14 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function getSelectQuery( string $field, array $values ) : QueryBuilder
     {
         $query = clone $this->query_builder;
-        $query->select('*')->from( $this->getTable() )
-            ->where( $query->expr()->in( 
+        $query->select('*')->from( $this->getTable() );
+        if ( ! empty($field) ) {
+            $query->where( $query->expr()->in( 
                 $this->validField($field), 
                 implode( ', ', array_pad( [], count($values), '?' ) )
               ) );
-        foreach ( array_values($values) as $idx => $value ) { $query->setParameter( $idx, $value ); }
+            foreach ( array_values($values) as $idx => $value ) { $query->setParameter( $idx, $value ); }
+        }
             
         return $query;
     }
@@ -123,7 +125,7 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     public function getRecordsByFieldValues( string $field, array $values ) : Vinyl\RecordProducer
     {
         // Mysql, for one, does not handle empty "IN ()" conditions well. 
-        if ( empty($values) ) { return new Vinyl\Collection\Records; }
+        if ( empty($values) and ! empty($field) ) { return new Vinyl\Collection\Records; }
         
         $query = $this->getSelectQuery( $field, $values );
 

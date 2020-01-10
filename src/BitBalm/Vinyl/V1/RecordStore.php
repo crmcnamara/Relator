@@ -25,8 +25,9 @@ interface RecordStore
     /**
      * Returns a Collection of Records uniquely identified by the passed ids.
      * The Collection may be empty if there are no matches. 
+     * If called without any arguments at all, returns all Records in the Store
      */
-    public function getRecords( array $record_ids ) : RecordProducer ;
+    public function getRecords( array $record_ids = null ) : RecordProducer ;
     
     /**
      * Returns a single record 
