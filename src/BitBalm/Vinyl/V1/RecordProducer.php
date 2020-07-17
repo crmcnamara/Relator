@@ -8,4 +8,8 @@ use Traversable;
 interface RecordProducer extends \Iterator
 {
     public function current() : Record ;
+    
+    public function asArray() : array;
+    
+    public function asArrays() : array;
 }

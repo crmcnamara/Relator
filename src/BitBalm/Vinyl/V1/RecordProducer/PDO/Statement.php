@@ -63,4 +63,17 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
         return $this->statement->rowCount();
     }
     
+    public function asArray() : array
+    {
+        return iterator_to_array($this);
+    }
+    
+    public function asArrays() : array
+    {
+        return array_map( 
+            function( Vinyl\Record $record ) { return $record->getAllValues(); }, 
+            $this->asArray()
+          );
+    }
+    
 }

@@ -25,4 +25,17 @@ class Records extends Vinyl\Collection implements Vinyl\RecordProducer
     {
         return $this->validItem( parent::current() );
     }
+    
+    public function asArray() : array
+    {
+        return $this->getArrayCopy();
+    }
+    
+    public function asArrays() : array
+    {
+        return array_map( 
+            function( Vinyl\Record $record ) { return $record->getAllValues(); }, 
+            $this->asArray()
+          );
+    }
 }
