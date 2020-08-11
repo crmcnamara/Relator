@@ -3,11 +3,14 @@ declare (strict_types=1);
 
 namespace BitBalm\Vinyl\V1\RecordProducer;
 
+use OuterIterator;
+
 use PDOStatement;
+
 use BitBalm\Vinyl\V1 as Vinyl;
 
 
-interface PDO extends Vinyl\RecordProducer
+interface PDO extends Vinyl\RecordProducer, OuterIterator
 {
     public function withStatement( PDOStatement $statement, string $id_field = 'id' ) : Vinyl\RecordProducer\PDO ;
     

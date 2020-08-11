@@ -27,4 +27,9 @@ class GetsRelatives extends Generic implements Vinyl\GetsRelatives
     {
         return $this->relator;
     }
+    
+    protected function getSourceRecord() : Vinyl\Record
+    {
+        return $this;
+    }
 }
