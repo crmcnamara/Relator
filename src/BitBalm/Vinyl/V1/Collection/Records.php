@@ -6,7 +6,7 @@ namespace BitBalm\Vinyl\V1\Collection;
 use Traversable;
 
 use BitBalm\Vinyl\V1 as Vinyl;
-
+use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 
 class Records extends Vinyl\Collection implements Vinyl\RecordProducer
 {
@@ -37,5 +37,14 @@ class Records extends Vinyl\Collection implements Vinyl\RecordProducer
             function( Vinyl\Record $record ) { return $record->getAllValues(); }, 
             $this->asArray()
           );
+    }
+    
+    public function getMasterRecord() : Vinyl\Record
+    {
+        if ( $this->count() <1 ) { 
+            throw new RecordNotFound( "No master record was found for this Colleciton. " ); 
+        }
+        
+        return current( $this->getArrayCopy() );
     }
 }

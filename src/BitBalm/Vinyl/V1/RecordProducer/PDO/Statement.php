@@ -29,7 +29,6 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
         $this->statement = $statement;
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         parent::__construct( $statement );
-        $this->rewind();
     }
     
     public function withStatement( PDOStatement $statement, string $id_field = 'id' ) : Vinyl\RecordProducer\PDO
@@ -40,9 +39,7 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
         return $producer;
     }
     
-    public function withRecord(
-        Vinyl\Record $prototype 
-      ) : Vinyl\RecordProducer\PDO
+    public function withRecord( Vinyl\Record $prototype ) : Vinyl\RecordProducer\PDO
     {
         $producer = new self( $prototype );
         if ( ! empty( $this->statement ) ) { $producer->setStatement( $this->statement ); }
@@ -75,5 +72,9 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
             $this->asArray()
           );
     }
-    
+
+    public function getMasterRecord() : Vinyl\Record
+    {
+        return $this->record;
+    }
 }

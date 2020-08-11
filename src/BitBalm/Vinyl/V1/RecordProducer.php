@@ -3,13 +3,16 @@ declare (strict_types=1);
 
 namespace BitBalm\Vinyl\V1;
 
-use Traversable;
+use Iterator;
 
-interface RecordProducer extends \Iterator
+
+interface RecordProducer extends Iterator
 {
-    public function current() : Record ;
+    public function current() : Record;
     
     public function asArray() : array;
     
     public function asArrays() : array;
+
+    public function getMasterRecord() : Record;
 }

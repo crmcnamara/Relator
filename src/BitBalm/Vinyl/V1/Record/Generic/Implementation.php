@@ -31,7 +31,7 @@ Trait Implementation /* implements Vinyl\Record */
         // If our internal id is not set, we're a prototype. 
         // If the passed id is not set, an insertable prototype is being requested.
         if ( ! isset( $this->record_id, $record_id ) ) { 
-          $record = clone $this;
+            $record = clone $this;
         }
         
         // if both ids are set, but don't match, our id is being moved. 

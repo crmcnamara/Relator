@@ -17,6 +17,7 @@ set -x
 [ "$container" = 'docker' ] || 
     ( ! : "We do not appear to be in a docker container. Aborting. " )
 
+mkdir -p vendor
 chown developer -R composer.json composer.lock vendor
 su developer -c "php7.1 /usr/bin/composer install" 
 
