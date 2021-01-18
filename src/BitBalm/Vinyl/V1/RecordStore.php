@@ -17,14 +17,14 @@ interface RecordStore
     public function withRecord( Record $prototype_record ) : RecordStore ;
     
     /** 
-     * Returns a single record uniquely identified by its primary key id.
+     * Returns a single record identified by its primary key id.
      * Throws RecordNotFound when it comes up empty. 
      */
     public function getRecord( $record_id ) : Record ;
     
     /**
-     * Returns a Collection of Records uniquely identified by the passed ids.
-     * The Collection may be empty if there are no matches. 
+     * Returns a RecordProducer iterator with zero or more Records 
+     *    identified by any one of the passed primary key ids.
      * If called without any arguments at all, returns all Records in the Store
      */
     public function getRecords( array $record_ids = null ) : RecordProducer ;
@@ -39,9 +39,8 @@ interface RecordStore
     public function getRecordByFieldValue( string $field, $value ) : Record ; 
     
     /**
-     * Returns a Collection of Records 
-     *    uniquely identified by having the given value in the given field.
-     * The Collection may be empty if there are no matches. 
+     * Returns a RecordProducer iterator with zero or more Records 
+     *    having any of the given values in the given field.
      * Throws InvalidArgumentException if the field is not valid for the record type.
      */
     public function getRecordsByFieldValues( string $field, array $values ) : RecordProducer ;
@@ -63,7 +62,7 @@ interface RecordStore
     public function updateRecord( Record $record ) : Record ;
     
     /**
-     * Deletes the record from the source database identified by the passed Record object.
+     * Deletes the record identified by the passed Record object from the source database.
      * Implementors should target the source database record using Record::getRecordId()
      * Throws RecordNotFound when it can't find the target record in the source database.
      */
