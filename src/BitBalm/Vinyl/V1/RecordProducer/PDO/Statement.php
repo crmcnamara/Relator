@@ -33,7 +33,7 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
     
     public function withStatement( PDOStatement $statement, string $id_field = 'id' ) : Vinyl\RecordProducer\PDO
     {
-        $producer = new self( $this->record );
+        $producer = new self( $this->getMasterRecord() );
         $producer->setStatement($statement);
         $producer->id_field = $id_field;
         return $producer;
@@ -50,7 +50,7 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
     public function current() : Vinyl\Record 
     {
         $row = parent::current();
-        $record = $this->record->withValues( $row[$this->id_field], $row );
+        $record = $this->getMasterRecord()->withValues( $row[$this->id_field], $row );
         return $record;
     }
     
@@ -75,6 +75,10 @@ class Statement extends IteratorIterator implements Vinyl\RecordProducer\PDO, Co
 
     public function getMasterRecord() : Vinyl\Record
     {
+        if ( $this->record instanceof Vinyl\Record\Contract ) {
+            $this->record = $this->record->getRecord();
+        }
+        
         return $this->record;
     }
 }

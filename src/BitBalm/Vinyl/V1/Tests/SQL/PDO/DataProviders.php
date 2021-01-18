@@ -29,11 +29,17 @@ trait DataProviders
     
     public function getRecordProducers()
     {
+        $contract = new Vinyl\Record\Contract;
+        
         $producers = [
             new Vinyl\RecordProducer\PDO\Statement( new Vinyl\Record\Generic ),
+            new Vinyl\RecordProducer\PDO\Statement( $contract ),
             #TODO: Vinyl\RecordProducer\Caching
             #TODO: Vinyl\Collection\Records
           ];
+          
+        $contract->setRecord( new Vinyl\Record\Generic );
+        
         return $producers ;
     }
     
