@@ -8,21 +8,19 @@ source "${0%/*}"/env
 #   provide a proper docker run command line and exit
 [ -t 0 ] || ( ! echo docker run --rm -it "$image" "$@" )
 
-set -x
-
-:
-: "running" "$0" "$@"
-:
+echo + "$0" "$@"
 
 [ "$container" = 'docker' ] || 
-    ( ! : "We do not appear to be in a docker container. Aborting. " )
+    ( ! echo "We do not appear to be in a docker container. Aborting. " )
 
 # if the source tree is a mountpoint, we're probably in development mode,
 #   and should re-run the build finalization script in case the source has been updated.
 if mountpoint "$source_dir" ; then 
-    "$command_dir"/finalize
+    ( set -x ; "$command_dir"/finalize )
 fi
 
-service mysql start
+set -x 
+
+service mysql start 
 
 exec "$@"
