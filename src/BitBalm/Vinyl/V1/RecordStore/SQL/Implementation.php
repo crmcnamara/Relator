@@ -61,11 +61,15 @@ trait Implementation /* implements Vinyl\RecordStore\SQL */
     {
         $records->rewind();
         
-        if ( ! $records->valid() )  { throw new RecordNotFound; }
+        if ( ! $records->valid() )  { 
+            throw new RecordNotFound( "No {$this->getTable()} record was found. " ); 
+        }
         
         $record = $records->current();
         $records->next();
-        if ( $records->valid() )    { throw new TooManyRecords; }
+        if ( $records->valid() ) { 
+            throw new TooManyRecords( "Multiple {$this->getTable()} records were found. " ); 
+        }
         
         return $record;
     }
