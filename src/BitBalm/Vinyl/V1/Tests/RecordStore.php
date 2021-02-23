@@ -67,7 +67,7 @@ abstract class RecordStore extends TestCase
         $record = $store->getRecord( $record_id );
         $values = $record->getAllValues();
         
-        // Identify fields whose values match that match the current record id
+        // Identify fields whose values match the current record id
         // Some or all of these values may match purely coincidentally,
         //    rather than because they're the id field.
         $id_fields = array_keys( $values, $record->getRecordId() );

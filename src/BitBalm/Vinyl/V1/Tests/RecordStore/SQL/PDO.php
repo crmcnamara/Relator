@@ -5,6 +5,8 @@ namespace BitBalm\Vinyl\V1\Tests\RecordStore\SQL;
 
 use PDO as PDOConnection;
 
+use Phinx\Db\Table;
+
 use Atlas\Pdo\Connection;
 use Atlas\Query\QueryFactory;
 
@@ -12,6 +14,8 @@ use Atlas\Query\QueryFactory;
 use BitBalm\Vinyl\V1 as Vinyl;
 use BitBalm\Vinyl\V1\Exception\RecordNotFound;
 use BitBalm\Vinyl\V1\Exception\TooManyRecords;
+
+use BitBalm\Vinyl\V1\Tests\SQL\PDO\Schema;
 
 
 abstract class PDO extends Vinyl\Tests\RecordStore\SQL
@@ -155,4 +159,40 @@ abstract class PDO extends Vinyl\Tests\RecordStore\SQL
         }
     }
     
+    /**
+     * @dataProvider getRecordStoreScenarios
+     */
+    public function testInsertRecordHandlesNonIncremementingPrimaryKeys( 
+        Vinyl\RecordStore $store, 
+        $record_id 
+      )
+    {
+        $prikey = $store->getPrimaryKey();
+        
+        // strip auto-increment from the primary key
+        $table = new Table( 
+            $store->getTable(), 
+            [], 
+            Schema::getAdapter( $store->getPDO() )
+          );
+        $table
+            ->changeColumn( $prikey, 'integer', [ 'identity' => false, ] )
+            ->save();
+            
+        $records = $store->getRecords()->asArray();
+        $insert_values = $this->mutateValues( end($records) );
+        $insert_values[$prikey] = max( array_map( 
+            function($record) { return $record->getRecordId(); }, 
+            $records 
+          ) ) +1;
+        
+        $inserted_record = $store->insertRecord( $insert_values );
+        
+        $this->assertNotEmpty(
+            $inserted_record->getAllValues()[$prikey],
+            "The PDO RecordStore should properly handle insertion of records "
+            ."even when the primary key is not auto-incremented. "
+          );
+
+    }
 }

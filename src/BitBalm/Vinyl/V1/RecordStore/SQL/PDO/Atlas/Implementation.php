@@ -164,8 +164,14 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     {    
         $query = $this->getInsertQuery($values);
         $query->perform();
-        
-        return $this->getRecord( $query->getLastInsertId() );
+
+        $key = $this->getPrimaryKey();
+        $inserted_id = 
+            isset( $values[$key] ) 
+                ? $values[$key]
+                : $query->getLastInsertId();
+
+        return $this->getRecord( $inserted_id );
     }
 
 

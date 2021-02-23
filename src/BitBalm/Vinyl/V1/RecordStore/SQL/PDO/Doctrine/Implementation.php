@@ -149,12 +149,19 @@ trait Implementation /* implements Vinyl\RecordStore\SQL\PDO */
     }
     
     public function insertRecord( array $values ) : Record 
-    {    
+    {
+
         $query = $this->getInsertQuery($values);
 
         $this->executeQuery($query);
 
-        return $this->getRecord( $query->getConnection()->lastInsertId() );
+        $key = $this->getPrimaryKey();
+        $inserted_id = 
+            isset( $values[$key] ) 
+                ? $values[$key]
+                : $query->getConnection()->lastInsertId();
+
+        return $this->getRecord( $inserted_id );
     }
 
 
