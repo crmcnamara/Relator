@@ -17,21 +17,17 @@ trait Implementation /* implements Vinyl\GetsRelatives */
     
     public function getRelative( string $relationship_name ) : Vinyl\Record 
     {
-        $records = $this->getRelatives( $relationship_name );
-        return $this->getOnlyRecord( $records );
-    }
-    
-    protected function getOnlyRecord( Vinyl\RecordProducer $records )
-    {
-        $records->rewind();
-        
-        if ( ! $records->valid() )  { throw new RecordNotFound; }
-        
-        $record = $records->current();
-        $records->next();
-        if ( $records->valid() )    { throw new TooManyRecords; }
-        
-        return $record;
+        $record = $this->getSourceRecord();
+
+        $relationship = $this->getRelator()->getRelationship( $record, $relationship_name );
+
+        $relative = $relationship->destinationRecordStore()
+            ->getRecordByFieldValue(
+                $relationship->destinationField(), 
+                $record->getAllValues()[ $relationship->sourceField() ]
+              );
+              
+        return $relative;
     }
     
     public function getRelatives( string $relationship_name ) : Vinyl\RecordProducer 
@@ -45,6 +41,7 @@ trait Implementation /* implements Vinyl\GetsRelatives */
                 $relationship->destinationField(), 
                 [ $record->getAllValues()[ $relationship->sourceField() ] ]
               );
+              
         return $records;
     }
 }
